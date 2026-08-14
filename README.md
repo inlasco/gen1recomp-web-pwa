@@ -5,7 +5,7 @@
 Play Gen1Recomp directly in your mobile browser — no sideloading, no emulator.
 
 <p align="center">
-  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/Web%20App-live-2f9e44?style=flat-square" alt="Web App: live"></a>
+  <a href="http://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/Web%20App-live-2f9e44?style=flat-square" alt="Web App: live"></a>
   <img src="https://img.shields.io/badge/Web-PWA-111827?style=flat-square" alt="Web / PWA">
   <img src="https://img.shields.io/badge/iPhone%20%2F%20Safari-hardware%20validated-0b7285?style=flat-square" alt="iPhone / Safari: hardware validated">
   <img src="https://img.shields.io/badge/Android-successfully%20tested-2f9e44?style=flat-square" alt="Android: successfully tested">
@@ -23,12 +23,13 @@ Play Gen1Recomp directly in your mobile browser — no sideloading, no emulator.
 </p>
 
 <p align="center">
-  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Launch%20Web%20App-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Launch Web App at gen1recomp.inlasco.fr"></a>
+  <a href="http://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Launch%20Web%20App-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Launch Web App at gen1recomp.inlasco.fr"></a>
 </p>
 
 <p align="center">
-  <strong><a href="https://gen1recomp.inlasco.fr/">▶ Launch Web App — https://gen1recomp.inlasco.fr/</a></strong><br>
-  <sub>Opens directly in your mobile browser. No download, no App Store, no GitHub account needed.</sub>
+  <strong><a href="http://gen1recomp.inlasco.fr/">▶ Launch Web App — http://gen1recomp.inlasco.fr/</a></strong><br>
+  <sub>Opens directly in your mobile browser. No download, no App Store, no GitHub account needed.</sub><br>
+  <sub><em>Temporary access: HTTPS provisioning is still completing for this new subdomain. The app currently launches over HTTP; the link will switch back to HTTPS as soon as the certificate is fully active.</em></sub>
 </p>
 
 > [!IMPORTANT]
@@ -38,68 +39,87 @@ Play Gen1Recomp directly in your mobile browser — no sideloading, no emulator.
 
 ## I just want to play
 
+You do not need a GitHub account, and you do not need to download this repository. Five steps, on your phone.
+
+> [!NOTE]
+> The web shell's buttons are currently labelled in French. The English meaning is given in brackets.
+
 ### Quick start
 
-**Do I need to know GitHub? No.**
+1. **Open the Web App** — go to **[http://gen1recomp.inlasco.fr/](http://gen1recomp.inlasco.fr/)** and wait until the status line reads `Prêt` *(Ready)*.
+2. **Import your ROM** — tap `Importer une ROM` *(Import a ROM)* and pick your own legally obtained `.gb` / `.gbc` file. It must be exactly 1 MiB. The game boots straight after.
+3. **Import Dramatic Shape** — download [`mods/DramaticShape-v1.0-widescreen-test.zip`](mods/DramaticShape-v1.0-widescreen-test.zip) from this repository, tap `Importer un mod` *(Import a mod)* and select it. Then open the launcher's `MODS` tab and switch **Dramatic Shape Voxel Mod** on.
+4. **Enable the tested 3D preset** — in game, press `START` → `OPTION` and apply the values in [Recommended 3D preset](#recommended-3d-preset) below.
+5. **Play** — use the on-screen touch controls, or connect a game controller (detected automatically). `Plein écran` *(Fullscreen)* gives an immersive view; the **×** in the corner leaves it.
 
-If you only want to play, you do not need to download this repository or understand GitHub. The green **Code → Download ZIP** button is *not* how you play — it just gives you the raw source files.
+### Recommended 3D preset
 
-**Where do I open it?** Open the official public Web App:
+For a result close to the screenshots on this page, this is the mobile preset currently tested successfully with this Web/PWA build. It is not mandatory, and it is not an official Dramatic Shape configuration — it is a starting point you can customize afterwards.
 
-> ### ▶ [https://gen1recomp.inlasco.fr/](https://gen1recomp.inlasco.fr/)
+**Where these settings live**
 
-You do not need to download this GitHub repository to play — just open that address on your phone or tablet. If you would rather run your own copy instead, see *Technical / deployment information* further down.
+- Press `START` (touch pad or controller) to open the pause menu, then select `OPTION`.
+- Once Dramatic Shape is enabled, its rows appear on that same `OPTION` list, below the engine's own rows. Scroll down to reach them.
+- `Up` / `Down` move the cursor, `Left` / `Right` change the highlighted value.
+- To go back to the game: press `B` or `START`, or move down to `CANCEL` and press `A`.
+
+**The preset**
+
+| Setting | Value |
+| --- | --- |
+| `MUSIC FILTER` | `OFF` |
+| `PERFORMANCE` | `HIGH` |
+| `COLORS` | `ADVANCED` |
+| `TILT` | `OFF` |
+| `VOXEL` | `50` |
+| `T-SHIFT` | `1` |
+| `V-GRID` | `ON` |
+| `V-CURVE` | `OFF` |
+| `WATER` | `FULL` |
+| `3D-BTL` | `ON` |
+| `BACK SPRITES` | `ON` |
+| `DAYTIME` | `GOLDEN` |
+| `G-SHADOW` | `ON` |
+| `AA` | `OFF` |
+
+Other options can be left at their existing values unless you specifically want to customize them.
+
+**What the main options do**
+
+- `VOXEL = 50` — the camera angle rung of the voxel 3D view (50°).
+- `3D-BTL = ON` — battles are staged on the map itself instead of the flat battle screen.
+- `BACK SPRITES = ON` — keeps your own Pokémon's back sprite framing in battle.
+- `DAYTIME = GOLDEN` — pins the day/night clock to the golden-hour lighting used in the screenshots.
+- `G-SHADOW = ON` — enables the validated geometric world-space shadows.
+- `WATER = FULL` — full water rendering, including the screen-space shoreline reflections.
+- `AA = OFF` — no supersampling, which keeps the sharp pixel-art presentation used for this mobile baseline.
+
+> [!NOTE]
+> This preset comes from hardware-validated mobile use, but it is not a framerate promise for every device. If your device struggles, reduce rendering options before assuming the Web port is malfunctioning.
 
 ### What you need
 
-- a compatible iPhone / iPad or Android device;
-- a compatible modern browser;
+- a compatible iPhone / iPad or Android device with a modern browser;
 - your own legally obtained supported Pokémon Red, Blue or Yellow ROM — a `.gb` or `.gbc` file of exactly 1 MiB;
-- no App Store installation required;
+- no App Store installation, and no GitHub account;
 - a Bluetooth / game controller is optional.
-
-**No ROM is included with this project.** This project does not tell you where to find one and does not link to one. Supplying a legal copy is your responsibility.
-
-### First launch, step by step
-
-> [!NOTE]
-> The web shell's buttons are currently labelled in French. The English meaning is given in brackets below.
-
-1. **Open [https://gen1recomp.inlasco.fr/](https://gen1recomp.inlasco.fr/)** in your mobile browser and wait a few seconds while it loads.
-2. **Wait for the status line to say `Prêt`** *(Ready)*. The buttons stay greyed out until the engine is ready.
-3. **Tap `Importer une ROM`** *(Import a ROM)* and pick your own `.gb` or `.gbc` file from your device. It must be exactly 1 MiB — the app refuses anything else.
-4. **The game boots.** Your ROM is read on your device and handed straight to the local engine.
-5. *(Optional, for the 3D voxel look)* **Tap `Importer un mod`** *(Import a mod)* and choose the `DramaticShape-v1.0-widescreen-test.zip` file, then turn it on from the launcher's mod section. This is what the screenshots on this page show.
-6. **Tap `Plein écran`** *(Fullscreen)* for immersive play. The **×** button in the corner leaves fullscreen again.
-7. **Play** using the on-screen touch controls, or connect a game controller — it is detected automatically.
 
 ### Install as an app
 
 You can add it to your home screen and launch it like a normal app.
 
-**iPhone / iPad**
+**iPhone / iPad** — open the app in **Safari**, tap **Share**, choose **Add to Home Screen**, then launch it from its icon.
 
-1. Open the app in **Safari**.
-2. Tap the **Share** button.
-3. Choose **Add to Home Screen**.
-4. Launch it from its icon.
+**Android** — open the app in a compatible browser, open the **browser menu**, choose **Install app**, **Add to Home screen**, or the equivalent entry, then launch it from its icon.
 
-**Android**
-
-Wording differs between browsers, so pick the closest match:
-
-1. Open the app in a compatible browser.
-2. Open the **browser menu**.
-3. Choose **Install app**, **Add to Home screen**, or the equivalent entry in your browser.
-4. Launch it from its icon.
+> [!NOTE]
+> The temporary HTTP endpoint is intended for browser access. Full PWA installation behavior may require HTTPS depending on the browser.
 
 ### Your ROM and saves stay local
 
 > [!IMPORTANT]
-> **Your ROM and saves stay local.**
-> - No ROM is included with or distributed by this project.
-> - The ROM you pick is read and processed locally, inside your browser, on your device.
-> - This port does not upload your ROM to this repository or to the hosting server.
+> - No ROM is included with, distributed by, or linked to from this project. Supplying a legal copy is your responsibility.
+> - The ROM you pick is read and processed locally, inside your browser, on your device — this port does not upload it to this repository or to the hosting server.
 > - Generated data, settings and saves are kept locally through your browser's storage.
 > - **Clearing the site's browser data can delete your local saves.** There is no server-side save backup.
 
@@ -135,6 +155,8 @@ Wording differs between browsers, so pick the closest match:
     </td>
   </tr>
 </table>
+
+The voxel overworld, the 3D battle and the touch controls shown above — and in the header image — are what the [Recommended 3D preset](#recommended-3d-preset) reproduces.
 
 ## Features
 

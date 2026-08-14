@@ -5,7 +5,7 @@
 Jouez à Gen1Recomp directement depuis votre navigateur mobile — sans sideloading ni émulateur.
 
 <p align="center">
-  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/Application%20Web-en%20ligne-2f9e44?style=flat-square" alt="Application Web : en ligne"></a>
+  <a href="http://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/Application%20Web-en%20ligne-2f9e44?style=flat-square" alt="Application Web : en ligne"></a>
   <img src="https://img.shields.io/badge/Web-PWA-111827?style=flat-square" alt="Web / PWA">
   <img src="https://img.shields.io/badge/iPhone%20%2F%20Safari-valid%C3%A9%20sur%20mat%C3%A9riel-0b7285?style=flat-square" alt="iPhone / Safari : validé sur matériel réel">
   <img src="https://img.shields.io/badge/Android-test%C3%A9%20avec%20succ%C3%A8s-2f9e44?style=flat-square" alt="Android : testé avec succès">
@@ -23,12 +23,13 @@ Jouez à Gen1Recomp directement depuis votre navigateur mobile — sans sideload
 </p>
 
 <p align="center">
-  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Lancer%20l%27application%20Web-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Lancer l'application Web sur gen1recomp.inlasco.fr"></a>
+  <a href="http://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Lancer%20l%27application%20Web-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Lancer l'application Web sur gen1recomp.inlasco.fr"></a>
 </p>
 
 <p align="center">
-  <strong><a href="https://gen1recomp.inlasco.fr/">▶ Lancer l'application Web — https://gen1recomp.inlasco.fr/</a></strong><br>
-  <sub>S'ouvre directement dans votre navigateur mobile. Aucun téléchargement, aucun App Store, aucun compte GitHub nécessaire.</sub>
+  <strong><a href="http://gen1recomp.inlasco.fr/">▶ Lancer l'application Web — http://gen1recomp.inlasco.fr/</a></strong><br>
+  <sub>S'ouvre directement dans votre navigateur mobile. Aucun téléchargement, aucun App Store, aucun compte GitHub nécessaire.</sub><br>
+  <sub><em>Accès temporaire : la mise en service HTTPS de ce nouveau sous-domaine est encore en cours. L'application est actuellement accessible en HTTP ; le lien repassera en HTTPS dès que le certificat sera pleinement opérationnel.</em></sub>
 </p>
 
 > [!IMPORTANT]
@@ -38,68 +39,87 @@ Jouez à Gen1Recomp directement depuis votre navigateur mobile — sans sideload
 
 ## Je veux simplement jouer
 
+Aucun compte GitHub n'est nécessaire, et il est inutile de télécharger ce dépôt. Cinq étapes, depuis votre téléphone.
+
+> [!NOTE]
+> Les intitulés indiqués ci-dessous sont exactement ceux affichés à l'écran.
+
 ### Démarrage rapide
 
-**Faut-il connaître GitHub ? Non.**
+1. **Ouvrir l'application Web** — rendez-vous sur **[http://gen1recomp.inlasco.fr/](http://gen1recomp.inlasco.fr/)** et patientez jusqu'à ce que la ligne d'état affiche `Prêt`.
+2. **Importer sa ROM** — touchez `Importer une ROM` et choisissez votre propre fichier `.gb` / `.gbc` obtenu légalement. Il doit faire exactement 1 Mio. Le jeu démarre dans la foulée.
+3. **Importer Dramatic Shape** — téléchargez [`mods/DramaticShape-v1.0-widescreen-test.zip`](mods/DramaticShape-v1.0-widescreen-test.zip) depuis ce dépôt, touchez `Importer un mod` et sélectionnez-le. Ouvrez ensuite l'onglet `MODS` du launcher et activez **Dramatic Shape Voxel Mod**.
+4. **Activer le preset 3D testé** — en jeu, appuyez sur `START` → `OPTION` et appliquez les valeurs de la section [Réglage 3D recommandé](#réglage-3d-recommandé) ci-dessous.
+5. **Jouer** — avec les commandes tactiles à l'écran, ou avec une manette (détectée automatiquement). `Plein écran` offre un affichage immersif ; le **×** dans le coin permet d'en sortir.
 
-Si vous voulez simplement jouer, vous n'avez pas besoin de télécharger ce dépôt ni de comprendre GitHub. Le bouton vert **Code → Download ZIP** n'est *pas* la façon de jouer : il ne fait que récupérer les fichiers sources bruts.
+### Réglage 3D recommandé
 
-**Où ouvrir l'application ?** Ouvrez directement l'application Web publique :
+Pour obtenir un rendu proche des captures de cette page, voici le preset mobile actuellement testé avec succès avec cette build Web/PWA. Il n'a rien d'obligatoire, et il ne s'agit pas d'une configuration officielle de Dramatic Shape : c'est un point de départ que vous pouvez ensuite personnaliser.
 
-> ### ▶ [https://gen1recomp.inlasco.fr/](https://gen1recomp.inlasco.fr/)
+**Où se trouvent ces réglages**
 
-Vous n'avez pas besoin de télécharger le dépôt GitHub pour jouer : ouvrez simplement cette adresse sur votre téléphone ou votre tablette. Si vous préférez héberger votre propre copie, voir *Informations techniques / déploiement* plus bas.
+- Appuyez sur `START` (pad tactile ou manette) pour ouvrir le menu de pause, puis choisissez `OPTION`.
+- Une fois Dramatic Shape activé, ses lignes apparaissent dans cette même liste `OPTION`, sous les lignes propres au moteur. Faites défiler vers le bas pour les atteindre.
+- `Haut` / `Bas` déplacent le curseur, `Gauche` / `Droite` modifient la valeur sélectionnée.
+- Pour revenir au jeu : appuyez sur `B` ou `START`, ou descendez sur `CANCEL` et appuyez sur `A`.
+
+**Le preset**
+
+| Réglage | Valeur |
+| --- | --- |
+| `MUSIC FILTER` | `OFF` |
+| `PERFORMANCE` | `HIGH` |
+| `COLORS` | `ADVANCED` |
+| `TILT` | `OFF` |
+| `VOXEL` | `50` |
+| `T-SHIFT` | `1` |
+| `V-GRID` | `ON` |
+| `V-CURVE` | `OFF` |
+| `WATER` | `FULL` |
+| `3D-BTL` | `ON` |
+| `BACK SPRITES` | `ON` |
+| `DAYTIME` | `GOLDEN` |
+| `G-SHADOW` | `ON` |
+| `AA` | `OFF` |
+
+Les autres options peuvent rester sur leurs valeurs actuelles, sauf si vous souhaitez les personnaliser.
+
+**À quoi servent les principales options**
+
+- `VOXEL = 50` — le cran d'angle de caméra de la vue voxel 3D (50°).
+- `3D-BTL = ON` — les combats se déroulent sur la carte elle-même au lieu de l'écran de combat classique.
+- `BACK SPRITES = ON` — conserve le cadrage du sprite de dos de votre propre Pokémon en combat.
+- `DAYTIME = GOLDEN` — fige l'horloge jour/nuit sur la lumière dorée utilisée dans les captures.
+- `G-SHADOW = ON` — active les ombres géométriques ancrées dans l'espace monde, validées sur matériel.
+- `WATER = FULL` — rendu complet de l'eau, y compris les reflets de rive en espace écran.
+- `AA = OFF` — pas de suréchantillonnage, ce qui conserve le rendu pixel-art net retenu pour cette baseline mobile.
+
+> [!NOTE]
+> Ce preset provient d'une utilisation mobile validée sur matériel réel, mais il ne constitue pas une promesse de fluidité sur tous les appareils. Si votre appareil manque de performances, réduisez d'abord certaines options graphiques avant de conclure à un dysfonctionnement du port Web.
 
 ### Ce qu'il vous faut
 
-- un iPhone / iPad ou un appareil Android compatible ;
-- un navigateur moderne compatible ;
+- un iPhone / iPad ou un appareil Android compatible, avec un navigateur moderne ;
 - votre propre ROM compatible de Pokémon Rouge, Bleu ou Jaune, obtenue légalement — un fichier `.gb` ou `.gbc` d'exactement 1 Mio ;
-- aucune installation depuis l'App Store n'est nécessaire ;
+- aucune installation depuis l'App Store, et aucun compte GitHub ;
 - une manette Bluetooth est facultative.
-
-**Aucune ROM n'est fournie avec ce projet.** Ce projet n'indique pas où en trouver une et ne fournit aucun lien vers une ROM. Disposer d'une copie légale relève de votre responsabilité.
-
-### Premier lancement, étape par étape
-
-> [!NOTE]
-> Les intitulés indiqués ci-dessous sont exactement ceux affichés par l'application.
-
-1. **Ouvrez [https://gen1recomp.inlasco.fr/](https://gen1recomp.inlasco.fr/)** dans votre navigateur mobile et patientez quelques secondes pendant le chargement.
-2. **Attendez que la ligne d'état affiche `Prêt`.** Les boutons restent inactifs tant que le moteur n'est pas prêt.
-3. **Touchez `Importer une ROM`** et choisissez votre propre fichier `.gb` ou `.gbc` depuis votre appareil. Il doit faire exactement 1 Mio — l'application refuse tout autre fichier.
-4. **Le jeu démarre.** Votre ROM est lue sur votre appareil puis transmise directement au moteur local.
-5. *(Facultatif, pour le rendu voxel 3D)* **Touchez `Importer un mod`** et sélectionnez le fichier `DramaticShape-v1.0-widescreen-test.zip`, puis activez-le depuis la section mods du launcher. C'est ce que montrent les captures de cette page.
-6. **Touchez `Plein écran`** pour un affichage immersif. Le bouton **×** dans le coin permet d'en sortir.
-7. **Jouez** avec les commandes tactiles à l'écran, ou branchez une manette : elle est détectée automatiquement.
 
 ### Installer comme une application
 
 Vous pouvez l'ajouter à votre écran d'accueil et la lancer comme une application classique.
 
-**iPhone / iPad**
+**iPhone / iPad** — ouvrez l'application dans **Safari**, touchez **Partager**, choisissez **Sur l'écran d'accueil**, puis lancez-la depuis son icône.
 
-1. Ouvrez l'application dans **Safari**.
-2. Touchez le bouton **Partager**.
-3. Choisissez **Sur l'écran d'accueil**.
-4. Lancez-la ensuite depuis son icône.
+**Android** — ouvrez l'application dans un navigateur compatible, ouvrez le **menu du navigateur**, choisissez **Installer l'application**, **Ajouter à l'écran d'accueil** ou l'option équivalente, puis lancez-la depuis son icône.
 
-**Android**
-
-L'intitulé varie selon les navigateurs ; choisissez l'entrée la plus proche :
-
-1. Ouvrez l'application dans un navigateur compatible.
-2. Ouvrez le **menu du navigateur**.
-3. Choisissez **Installer l'application**, **Ajouter à l'écran d'accueil**, ou l'option équivalente de votre navigateur.
-4. Lancez-la ensuite depuis son icône.
+> [!NOTE]
+> L'accès HTTP temporaire est destiné à l'utilisation dans le navigateur. Selon le navigateur, l'installation complète en PWA peut nécessiter HTTPS.
 
 ### Votre ROM et vos sauvegardes restent locales
 
 > [!IMPORTANT]
-> **Votre ROM et vos sauvegardes restent locales.**
-> - Aucune ROM n'est fournie ni distribuée par ce projet.
-> - La ROM que vous sélectionnez est lue et traitée localement, dans votre navigateur, sur votre appareil.
-> - Ce port n'envoie pas votre ROM vers ce dépôt ni vers le serveur d'hébergement.
+> - Aucune ROM n'est fournie, distribuée ni référencée par ce projet. Disposer d'une copie légale relève de votre responsabilité.
+> - La ROM que vous sélectionnez est lue et traitée localement, dans votre navigateur, sur votre appareil : ce port ne l'envoie ni vers ce dépôt ni vers le serveur d'hébergement.
 > - Les données générées, les réglages et les sauvegardes sont conservés localement via le stockage de votre navigateur.
 > - **Supprimer les données du site peut effacer vos sauvegardes locales.** Il n'existe aucune sauvegarde côté serveur.
 
@@ -135,6 +155,8 @@ L'intitulé varie selon les navigateurs ; choisissez l'entrée la plus proche :
     </td>
   </tr>
 </table>
+
+L'overworld voxel, le combat 3D et les commandes tactiles ci-dessus — ainsi que l'image d'en-tête — correspondent au rendu que reproduit le [Réglage 3D recommandé](#réglage-3d-recommandé).
 
 ## Fonctionnalités
 
