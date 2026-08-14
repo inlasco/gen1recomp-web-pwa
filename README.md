@@ -5,6 +5,7 @@
 Play Gen1Recomp directly in your mobile browser — no sideloading, no emulator.
 
 <p align="center">
+  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/Web%20App-live-2f9e44?style=flat-square" alt="Web App: live"></a>
   <img src="https://img.shields.io/badge/Web-PWA-111827?style=flat-square" alt="Web / PWA">
   <img src="https://img.shields.io/badge/iPhone%20%2F%20Safari-hardware%20validated-0b7285?style=flat-square" alt="iPhone / Safari: hardware validated">
   <img src="https://img.shields.io/badge/Android-successfully%20tested-2f9e44?style=flat-square" alt="Android: successfully tested">
@@ -21,6 +22,15 @@ Play Gen1Recomp directly in your mobile browser — no sideloading, no emulator.
        width="100%">
 </p>
 
+<p align="center">
+  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Launch%20Web%20App-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Launch Web App at gen1recomp.inlasco.fr"></a>
+</p>
+
+<p align="center">
+  <strong><a href="https://gen1recomp.inlasco.fr/">▶ Launch Web App — https://gen1recomp.inlasco.fr/</a></strong><br>
+  <sub>Opens directly in your mobile browser. No download, no App Store, no GitHub account needed.</sub>
+</p>
+
 > [!IMPORTANT]
 > **No ROM is included.** You must supply your own, legally obtained, supported game ROM. It is read locally on your device and is never uploaded to this repository or to the hosting server.
 
@@ -34,12 +44,11 @@ Play Gen1Recomp directly in your mobile browser — no sideloading, no emulator.
 
 If you only want to play, you do not need to download this repository or understand GitHub. The green **Code → Download ZIP** button is *not* how you play — it just gives you the raw source files.
 
-**Where do I open it?** This repository holds the application's files. It does not publish an official public instance, and no production URL is listed here. So:
+**Where do I open it?** Open the official public Web App:
 
-- if someone gave you a link to a running copy, open **that link** on your phone or tablet;
-- if you want to host your own copy, see *Technical / deployment information* further down.
+> ### ▶ [https://gen1recomp.inlasco.fr/](https://gen1recomp.inlasco.fr/)
 
-Everything below assumes the app is already open in your browser.
+You do not need to download this GitHub repository to play — just open that address on your phone or tablet. If you would rather run your own copy instead, see *Technical / deployment information* further down.
 
 ### What you need
 
@@ -56,7 +65,7 @@ Everything below assumes the app is already open in your browser.
 > [!NOTE]
 > The web shell's buttons are currently labelled in French. The English meaning is given in brackets below.
 
-1. **Open the app** in your mobile browser and wait a few seconds while it loads.
+1. **Open [https://gen1recomp.inlasco.fr/](https://gen1recomp.inlasco.fr/)** in your mobile browser and wait a few seconds while it loads.
 2. **Wait for the status line to say `Prêt`** *(Ready)*. The buttons stay greyed out until the engine is ready.
 3. **Tap `Importer une ROM`** *(Import a ROM)* and pick your own `.gb` or `.gbc` file from your device. It must be exactly 1 MiB — the app refuses anything else.
 4. **The game boots.** Your ROM is read on your device and handed straight to the local engine.
