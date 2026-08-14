@@ -1,0 +1,36 @@
+# ROMs — never commit game ROMs
+*.gb
+*.gbc
+*.rom
+*.bin
+
+# Saves / generated user data
+save.lua
+save.lua.bak
+options.lua
+*.sav
+*.srm
+*.state
+*.state.*
+
+# Browser / local persistence exports
+idbfs/
+IDBFS/
+indexeddb/
+.cache/
+cache/
+data/generated/
+assets/generated/
+
+# Temporary / local imports
+*.tmp
+*.temp
+*.bak
+*.log
+.DS_Store
+__MACOSX/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db

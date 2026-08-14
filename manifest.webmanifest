@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "Gen1Recomp",
+  "short_name": "Gen1Recomp",
+  "description": "Gen1Recomp Web sur iPhone",
+  "start_url": "./?v=13.3-pwa-final",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#05070b",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

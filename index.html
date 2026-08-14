@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gen1Recomp">
+  <title>Gen1Recomp PWA v13.3 Viewport Final</title>
+  <link rel="manifest" href="manifest.webmanifest?v=13.3-pwa-final">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="app-v13.css?v=13.3-pwa-final">
+</head>
+<body>
+  <main id="app" aria-label="Gen1Recomp Web">
+    <div id="game-frame">
+      <canvas id="canvas" tabindex="0" aria-label="Gen1Recomp"></canvas>
+      <div id="spinner" class="pending" role="status" aria-live="polite">
+        <span class="spinner-dot"></span>
+        <span>Chargement de Gen1Recomp…</span>
+      </div>
+    </div>
+    <div id="web-tools">
+      <button id="rom-button" type="button">Importer une ROM</button>
+      <button id="mod-button" type="button" disabled>Importer un mod</button>
+      <button id="fullscreen-button" type="button">Plein écran</button>
+      <span id="web-status" role="status" aria-live="polite">Initialisation…</span>
+    </div>
+    <input id="rom-picker" type="file" accept=".gb,.gbc,application/octet-stream" hidden>
+  </main>
+  <noscript>JavaScript est indispensable pour exécuter la version WebAssembly.</noscript>
+  <script src="web-mod-import.js?v=13.3-pwa-final"></script>
+  <script src="web-bridge-v13.js?v=13.3-pwa-final"></script>
+  <script src="player.js?v=11.5&amp;n=2&amp;g=game-v13.3-viewport-final.love&amp;arg=%5B%22--web%22%5D"></script>
+</body>
+</html>

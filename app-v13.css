@@ -1,0 +1,235 @@
+:root {
+  color-scheme: dark;
+  background: #05070b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #05070b;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+#app {
+  display: grid;
+  /* A DEFINITE column, so #game-frame has a definite width and the canvas's
+     max-width: 100% actually resolves. Without it the column falls back to
+     the canvas's min-content width and a narrow (portrait) viewport is
+     overflowed by the engine's own pixel width. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  width: 100%;
+  height: 100%;
+}
+
+#game-frame {
+  position: relative;
+  display: grid;
+  /* DEFINITE tracks. A percentage max-height only resolves against a
+     definite containing block, and an implicit auto row is indefinite --
+     which silently disables the canvas's max-height: 100% and lets the
+     engine's pixel height overflow the frame. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  /* The canvas is momentarily at its raw pixel size between window creation
+     and the first presentation; it must not be able to blow up the layout. */
+  overflow: hidden;
+  background: #05070b;
+}
+
+/*
+ * No border or padding: LÖVE's mouse/touch coordinates assume the canvas box.
+ *
+ * NO CSS WIDTH/HEIGHT/ASPECT-RATIO HERE, and that is the whole point.
+ * SDL's emscripten backend probes the canvas at window creation (backing set
+ * to 1x1, CSS box read back): if the CSS box is not 1x1, the canvas is
+ * flagged EXTERNALLY SIZED and every love.window.setMode is discarded in
+ * favour of floor(cssW) x floor(cssH). A stylesheet that sizes this element
+ * therefore takes the window away from the engine -- which is exactly what
+ * kept the game at its old shape. The size below is published by
+ * web-bridge-v13.js only AFTER the engine has chosen its rectangle.
+ */
+#canvas {
+  display: none;
+  /* PRESENTATION, and nothing else: a canvas is a replaced element with an
+     intrinsic size and ratio taken from its width/height ATTRIBUTES -- which
+     SDL owns. auto sizes plus these two maxima are therefore a uniform
+     "contain" fit of the engine's rectangle inside the frame: scaleX ==
+     scaleY by definition of the rule, computed by the browser, with no
+     scalar for anything to get wrong. And it is invisible to SDL's probe,
+     because a 1x1 canvas is already under both maxima. */
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border: 0;
+  padding: 0;
+  outline: none;
+  image-rendering: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/*
+ * While SDL creates or re-creates the window, the canvas must keep a LAYOUT
+ * box (so the 1x1 probe reads a real element) but must not be seen at its
+ * raw pixel size for a frame. visibility, never display.
+ */
+body.web-engine-resizing #canvas {
+  visibility: hidden;
+}
+
+#spinner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: .75rem;
+  justify-items: center;
+  color: #dbeafe;
+  font-size: .95rem;
+}
+
+#spinner:not(.pending):not(.loading):not(.error) {
+  display: none;
+}
+
+.spinner-dot {
+  width: 2rem;
+  height: 2rem;
+  border: .2rem solid #334155;
+  border-top-color: #60a5fa;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+#spinner.error .spinner-dot {
+  border-color: #ef4444;
+  animation: none;
+}
+
+#web-tools {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: 3.25rem;
+  padding: .45rem .65rem;
+  background: #111827;
+  border-top: 1px solid #263244;
+}
+
+#rom-button,
+#mod-button,
+#fullscreen-button {
+  flex: 0 0 auto;
+  min-height: 2.35rem;
+  padding: .45rem .8rem;
+  border: 1px solid #60a5fa;
+  border-radius: .55rem;
+  color: #eff6ff;
+  background: #1d4ed8;
+  font: inherit;
+  font-weight: 700;
+}
+
+#rom-button:active,
+#mod-button:active,
+#fullscreen-button:active {
+  background: #1e40af;
+}
+
+#rom-button:disabled,
+#mod-button:disabled,
+#fullscreen-button:disabled {
+  opacity: .5;
+}
+
+#web-status {
+  min-width: 0;
+  overflow: hidden;
+  color: #cbd5e1;
+  font-size: .78rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Portrait needs no special rule: the engine keeps its launcher rectangle and
+   the presentation scalar already fits it to the frame. */
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner-dot { animation-duration: 1.8s; }
+}
+
+
+/* Game mode keeps the actual safe-area box as the game measurement box. */
+body.web-immersive {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+body.web-immersive #app {
+  grid-template-rows: minmax(0, 1fr);
+  height: 100%;
+}
+body.web-immersive #web-tools {
+  display: none;
+}
+body.web-immersive #game-frame {
+  width: 100%;
+  height: 100%;
+}
+/* Game mode changes only the size of the frame; the presentation scalar
+   re-derives itself from it, and the engine rectangle follows on the next
+   published target. */
+
+#immersive-exit {
+  position: fixed;
+  top: max(.45rem, env(safe-area-inset-top));
+  right: max(.45rem, env(safe-area-inset-right));
+  z-index: 100000;
+  display: none;
+  min-width: 2.35rem;
+  min-height: 2.35rem;
+  border: 1px solid rgba(255,255,255,.38);
+  border-radius: 999px;
+  background: rgba(5,7,11,.66);
+  color: #fff;
+  font: 700 1rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+body.web-immersive #immersive-exit {
+  display: block;
+}
+
+@media (max-width: 760px) {
+  #web-tools { gap: .4rem; }
+  #rom-button, #mod-button, #fullscreen-button {
+    padding-left: .55rem;
+    padding-right: .55rem;
+    font-size: .82rem;
+  }
+}
