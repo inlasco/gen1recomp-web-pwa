@@ -44,5 +44,19 @@
   <script src="web-mod-import.js?v=13.3-pwa-final"></script>
   <script src="web-bridge-v13.js?v=13.4-optional-rack"></script>
   <script src="player.js?v=11.5&amp;n=2&amp;g=game-v13.4-fr.love&amp;arg=%5B%22--web%22%5D"></script>
+  <script>
+    // Registered after load so it never competes with the engine's own
+    // fetches for the wasm and the game archive.  updateViaCache:"none" is
+    // explicit: the worker script itself must always be revalidated, or a
+    // deploy -- and the kill switch inside it -- could be cached out.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("sw.js", { scope: "./", updateViaCache: "none" })
+          .then(function (registration) { registration.update(); })
+          .catch(function (error) { console.warn("SW registration failed", error); });
+      }, { once: true });
+    }
+  </script>
 </body>
 </html>
