@@ -297,8 +297,13 @@
   modPicker.setAttribute("aria-hidden", "true");
   document.body.appendChild(modPicker);
 
+  // The preparation rack (#rom-button / #mod-button / #fullscreen-button /
+  // #web-status) is OPTIONAL: a shell that lets the launcher's own controls
+  // drive the import omits it entirely, and the engine calls in through
+  // Gen1WebBridge.pickRom instead.  Every reference to those four elements is
+  // therefore guarded.  #rom-picker and #canvas are the only required ones.
   function setStatus(message) {
-    status.textContent = message;
+    if (status) status.textContent = message;
   }
 
   function getFS() {
@@ -579,7 +584,7 @@
       return;
     }
 
-    pickerButton.disabled = true;
+    if (pickerButton) pickerButton.disabled = true;
     setStatus("Lecture locale et validation par Gen1Recomp…");
     try {
       var bytes = new Uint8Array(await file.arrayBuffer());
@@ -594,11 +599,11 @@
       scrubTransientRom();
       setStatus("Impossible de lire ce fichier local.");
     } finally {
-      pickerButton.disabled = false;
+      if (pickerButton) pickerButton.disabled = false;
     }
   }
 
-  pickerButton.addEventListener("click", pickRom);
+  if (pickerButton) pickerButton.addEventListener("click", pickRom);
   if (modButton) modButton.addEventListener("click", pickMod);
   if (fullscreenButton) fullscreenButton.addEventListener("click", enterFullscreen);
   immersiveExit.addEventListener("click", exitFullscreen);
@@ -647,7 +652,7 @@
     saveDirectory = saveDirectory || findSaveDirectory(fs);
     if (!saveDirectory) return;
     window.clearInterval(readyPoll);
-    pickerButton.disabled = false;
+    if (pickerButton) pickerButton.disabled = false;
     if (modButton) modButton.disabled = false;
     setStatus("Prêt — ROM et mods traités uniquement sur cet appareil.");
     if (gameLive && !requestedGeometry) publishTarget(true);

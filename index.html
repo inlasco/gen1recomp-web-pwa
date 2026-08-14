@@ -21,17 +21,28 @@
         <span>Chargement de Gen1Recomp…</span>
       </div>
     </div>
-    <div id="web-tools">
-      <button id="rom-button" type="button">Importer une ROM</button>
-      <button id="mod-button" type="button" disabled>Importer un mod</button>
-      <button id="fullscreen-button" type="button">Plein écran</button>
-      <span id="web-status" role="status" aria-live="polite">Initialisation…</span>
-    </div>
+    <!-- The visible preparation rack (rom-button / mod-button /
+         fullscreen-button) is gone: the launcher's own controls are the
+         interface.  Pressing Choose ROM in the launcher makes the engine call
+         window.Gen1WebBridge.pickRom(), which opens the picker below.
+
+         Two elements still have to exist:
+           #rom-picker  -- the bridge's only required element, it is what the
+                           picker actually opens.
+           #web-status  -- the bridge's live region.  It carries the messages
+                           that have no other home ("ROM remise au moteur
+                           local — aucun téléversement", "Impossible de lire
+                           ce fichier local", "Le moteur n'est pas encore
+                           prêt"), so it stays in the accessibility tree,
+                           visually hidden rather than removed. -->
+    <span id="web-status" role="status" aria-live="polite"
+          style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0"
+          >Initialisation…</span>
     <input id="rom-picker" type="file" accept=".gb,.gbc,application/octet-stream" hidden>
   </main>
   <noscript>JavaScript est indispensable pour exécuter la version WebAssembly.</noscript>
   <script src="web-mod-import.js?v=13.3-pwa-final"></script>
-  <script src="web-bridge-v13.js?v=13.3-pwa-final"></script>
-  <script src="player.js?v=11.5&amp;n=2&amp;g=game-v13.3-viewport-final.love&amp;arg=%5B%22--web%22%5D"></script>
+  <script src="web-bridge-v13.js?v=13.4-optional-rack"></script>
+  <script src="player.js?v=11.5&amp;n=2&amp;g=game-v13.3-fr-regional-test.love&amp;arg=%5B%22--web%22%5D"></script>
 </body>
 </html>
