@@ -1,0 +1,402 @@
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/extract/field.py upstream/tools/extract/field.py
+--- a/tools/extract/field.py	2026-08-14 18:08:52.128238946 +0000
++++ b/tools/extract/field.py	2026-08-14 18:07:23.641127655 +0000
+@@ -712,9 +712,17 @@
+             m = re.match(r"dw\s+(\w+)$", s)
+             if m:
+                 badge_ptr_labels.append(m.group(1))
+-        m = re.match(r'db\s+"(\w+)@"$', s)
+-        if m and label:
+-            badge_names[label] = m.group(1)
++        # The badge identity is the *pointer label*, not the displayed
++        # string: `guard.badge` is an item constant the engine looks up in
++        # Game.data.items / Game.save.inventory.  In English the two happen
++        # to coincide ("EarthBadgeText" -> db "EARTHBADGE@"), but a localised
++        # tree writes the translated caption there ("BADGE TERRE@"), which is
++        # neither an item key nor a legal EVENT_PASSED_* suffix.  Deriving the
++        # constant from the label is locale-independent and produces the same
++        # values for the English trees.
++        m = re.match(r'db\s+"[^"]*@"$', s)
++        if m and label and label.endswith("Text"):
++            badge_names[label] = label.removesuffix("Text").upper()
+ 
+     if len(ys) != 7 or len(badge_ptr_labels) != 7:
+         util.die("Route23.asm: expected 7 guard rows and 7 badge pointers")
+@@ -1262,7 +1270,11 @@
+     coins = int(f"00{coins_low}")
+     dialogue = "\n".join(l.strip() for _, l in read_asm(
+         os.path.join(pokered, "text/GameCorner.asm")))
+-    if f"¥{price} for {coins}" not in dialogue:
++    # Cross-check the numbers the script actually uses against the dialogue.
++    # The sentence itself is localised ("¥1000 for 50 coins" / "¥1000 pour 50
++    # jetons"), so only the price-then-coins number pair is portable; the
++    # words between them, and any line break, are not.
++    if not re.search(rf"¥{price}\b[^¥]{{0,40}}\b{coins}\b", dialogue):
+         util.die("GameCorner text/script coin purchase mismatch")
+     return [{"coins": coins, "price": price}]
+ 
+@@ -1484,14 +1496,22 @@
+        or (intro["fallingStar"]["width"], intro["bigStar"]["width"],
+            intro["gamefreakText"]["width"]) != (8, 16, 80):
+         util.die("intro asset extraction sanity check failed")
+-    if town_map["locations"].get("PALLET_TOWN") != {"x": 2, "y": 11,
+-                                                    "name": "PALLET TOWN"} \
+-       or town_map["locations"].get("CERULEAN_CAVE_1F", {}).get("name") != "CERULEAN CAVE" \
++    # Coordinates and cursor order are structural; the location *names* are
++    # display strings and are localised ("PALLET TOWN" / "BOURG PALETTE"), so
++    # they are checked for presence rather than for English content.
++    pallet = town_map["locations"].get("PALLET_TOWN") or {}
++    if (pallet.get("x"), pallet.get("y")) != (2, 11) \
++       or not pallet.get("name") \
++       or not town_map["locations"].get("CERULEAN_CAVE_1F", {}).get("name") \
+        or len(town_map["cursorOrder"]) != 47 \
+        or town_map["cursorOrder"][0] != "PALLET_TOWN":
+         util.die("town map extraction sanity check failed")
+-    if len(credits["screens"]) != 35 or len(credits["mons"]) != 15 \
+-       or credits["screens"][0]["lines"][1]["text"] != "RED VERSION STAFF" \
++    # Everything below is structural except the version banner, which is the
++    # one credits line that is localised (the staff names and role captions
++    # are left in English by every localisation).
++    if len(credits["screens"]) != util.locale("creditsScreens") \
++       or len(credits["mons"]) != 15 \
++       or credits["screens"][0]["lines"][1]["text"] != util.locale("creditsBanner") \
+        or credits["screens"][1]["lines"] != [{"column": 6, "text": "DIRECTOR"},
+                                              {"column": 3, "text": "SATOSHI TAJIRI"}] \
+        or not credits["screens"][-1].get("copyright") \
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/extract/gfx.py upstream/tools/extract/gfx.py
+--- a/tools/extract/gfx.py	2026-08-14 18:08:52.128238946 +0000
++++ b/tools/extract/gfx.py	2026-08-14 18:03:56.105115319 +0000
+@@ -728,6 +728,11 @@
+         rows.append(row)
+     if len(rows) != 2 or len(rows[0]) != len(rows[1]):
+         util.die("credits.asm: TheEndTextString shape changed")
++    # The caption is localised (English "THE END" is five 8x16 columns,
++    # French "FIN" is four), so the column count and the expected screen
++    # layout come from the locale profile rather than being hard-coded.
++    letters = util.locale("theEndLetters")
++    last_tile = 0x60 + 2 * (len(letters) - 1)
+     pattern = []
+     for top, bottom in zip(rows[0], rows[1]):
+         if top == -1:
+@@ -735,18 +740,17 @@
+                 util.die("credits.asm: THE END rows misaligned")
+             pattern.append(-1)
+         else:
+-            if bottom != top + 1 or top % 2 != 0 or not 0x60 <= top <= 0x68:
++            if bottom != top + 1 or top % 2 != 0 or not 0x60 <= top <= last_tile:
+                 util.die(f"credits.asm: THE END tiles {top:#x}/{bottom:#x} not a column pair")
+             pattern.append((top - 0x60) // 2)
+-    letters = "THEND"
+     display = "".join(letters[c] if c >= 0 else " " for c in pattern)
+-    if display != "T H E  E N D":
++    if display != util.locale("theEndDisplay"):
+         util.die(f"credits.asm: THE END layout changed: {display!r}")
+ 
+     size = convert_png(os.path.join(pokered, "gfx/credits/the_end.png"),
+                        os.path.join(assets_dir, "credits", "the_end.png"))
+-    if size != (40, 16):
+-        util.die(f"the_end.png: expected 40x16, got {size}")
++    if size != (8 * len(letters), 16):
++        util.die(f"the_end.png: expected {8 * len(letters)}x16, got {size}")
+     return {
+         "path": "assets/generated/credits/the_end.png",
+         "width": size[0], "height": size[1],
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/extract/pokemon.py upstream/tools/extract/pokemon.py
+--- a/tools/extract/pokemon.py	2026-08-14 18:08:52.128238946 +0000
++++ b/tools/extract/pokemon.py	2026-08-14 18:42:48.059060938 +0000
+@@ -93,6 +93,30 @@
+     return out
+ 
+ 
++def dex_measurement_system(entries):
++    """"imperial" (ft/in + 0.1 lb) or "metric" (dm + 0.1 kg).
++
++    Decided from what the entries actually parsed as, not from a locale guess:
++    every entry must agree, or the file is not shaped like either release and
++    the caller should stop rather than mis-read 151 records.
++    """
++    # Only the REAL entries vote.  The MissingNo./unused slots kept a
++    # leftover Japanese-format body (a placeholder kind, `db 10`, `dw 100`,
++    # no text_far) in every release, which reads as a single height byte and
++    # would otherwise make an English tree look mixed.  RomExtractor skips
++    # those species too.
++    real = [e for e in entries.values() if e.get("text")]
++    imperial = sum(1 for e in real if "heightFt" in e)
++    metric = sum(1 for e in real if "heightDm" in e)
++    if imperial and not metric:
++        return "imperial"
++    if metric and not imperial:
++        return "metric"
++    from . import util
++    util.die("dex_entries.asm: mixed metric/imperial height fields "
++             f"({metric} metric, {imperial} imperial)")
++
++
+ def parse_dex_entries(pokered, species_order):
+     """data/pokemon/dex_entries.asm: kind, height ft/in, weight (0.1 lb),
+     dex text label -- pointer table is in internal species order."""
+@@ -122,6 +146,16 @@
+             bodies[current]["heightFt"] = int(m.group(1))
+             bodies[current]["heightIn"] = int(m.group(2))
+             continue
++        # Metric releases (pokered-fr, pokeyellow-fr, the European localisations
++        # generally) store ONE height byte in decimetres instead of the
++        # feet/inches pair, and the weight word in hectograms instead of tenths
++        # of a pound -- so a dex entry body is one byte shorter and the whole
++        # struct after it shifts.  Recorded here, reported by
++        # dex_measurement_system() below, and honoured by RomExtractor.
++        m = re.match(r"db\s+(\d+)$", s)
++        if m:
++            bodies[current]["heightDm"] = int(m.group(1))
++            continue
+         m = re.match(r"dw\s+(\d+)$", s)
+         if m:
+             bodies[current]["weight"] = int(m.group(1))
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/extract/util.py upstream/tools/extract/util.py
+--- a/tools/extract/util.py	2026-08-14 18:08:52.128238946 +0000
++++ b/tools/extract/util.py	2026-08-14 18:07:20.229127452 +0000
+@@ -27,6 +27,38 @@
+ # title mons, prizes etc. are version-gated in pokered).
+ ASM_DEFINES = {"_RED"}
+ 
++# Locale-dependent *content* the extractors cross-check against.  The parsers
++# themselves are structural and locale-agnostic; only a handful of sanity
++# checks quote English strings (the credits "THE END" tilemap, the credits
++# banner, the name presets).  Those live here so a localised disassembly
++# (pokered-fr, pokeyellow-fr, ...) can supply its own values instead of the
++# checks being deleted -- the check stays strict, it just knows which text it
++# is checking for.  Swapped by the caller the same way ASM_DEFINES is.
++ENGLISH_LOCALE = {
++    "id": "en",
++    # gfx/credits/the_end.png: one 8x16 column per entry, left to right.
++    "theEndLetters": "THEND",
++    # TheEndTextString laid out over the screen columns.
++    "theEndDisplay": "T H E  E N D",
++    # data/credits/credits_text.asm CredVersion for the tree being parsed
++    # (the _RED branch here; the Blue derivation passes its own).
++    "creditsBanner": "RED VERSION STAFF",
++    # data/credits/credits_order.asm screen count.  Localised releases add
++    # their own localisation/distribution staff screens, so this is content,
++    # not structure (English 35, French 34).
++    "creditsScreens": 35,
++}
++
++LOCALE = dict(ENGLISH_LOCALE)
++
++
++def locale(key):
++    """Locale-dependent expectation, or the English value as a fallback."""
++    if key in LOCALE:
++        return LOCALE[key]
++    return ENGLISH_LOCALE[key]
++
++
+ _IF_RE = None
+ 
+ def read_asm(path):
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/make_blue_manifest.py upstream/tools/make_blue_manifest.py
+--- a/tools/make_blue_manifest.py	2026-08-14 18:08:52.131500875 +0000
++++ b/tools/make_blue_manifest.py	2026-08-14 18:04:44.797118213 +0000
+@@ -47,10 +47,17 @@
+ DEFAULT_SYMBOLS = os.path.join(DEV, "decprep/pokered-symbols/pokeblue.sym")
+ 
+ 
+-def derive(red, pokered, symbols_path):
+-    """Return the Blue manifest derived from the Red manifest dict."""
++def derive(red, pokered, symbols_path, rom_sha1=None,
++           expect_banner="BLUE VERSION STAFF"):
++    """Return the Blue manifest derived from the Red manifest dict.
++
++    `rom_sha1` and `expect_banner` exist so a localised pokered tree can be
++    derived with the same code path: the ROM hash and the credits banner are
++    the two English constants in here.  Both keep their English defaults, so
++    the pret build is unchanged.
++    """
+     blue = copy.deepcopy(red)
+-    blue["romSha1"] = CANONICAL_BLUE_SHA1
++    blue["romSha1"] = rom_sha1 or CANONICAL_BLUE_SHA1
+ 
+     # Re-source every symbol the manifest already references from Blue's .sym.
+     # The name set is identical between versions; only 23 bank-$1D map headers
+@@ -88,8 +95,9 @@
+     if "BLUE" not in presets["player"] or "RED" not in presets["rival"]:
+         raise SystemExit("Blue preset-name parse did not swap player/rival")
+     banner = blue["field"]["credits"]["screens"][0]["lines"][1]["text"]
+-    if banner != "BLUE VERSION STAFF":
+-        raise SystemExit(f"Blue credits banner is {banner!r}, expected BLUE")
++    if banner != expect_banner:
++        raise SystemExit(
++            f"Blue credits banner is {banner!r}, expected {expect_banner!r}")
+ 
+     return blue
+ 
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/make_rom_manifest.py upstream/tools/make_rom_manifest.py
+--- a/tools/make_rom_manifest.py	2026-08-14 18:08:52.131500875 +0000
++++ b/tools/make_rom_manifest.py	2026-08-14 18:45:55.205943706 +0000
+@@ -321,11 +321,23 @@
+     paths.append(os.path.join(pokered, "data/pokemon/dex_text.asm"))
+ 
+     labels = []
+-    dynamic = {}
++    order = []          # labels in file order, for the fall-through chain
++    subs = {}           # label -> its own substitutions
++    terminated = {}     # label -> its byte stream ends at its own last line
+     current = None
+     command_ids = {"text_ram": 1, "text_bcd": 2, "text_decimal": 9}
+     token_names = {"text_ram": "RAM", "text_bcd": "NUM",
+                    "text_decimal": "NUM"}
++    # Macros that emit a stream terminator ($57 done / $58 prompt / $50$50
++    # dex).  A label whose body has none of them does not end: the ROM keeps
++    # reading straight into whatever was assembled next.
++    terminators = {"done", "prompt", "dex", "text_end"}
++    # Macros that emit stream bytes.  A label with none of them is a data or
++    # pointer label, not a text one, and never participates in the chain.
++    body = {"text", "next", "line", "para", "cont", "page", "text_start",
++            "text_ram", "text_bcd", "text_decimal", "text_far", "text_asm",
++            "text_promptbutton", "text_waitbutton", "text_scroll",
++            "text_pause", "text_dots", "db"}
+     for path in paths:
+         for _, line in util.read_asm(path):
+             stripped = line.strip()
+@@ -336,17 +348,45 @@
+             if match:
+                 current = match.group(1)
+                 labels.append(current)
++                order.append(current)
++                continue
++            if not current:
+                 continue
++            macro = stripped.split(None, 1)[0] if stripped else ""
++            if macro in terminators:
++                terminated[current] = True
++            elif macro in body and current not in terminated:
++                terminated[current] = False
+             match = re.match(
+                 r"(text_ram|text_bcd|text_decimal)\s+(.+)$", stripped)
+-            if match and current:
++            if match:
+                 macro, args = match.groups()
+                 token = (
+                     "{" + token_names[macro] + ":"
+                     + args.replace('"', "") + "}")
+-                dynamic.setdefault(current, []).append(
++                subs.setdefault(current, []).append(
+                     [command_ids[macro], token])
+ 
++    # Fall-through chaining.  A localisation is free to split what the
++    # international source wrote as one label into two -- pokered-fr ends
++    # _MonWasReleasedText on `cont "@"` and continues in
++    # _CF50ExclamationText -- but the ROM has one contiguous stream, so the
++    # decoder that starts at the first label meets BOTH text_ram commands and
++    # needs both substitutions.  Walk forward until a label that really
++    # terminates.  Labels that already terminate (every one in the English
++    # trees) chain with nothing and keep their previous value exactly.
++    dynamic = {}
++    for index, label in enumerate(order):
++        collected = list(subs.get(label, []))
++        cursor = index
++        while not terminated.get(order[cursor], True):
++            cursor += 1
++            if cursor >= len(order):
++                break
++            collected.extend(subs.get(order[cursor], []))
++        if collected:
++            dynamic[label] = collected
++
+     pointers = text.parse_script_text_pointers(pokered)
+     trainer_headers = text.parse_trainer_headers(pokered)
+     for headers in trainer_headers.values():
+@@ -628,7 +668,12 @@
+     }
+ 
+ 
+-def generate(pokered, symbols_path):
++def generate(pokered, symbols_path, rom_sha1=None):
++    """Build the manifest for a pokered tree.
++
++    `rom_sha1` defaults to the English Red ROM hash so the pret build is
++    unchanged; a localised tree passes the hash of the ROM it assembles.
++    """
+     symbols = SymbolTable(symbols_path)
+     map_order, map_dims = constants.extract_map_constants(pokered)
+     tilesets = [
+@@ -698,13 +743,19 @@
+     ]
+     dex_entries = pokemon.parse_dex_entries(
+         pokered, constants_data["speciesOrder"])
++    # How the dex entry bodies encode height/weight.  "imperial" (the
++    # international releases: db feet, inches + dw 0.1 lb) makes the body one
++    # byte longer than "metric" (the European localisations: db decimetres +
++    # dw hectograms), so RomExtractor cannot find the trailing TX_FAR without
++    # being told which shape it is reading.
++    dex_measurements = pokemon.dex_measurement_system(dex_entries)
+     texts = text_metadata(pokered)
+     field_data = field_metadata(pokered)
+     audio_data = audio_metadata(pokered, symbols, map_order)
+ 
+     data = {
+         "format": 2,
+-        "romSha1": CANONICAL_RED_SHA1,
++        "romSha1": rom_sha1 or CANONICAL_RED_SHA1,
+         "constants": constants_data,
+         "charmap": charmap(pokered),
+         "moveEffects": [name or "UNUSED" for name in effects],
+@@ -715,6 +766,15 @@
+         "trainers": trainer_order,
+         "trainerPics": trainer_pic_metadata(pokered),
+         "dexOrder": dex_order,
++        "pokedex": {
++            "measurements": dex_measurements,
++            # Bytes between the kind string and the TX_FAR description
++            # pointer: kind@, height, weight.
++            "heightBytes": 2 if dex_measurements == "imperial" else 1,
++            "weightBytes": 2,
++            "heightUnit": "ftin" if dex_measurements == "imperial" else "dm",
++            "weightUnit": "lb10" if dex_measurements == "imperial" else "hg",
++        },
+         "pokemonAssets": pokemon_assets,
+         "growthRates": growth_rates,
+         "tmhmMoves": tms + hms,
+diff -ruN '--exclude=__pycache__' '--exclude=*.pyc' upstream_pristine/tools/make_yellow_manifest.py upstream/tools/make_yellow_manifest.py
+--- a/tools/make_yellow_manifest.py	2026-08-14 18:08:52.131500875 +0000
++++ b/tools/make_yellow_manifest.py	2026-08-14 18:43:04.346990074 +0000
+@@ -285,10 +285,14 @@
+     yellow["audio"]["cryData"] = {"bank": cry.bank, "address": cry.address}
+ 
+ 
+-def derive(red, pokeyellow, symbols_path):
+-    """Return the Yellow manifest derived from the Red manifest dict."""
++def derive(red, pokeyellow, symbols_path, rom_sha1=None):
++    """Return the Yellow manifest derived from the Red manifest dict.
++
++    `rom_sha1` lets a localised pokeyellow tree reuse this code path; it
++    defaults to the English ROM hash so the pret build is unchanged.
++    """
+     yellow = copy.deepcopy(red)
+-    yellow["romSha1"] = CANONICAL_YELLOW_SHA1
++    yellow["romSha1"] = rom_sha1 or CANONICAL_YELLOW_SHA1
+     yellow_symbols = SymbolTable(symbols_path)
+ 
+     omit = set(OMIT_INTRO_SYMBOLS)
+@@ -487,6 +491,21 @@
+     # it or the import falls back to NIDORINO (#915).
+     yellow["field"]["oakSpeech"]["demoSpecies"] = "PIKACHU"
+ 
++    # pokeyellow is its own tree, so its dex entry shape has to be read from
++    # it rather than inherited from the pokered manifest we deep-copied.
++    from extract import pokemon as _pokemon  # noqa: PLC0415
++    _entries = _pokemon.parse_dex_entries(
++        pokeyellow, yellow["constants"]["speciesOrder"])
++    _system = _pokemon.dex_measurement_system(_entries)
++    yellow["pokedex"] = dict(yellow.get("pokedex") or {})
++    yellow["pokedex"].update({
++        "measurements": _system,
++        "heightBytes": 2 if _system == "imperial" else 1,
++        "weightBytes": 2,
++        "heightUnit": "ftin" if _system == "imperial" else "dm",
++        "weightUnit": "lb10" if _system == "imperial" else "hg",
++    })
++
+     # Ensure Melanie / Summer Beach town-map entries exist after rebuild.
+     locations = yellow["field"]["townMap"]["locations"]
+     if "CERULEAN_MELANIES_HOUSE" not in locations \
