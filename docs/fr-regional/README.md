@@ -1,16 +1,20 @@
-# Native French ROM support — experimental build
+# Native French ROM support
 
 Adds native support for the official French Pokémon **Rouge**, **Bleue** and
 **Jaune** cartridges to the Web/PWA baseline, alongside the US ROMs already
 supported. The player imports their own French cartridge dump from the
 existing importer; nothing else changes.
 
-Status: **experimental artifact, not merged into the stable build.**
+Status: **published as its own artifact; the stable build is untouched and
+stays online beside it.**
 
 ```text
-game-v13.3-viewport-final.love     stable baseline, untouched
-game-v13.3-fr-regional-test.love   this work
+game-v13.3-viewport-final.love   previous build, US only, kept for rollback
+game-v13.4-fr.love               this work, US + FR
 ```
+
+`index.html` decides which one the shell loads (the `g=` parameter on
+`player.js`). Rolling back is one line, with no re-upload.
 
 ## Architecture
 
@@ -111,7 +115,7 @@ What differs is the name charmap, and that is selected explicitly per variant.
 `11.5/love.js`, `11.5/love.wasm`, `mods/DramaticShape-v1.0-widescreen-test.zip`,
 `index.html`, `app-v13.css`, `player.js`, `web-bridge-v13.js`,
 `web-mod-import.js`, `sw.js`, `manifest.webmanifest` and
-`game-v13.3-viewport-final.love` all still match `SHA256SUMS`. Regional
+`game-v13.3-viewport-final.love` are all still the bytes they were. Regional
 detection lives entirely in the Gen1Recomp core; the Web bridge does not carry
 a copy of the hash table.
 

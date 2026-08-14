@@ -11,7 +11,7 @@ set -eu
 root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 love_file=${1:-}
 if [ -z "$love_file" ]; then
-  for candidate in "$root/game-v13.3-fr-regional-test.love" \
+  for candidate in "$root/game-v13.4-fr.love" \
                    "$root/game-v13.3-viewport-final.love"; do
     [ -f "$candidate" ] && love_file="$candidate" && break
   done
