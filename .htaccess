@@ -1,0 +1,58 @@
+# Gen1Recomp Web/PWA — politique de cache HTTP.
+#
+# POURQUOI CE FICHIER EXISTE
+#
+# boot-guard.js sait déjà purger tout seul le cache de paquets IndexedDB de
+# player.js : à chaque lancement il compare la taille de chaque paquet stocké
+# à celle que ce build attend, et supprime ce qui ne correspond pas. Ça, c'est
+# automatique et ça ne demande rien à l'utilisateur.
+#
+# Mais ça ne suffit pas si le NAVIGATEUR, lui, ressert l'ancien fichier depuis
+# son propre cache HTTP. Mesuré : avec un `.love` servi en max-age d'un an,
+# boot-guard purge bien le paquet périmé, puis player.js le retélécharge...
+# depuis le cache HTTP, donc à l'identique. Résultat : l'ancienne version
+# redémarre à chaque fois, et la purge se répète en boucle sans jamais rien
+# changer. C'est exactement le symptôme « j'ai retéléversé et rien n'a bougé ».
+#
+# Même piège pour index.html, qui est le seul fichier à ne pas pouvoir porter
+# de `?v=` : s'il est mis en cache longtemps, l'utilisateur garde indéfiniment
+# l'ancienne page, donc les anciens `?v=` et l'ancien boot-guard.
+#
+# LA RÈGLE
+#
+# Ce qui change d'une livraison à l'autre est revalidé à chaque lancement.
+# `no-cache` ne veut pas dire « ne pas mettre en cache » : le fichier reste
+# stocké, le navigateur demande juste « a-t-il changé ? » et reçoit un 304 de
+# quelques octets si non. Le coût est une poignée de requêtes conditionnelles
+# au démarrage, et le bénéfice est qu'aucune purge manuelle n'est plus jamais
+# nécessaire.
+#
+# Ce qui ne change jamais — le runtime LÖVE compilé, les icônes — reste en
+# cache un an.
+#
+# Vérifiable après téléversement : diagnostic.html affiche l'en-tête
+# Cache-Control réellement renvoyé par le serveur pour chaque fichier.
+
+<IfModule mod_headers.c>
+  # Par défaut : revalider. Couvre index.html, diagnostic.html, boot-guard.js,
+  # web-bridge-v13.js, web-mod-import.js, player.js, app-v13.css, sw.js,
+  # manifest.webmanifest et game-*.love.
+  Header set Cache-Control "no-cache"
+
+  # Le runtime figé : love.wasm, love.js, les scripts de normalisation Lua et
+  # les icônes de la PWA. Aucun de ces fichiers ne bouge entre deux builds.
+  <FilesMatch "\.(wasm|png|ico|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^(love\.js|normalize[0-9]*\.lua)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# OVH ne connaît pas forcément ces deux types. Un .wasm servi avec le mauvais
+# type MIME interdit la compilation en flux et ralentit le démarrage ; un
+# .love servi en text/html casse l'archive.
+<IfModule mod_mime.c>
+  AddType application/wasm .wasm
+  AddType application/octet-stream .love
+</IfModule>

@@ -84,6 +84,35 @@ var PACKAGES = ["game-v13.4-fr.love", "11.5/love.wasm",
                 "lua/normalize1.lua", "lua/normalize2.lua"];
 
 var problems = [];
+var staleRisk = [];
+
+// Un fichier qui change d'une livraison à l'autre DOIT être revalidé, sinon
+// le navigateur ressert l'ancien et aucun retéléversement n'a d'effet : la
+// purge de boot-guard s'exécute, player.js retélécharge... depuis le cache
+// HTTP, à l'identique. Le runtime figé, lui, a le droit de rester en cache.
+function mustRevalidate(name) {
+  if (/\.(wasm|png|ico|svg)$/.test(name)) return false;
+  if (/(^|\/)love\.js$/.test(name)) return false;
+  if (/(^|\/)normalize[0-9]*\.lua$/.test(name)) return false;
+  return true;
+}
+
+function cacheVerdict(name, header) {
+  var value = (header || "").toLowerCase();
+  var maxAge = value.match(/max-age\s*=\s*(\d+)/);
+  var revalidates = /no-cache|no-store|must-revalidate/.test(value)
+    || (maxAge && parseInt(maxAge[1], 10) === 0);
+  if (!mustRevalidate(name)) return { state: "ok", note: null };
+  if (!header) {
+    staleRisk.push(name);
+    return { state: "warn", note: "aucun Cache-Control : le navigateur decide "
+      + "seul combien de temps garder l'ancienne version" };
+  }
+  if (revalidates) return { state: "ok", note: null };
+  staleRisk.push(name);
+  return { state: "warn", note: "mis en cache sans revalidation — une nouvelle "
+    + "livraison ne sera pas vue. Voir le fichier .htaccess fourni." };
+}
 
 function el(tag, cls, text) {
   var n = document.createElement(tag);
@@ -134,10 +163,14 @@ function checkNetwork() {
             return null;
           }
           var type = response.headers.get("content-type") || "(aucun)";
+          var cacheHeader = response.headers.get("cache-control");
+          var cache = cacheVerdict(name, cacheHeader);
           return response.arrayBuffer().then(function (buffer) {
             var length = buffer.byteLength;
             var spec = EXPECT[name];
-            var detail = length.toLocaleString("fr-FR") + " octets · " + type;
+            var detail = length.toLocaleString("fr-FR") + " octets · " + type
+              + " · cache: " + (cacheHeader || "(aucun en-tête)");
+            if (cache.note) detail += " — " + cache.note;
 
             // Un serveur qui renvoie sa page d'erreur en HTTP 200 est le
             // piège classique : le fichier « existe » et contient du HTML.
@@ -173,12 +206,12 @@ function checkNetwork() {
                   addRow(host, "bad", name, detail + " — empreinte " + digest.slice(0, 16)
                     + "…, attendue " + spec.sha.slice(0, 16) + "…");
                 } else {
-                  addRow(host, "ok", name, detail
+                  addRow(host, cache.state, name, detail
                     + (digest ? " · SHA-256 conforme" : " · taille conforme"));
                 }
               });
             }
-            addRow(host, "ok", name, detail);
+            addRow(host, cache.state, name, detail);
             return null;
           });
         })
@@ -233,10 +266,13 @@ function checkIndexedDb() {
               addRow(host, "warn", name,
                 length.toLocaleString("fr-FR") + " octets — paquet d'un ancien build");
             } else if (spec && spec.bytes != null && length !== spec.bytes) {
-              problems.push("cache local : " + name + " est corrompu");
-              addRow(host, "bad", name, length.toLocaleString("fr-FR")
+              // Pas une erreur : boot-guard supprime cette entrée de lui-même
+              // au prochain lancement. C'est le cas normal juste après une
+              // nouvelle livraison.
+              addRow(host, "warn", name, length.toLocaleString("fr-FR")
                 + " octets — ATTENDU " + spec.bytes.toLocaleString("fr-FR")
-                + ". Copie locale endommagée : purge nécessaire.");
+                + ". Copie périmée ou endommagée ; boot-guard la supprimera "
+                + "au prochain lancement, sans rien te demander.");
             } else {
               addRow(host, "ok", name,
                 length.toLocaleString("fr-FR") + " octets — conforme");
@@ -279,17 +315,31 @@ function checkServiceWorker() {
 
 function verdict() {
   var box = document.getElementById("verdict");
-  box.className = problems.length ? "bad" : "ok";
-  if (!problems.length) {
-    box.textContent = "✓ Tout est conforme. Si le jeu ne démarre toujours pas, "
-      + "purge ci-dessous puis relance.";
+  if (problems.length) {
+    box.className = "bad";
+    box.textContent = "✗ " + problems.length + " problème(s) : "
+      + problems.join(" · ");
     return;
   }
-  box.textContent = "✗ " + problems.length + " problème(s) : " + problems.join(" · ");
+  if (staleRisk.length) {
+    box.className = "warn";
+    box.textContent = "! Les fichiers sont bons, mais " + staleRisk.length
+      + " d'entre eux sont servis sans revalidation ("
+      + staleRisk.slice(0, 4).join(", ")
+      + (staleRisk.length > 4 ? "…" : "")
+      + "). Tes joueurs garderont l'ancienne version après une mise à jour. "
+      + "Téléverse le .htaccess fourni à la racine, puis relance ce "
+      + "diagnostic.";
+    return;
+  }
+  box.className = "ok";
+  box.textContent = "✓ Tout est conforme, et les mises à jour arriveront "
+    + "toutes seules chez tes joueurs. Aucune purge n'est nécessaire.";
 }
 
 function run() {
   problems = [];
+  staleRisk = [];
   document.getElementById("verdict").className = "muted";
   document.getElementById("verdict").textContent = "Analyse en cours…";
   checkNetwork()
