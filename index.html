@@ -10,7 +10,7 @@
   <title>Gen1Recomp PWA v13.3 Viewport Final</title>
   <link rel="manifest" href="manifest.webmanifest?v=13.3-pwa-final">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="app-v13.css?v=13.3-pwa-final">
+  <link rel="stylesheet" href="app-v13.css?v=13.4-fr-r3">
 </head>
 <body>
   <main id="app" aria-label="Gen1Recomp Web">
@@ -21,17 +21,44 @@
         <span>Chargement de Gen1Recomp…</span>
       </div>
     </div>
-    <div id="web-tools">
-      <button id="rom-button" type="button">Importer une ROM</button>
-      <button id="mod-button" type="button" disabled>Importer un mod</button>
-      <button id="fullscreen-button" type="button">Plein écran</button>
-      <span id="web-status" role="status" aria-live="polite">Initialisation…</span>
-    </div>
+    <!-- Pas de barre de boutons : le launcher est l'interface.  Quand il
+         demande une ROM ou un mod, le moteur écrit web-pick-request.txt et
+         web-bridge-v13.js affiche un bandeau plein écran ; le toucher sur ce
+         bandeau est le geste DOM réel dont iOS a besoin pour ouvrir le
+         sélecteur de fichiers.  Rien de permanent à l'écran.
+
+         #web-status reste dans le DOM, visuellement masqué : c'est la seule
+         destination des messages du pont, y compris « lu sur l'appareil,
+         rien n'est envoyé ». -->
+    <span id="web-status" role="status" aria-live="polite"
+          style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0"
+          >Initialisation…</span>
     <input id="rom-picker" type="file" accept=".gb,.gbc,application/octet-stream" hidden>
   </main>
   <noscript>JavaScript est indispensable pour exécuter la version WebAssembly.</noscript>
   <script src="web-mod-import.js?v=13.3-pwa-final"></script>
-  <script src="web-bridge-v13.js?v=13.3-pwa-final"></script>
-  <script src="player.js?v=11.5&amp;n=2&amp;g=game-v13.3-viewport-final.love&amp;arg=%5B%22--web%22%5D"></script>
+  <script src="web-bridge-v13.js?v=13.4-fr-r4"></script>
+  <!-- boot-guard.js vérifie le cache de paquets IndexedDB de player.js puis
+       injecte player.js.  Sans lui, un .love téléversé de travers reste
+       épinglé dans le navigateur et aucun retéléversement ne le remplace. -->
+  <script src="boot-guard.js?v=13.4-fr-r5"></script>
+  <script>
+    // Enregistré après le chargement, pour ne pas concurrencer les propres
+    // requêtes du moteur (love.wasm, l'archive du jeu).
+    //
+    // updateViaCache:"none" est le point important : le script du worker
+    // lui-même doit toujours être revalidé. Sans ça, une livraison — et
+    // l'interrupteur KILL qu'elle contient — pourrait rester bloquée
+    // derrière une copie en cache, ce qui est exactement le problème que ce
+    // worker est là pour supprimer.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("sw.js", { scope: "./", updateViaCache: "none" })
+          .then(function (registration) { registration.update(); })
+          .catch(function (error) { console.warn("SW registration failed", error); });
+      }, { once: true });
+    }
+  </script>
 </body>
 </html>

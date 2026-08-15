@@ -1,0 +1,3478 @@
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/data/strings/fr.lua love_src/data/strings/fr.lua
+--- love_orig/data/strings/fr.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/data/strings/fr.lua	2026-08-14 18:27:39.046034991 +0000
+@@ -0,0 +1,213 @@
++-- French catalog for Gen1Recomp's OWN player-facing text.
++--
++-- Everything that comes out of the cartridge -- dialogue, POKéMON and move
++-- names, item names, Pokédex entries -- is already French when a French ROM
++-- is imported: it is decoded from the player's own cart at import time and
++-- never lives in this repository (see src/core/RomText.lua, which prefers the
++-- extracted line and only falls back to the literal below).
++--
++-- What this file covers is the text Gen1Recomp *authors*: menu labels, option
++-- rows, PC/box/bag prompts this port added, printer and save messages.  Those
++-- were English literals in Lua, which is what made a French import read half
++-- French and half English.
++--
++-- Keys are the exact English sources, the same convention a translation mod
++-- uses (src/core/Strings.lua).  An entry that is missing falls through to
++-- English, and Strings.get still checks format arity, so a wrong %s count
++-- here is reported and the English source is used instead of crashing.
++--
++-- Loaded only when the running variant's language is "fr"
++-- (Strings.loadLocale); a US playthrough never sees it.
++
++return {
++  ["\fWould you like to\nSAVE the game?"] = "\fVeux-tu SAUVER\nla partie?",
++  ["%d INSTALLED"] = "%d INSTALLES",
++  ["%s :L%d"] = "%s :N%d",
++  ["%s got off\nthe BICYCLE."] = "%s descend\ndu VELO.",
++  ["%s got on\nthe BICYCLE!"] = "%s enfourche\nle VELO!",
++  ["%s is\ntaken out.\vGot %s."] = "%s est\nretire.\v%s recu.",
++  ["%s learned\n%s!"] = "%s apprend\n%s!",
++  ["%s lined up!\nScored %d coins!"] = "%s aligne!\n%d jetons gagnes!",
++  ["%s saved\nthe game!"] = "%s a sauvegarde\nla partie!",
++  ["%s was\nreleased outside.\fBye %s!"] = "%s est\nlibere dehors.\fAdieu %s!",
++  ["%s was\nstored in Box %s."] = "%s est\nrange dans la BOITE %s.",
++  ["%s was\nstored via PC."] = "%s est\nrange via le PC.",
++  ["%s's HP\nwas restored!"] = "Les PV de %s\nsont restaures!",
++  ["%s?\nThat will be\n¥%d. OK?"] = "%s?\nCe sera\n%d¥. OK?",
++  ["%sBOX %2d"] = "%sBOITE %2d",
++  [":L%d No.%03d"] = ":N%d No.%03d",
++  ["<Diploma>"] = "<Diplome>",
++  ["A blinding FLASH\nlights the area!"] = "Un FLASH aveuglant\neclaire la zone!",
++  ["ABLE"] = "APTE",
++  ["AREA"] = "ZONE",
++  ["BADGES"] = "BADGES",
++  ["BALL"] = "BALL",
++  ["BATTLE ANIMATION"] = "ANIM. COMBAT",
++  ["BATTLE BG"] = "FOND COMBAT",
++  ["BATTLE LAYOUT"] = "CADRE COMBAT",
++  ["BATTLE SIZE"] = "TAILLE COMBAT",
++  ["BATTLE SPEED"] = "VIT. COMBAT",
++  ["BATTLE STYLE"] = "STYLE COMBAT",
++  ["BLACK"] = "NOIR",
++  ["BOX %d (RELEASE)"] = "BOITE %d (LIBERER)",
++  ["BOX %d (WITHDRAW)"] = "BOITE %d (RETIRER)",
++  ["BOX %d is full!"] = "La BOITE %d est\npleine!",
++  ["BOX No."] = "BOITE No.",
++  ["BOX No.%d"] = "BOITE No.%d",
++  ["BUY"] = "ACHETER",
++  ["Booted up a TM!"] = "Une CT!",
++  ["Bring out which\nPOKéMON?"] = "Envoyer quel\nPOKéMON?",
++  ["CANCEL"] = "ANNULER",
++  ["CENTERED"] = "CENTRE",
++  ["CHANGE BOX"] = "CHANGER BOITE",
++  ["COINS %4d"] = "JETONS %4d",
++  ["COLORS"] = "COULEURS",
++  ["CONTINUE"] = "CONTINUER",
++  ["CONTROLS"] = "COMMANDES",
++  ["CRY"] = "CRI",
++  ["CUT"] = "COUPE",
++  ["Choose a POKéMON."] = "Choisis un POKéMON.",
++  ["DATA"] = "DATA",
++  ["DEPOSIT <PK><MN>"] = "DEPOSER <PK><MN>",
++  ["DEPOSIT ITEM"] = "DEPOSER OBJET",
++  ["DIG"] = "TUNNEL",
++  ["DYNAMIC"] = "DYNAMIQUE",
++  ["Darn!\nRan out of coins!"] = "Zut!\nPlus de jetons!",
++  ["Data unknown."] = "Donnees inconnues.",
++  ["ESC/2ND CANCELS"] = "ECHAP/2E ANNULE",
++  ["EXIT GAME"] = "QUITTER LE JEU",
++  ["EXP POINTS"] = "POINTS EXP",
++  ["Empty."] = "Vide.",
++  ["FAITHFUL RATIO"] = "RATIO FIDELE",
++  ["FILL"] = "PLEIN",
++  ["FIXED"] = "FIXE",
++  ["FLASH"] = "FLASH",
++  ["FLY"] = "VOL",
++  ["FNT"] = "K.O.",
++  ["GBC FX"] = "EFFET GBC",
++  ["HALL OF FAME"] = "PANTHEON",
++  ["Here you are!\nThank you!"] = "Voila!\nMerci!",
++  ["How many?"] = "Combien?",
++  ["I can pay you\n¥%d for that."] = "Je t'en donne\n%d¥.",
++  ["I can't put a\nprice on that."] = "Je ne peux pas\nl'acheter.",
++  ["ITEM"] = "OBJET",
++  ["It contained\n%s!"] = "Il contenait\n%s!",
++  ["It won't have\nany effect."] = "Ca n'aura aucun\neffet.",
++  ["Keep it up!"] = "Continue comme ca!",
++  ["LEVEL UP"] = "NIVEAU SUP.",
++  ["LEVEL/"] = "NIVEAU/",
++  ["LINK"] = "LINK",
++  ["LOG OFF"] = "QUITTER",
++  ["MAX FPS"] = "FPS MAX",
++  ["MENU SPEED"] = "VIT. MENU",
++  ["MODS"] = "MODS",
++  ["MONEY"] = "ARGENT",
++  ["MUSIC FILTER"] = "FILTRE MUSIQUE",
++  ["MUSIC VOL"] = "VOL. MUSIQUE",
++  ["Move to where?"] = "Deplacer ou?",
++  ["NAME/%s"] = "NOM/%s",
++  ["NEW GAME"] = "NOUVELLE PARTIE",
++  ["NO"] = "NON",
++  ["NOT ABLE"] = "PAS APTE",
++  ["No POKéMON!"] = "Pas de POKéMON!",
++  ["No SURFing here!"] = "Pas de SURF ici!",
++  ["No cycling\nallowed here."] = "Velo interdit\nici.",
++  ["No good! It's not\neven near water."] = "Non! Il n'y a meme\npas d'eau ici.",
++  ["No room left to\nstore items."] = "Plus de place pour\nranger des objets.",
++  ["No."] = "No.",
++  ["Nope! ITEMFINDER\nisn't responding."] = "Non! Le CHERCH'OBJET\nne repond pas.",
++  ["Not enough\ncoins!"] = "Pas assez de\njetons!",
++  ["Nothing here."] = "Il n'y a rien ici.",
++  ["Nothing to CUT!"] = "Rien a COUPER!",
++  ["Now saving..."] = "Sauvegarde...",
++  ["OAK: %s!\nThis isn't the\ntime to use that!"] = "CHEN: %s!\nCe n'est pas le\nmoment pour ca!",
++  ["OFF"] = "NON",
++  ["OG"] = "OG",
++  ["ON"] = "OUI",
++  ["OPTION"] = "OPTION",
++  ["ORIENTATION"] = "ORIENTATION",
++  ["OT/"] = "D.O./",
++  ["OVERWORLD SPEED"] = "VIT. TERRAIN",
++  ["Once released,\n%s is\ngone forever. OK?"] = "Une fois libere,\n%s est\nperdu a jamais. OK?",
++  ["Oops! This Box is\nfull of POKéMON."] = "Cette BOITE est\npleine de POKéMON.",
++  ["PERFORMANCE"] = "PERFORMANCE",
++  ["PIKACHU VOL"] = "VOL. PIKACHU",
++  ["PLAY TIME"] = "TEMPS DE JEU",
++  ["PLAYER"] = "JOUEUR",
++  ["PLAYER %s\nBADGES    %d\nPOKéDEX %3d\nTIME %6d:%02d"] = "JOUEUR %s\nBADGES    %d\nPOKéDEX %3d\nTEMPS %6d:%02d",
++  ["POKéDEX"] = "POKéDEX",
++  ["POKéDEX Rating{COLON}"] = "Evaluation POKéDEX{COLON}",
++  ["POKéMON"] = "POKéMON",
++  ["PP"] = "PP",
++  ["PRESS A BUTTON"] = "APPUIE SUR UN BOUTON",
++  ["PRINT BOX"] = "IMPRIMER BOITE",
++  ["PRNT"] = "IMPR",
++  ["Player"] = "Joueur",
++  ["Printed %s's\ndata!\fSaved as\n%s\vin the save\nfolder."] = "Donnees de %s\nimprimees!\fEnregistre sous\n%s\vdans le dossier\nde sauvegarde.",
++  ["Printed BOX %d!\fSaved as\n%s\vin the save\nfolder."] = "BOITE %d imprimee!\fEnregistre sous\n%s\vdans le dossier\nde sauvegarde.",
++  ["Printer error!\n%s"] = "Erreur imprimante!\n%s",
++  ["QUIT"] = "QUITTER",
++  ["RELEASE <PK><MN>"] = "LIBERER <PK><MN>",
++  ["RELEASE TO SET"] = "RELACHE POUR REGLER",
++  ["RESET ALL BINDINGS?"] = "REINITIALISER TOUT?",
++  ["RETURN TO MAIN\nMENU?"] = "RETOUR AU MENU\nPRINCIPAL?",
++  ["RULESET"] = "REGLES",
++  ["SAVE"] = "SAUVER",
++  ["SEE YA!"] = "A PLUS!",
++  ["SEEN %3d  OWN %3d"] = "VUS %3d  PRIS %3d",
++  ["SELECT:CLEAR ROW\nSTART:RESET ALL"] = "SELECT:VIDER LIGNE\nSTART:TOUT RAZ",
++  ["SELL"] = "VENDRE",
++  ["SET"] = "FIXE",
++  ["SFX VOL"] = "VOL. BRUITAGES",
++  ["SHIFT"] = "ROTATION",
++  ["SLOT MACHINE"] = "MACHINE A SOUS",
++  ["SOFTBOILED"] = "E-COQUE",
++  ["STATS"] = "STATS",
++  ["STATUS/"] = "ETAT/",
++  ["STRENGTH"] = "FORCE",
++  ["SURF"] = "SURF",
++  ["SWITCH"] = "CHANGER",
++  ["TELEPORT"] = "TELEPORT",
++  ["TEXT SPEED"] = "VIT. TEXTE",
++  ["TILT"] = "INCLINAISON",
++  ["TIME"] = "TEMPS",
++  ["TOSS"] = "JETER",
++  ["TOSS ITEM"] = "JETER OBJET",
++  ["TOUCH PAD"] = "PAVE TACTILE",
++  ["TYPE1/"] = "TYPE1/",
++  ["TYPE2/"] = "TYPE2/",
++  ["That's too impor-\ntant to toss!"] = "C'est bien trop\nimportant!",
++  ["The TOWN MAP is\nunreadable here."] = "La CARTE est\nillisible ici.",
++  ["Threw away\n%s."] = "%s\njete.",
++  ["Threw away %s."] = "%s jete.",
++  ["Toss %s?"] = "Jeter %s?",
++  ["UI LAYOUT"] = "DISPO. UI",
++  ["USE"] = "UTILISER",
++  ["Use TM on which\nPOKéMON?"] = "Utiliser la CT sur\nquel POKéMON?",
++  ["Use on which one?"] = "Utiliser sur qui?",
++  ["VIBRATION"] = "VIBRATION",
++  ["VIDEO MODE"] = "MODE VIDEO",
++  ["VOID FILL"] = "REMPLISSAGE",
++  ["WHITE"] = "BLANC",
++  ["WIDE"] = "LARGE",
++  ["WITHDRAW <PK><MN>"] = "RETIRER <PK><MN>",
++  ["WITHDRAW ITEM"] = "RETIRER OBJET",
++  ["WORLD"] = "MONDE",
++  ["What?"] = "Quoi?",
++  ["What? There are\nno POKéMON here!"] = "Quoi? Il n'y a\naucun POKéMON ici!",
++  ["When you change a\nPOKéMON BOX, data\nwill be saved. OK?"] = "Changer de BOITE\nsauvegarde les\ndonnees. OK?",
++  ["Which move should"] = "Quelle attaque doit",
++  ["Withdrew\n%s."] = "%s\nretire.",
++  ["YES"] = "OUI",
++  ["Yes! ITEMFINDER\nindicates there's\nan item nearby."] = "Oui! Le CHERCH'OBJET\nindique un objet\ntout pres.",
++  ["You can't carry\nany more items."] = "Tu ne peux pas\nporter plus d'objets.",
++  ["You can't deposit\nthe last POKéMON!"] = "Tu ne peux pas deposer\nton dernier POKéMON!",
++  ["You can't get off\nhere."] = "Impossible de\ndescendre ici.",
++  ["You can't take\nany more POKéMON.\fDeposit POKéMON\nfirst."] = "Tu ne peux pas\nprendre plus de POKéMON.\fDepose un POKéMON\nd'abord.",
++  ["You don't have\nenough money."] = "Tu n'as pas assez\nd'argent.",
++  ["You need at least\none POKéMON!"] = "Il te faut au moins\nun POKéMON!",
++  ["ZOOM"] = "ZOOM",
++  ["be forgotten?"] = "etre oubliee?",
++  ["{RAM:wNameBuffer} can\nmove boulders."] = "{RAM:wNameBuffer} peut\npousser les rochers.",
++  ["{RAM:wNameBuffer} used\nSTRENGTH."] = "{RAM:wNameBuffer} utilise\nFORCE.",
++}
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/main.lua love_src/main.lua
+--- love_orig/main.lua	2026-08-13 18:11:50.000000000 +0000
++++ love_src/main.lua	2026-08-15 07:44:31.086217003 +0000
+@@ -81,7 +81,7 @@
+ -- ------------------------------------------------------------ save editor
+ -- The launcher instance parked while the editor is up, plus the version whose
+ -- cache the editor mounted (so closing can put the read path back).
+-local editorHost, editorVersion, editorWindow
++local editorHost, editorVersion, editorVariant, editorWindow
+ local closeEditor  -- forward declaration: openEditor hands it to the editor
+ 
+ -- The editor's modules use flat names (require("Kit"), require("Party")), so
+@@ -143,7 +143,11 @@
+   end
+   local GameVersion = require("src.core.GameVersion")
+   GameVersion.set(version)
+-  require("src.import.CacheFs").mountVersion(version)
++  -- Remember which regional variant was mounted: the launcher's US|FR
++  -- selector can move on while the editor is open, and closeEditor has to
++  -- unmount the tree it actually mounted (red/ vs red-fr/).
++  editorVariant = GameVersion.variant()
++  require("src.import.CacheFs").mountVersion(version, editorVariant)
+   editorVersion = version
+   editorHost = Importer
+   -- Drop launcher pad/FlexLove so the save editor owns input (NX shim +
+@@ -170,10 +174,11 @@
+   if EditorApp and EditorApp.unload then EditorApp.unload() end
+   EditorApp = nil
+   if version then
+-    require("src.import.CacheFs").unmountVersion(version)
++    require("src.import.CacheFs").unmountVersion(version, editorVariant)
+     require("src.core.Data"):unloadGenerated()
+   end
+   editorVersion = nil
++  editorVariant = nil
+   restoreWindow()
+   Importer = editorHost
+   editorHost = nil
+@@ -211,7 +216,7 @@
+   end
+ end
+ 
+-local function bootGame(version)
++local function bootGame(version, variant)
+   -- Keep the preparation/launcher UI on the materially validated 800x600
+   -- surface.  Widescreen is an overworld/gameplay concern: applying the DOM
+   -- backing-store repair before the launcher is active can desynchronise the
+@@ -223,12 +228,19 @@
+   -- version and overlay its extracted cache BEFORE anything requires generated
+   -- data, so data/generated + assets/generated resolve to that version's files.
+   local GameVersion = require("src.core.GameVersion")
+-  GameVersion.set(version or os.getenv("POKEPORT_VERSION") or "red")
++  -- The regional variant is part of the boot identity: it decides the cache
++  -- tree, the manifest and the save file, so it has to be settled BEFORE the
++  -- mount below and before anything requires generated data.  The launcher
++  -- passes it; scripted / headless runs use POKEPORT_VARIANT (default: the
++  -- variant remembered for that game, i.e. US on a fresh install).
++  GameVersion.set(version or os.getenv("POKEPORT_VERSION") or "red",
++    variant or os.getenv("POKEPORT_VARIANT"))
+   local CacheFs = require("src.import.CacheFs")
+   -- Keep CacheFs.prefix aligned for any CacheFs.read fallback during Data:load
+-  -- (Blue/Yellow caches live under blue/ / yellow/).
++  -- (Blue/Yellow caches live under blue/ / yellow/, regional variants under
++  -- red-fr/ / blue-fr/ / yellow-fr/).
+   CacheFs.prefix = GameVersion.cachePrefix()
+-  CacheFs.mountVersion(GameVersion.get())
++  CacheFs.mountVersion(GameVersion.get(), GameVersion.variant())
+   -- NX: always write nx-asset-probe.log so Yellow/Blue art failures are
+   -- diagnosable from the SD without enabling switch-debug.txt.
+   pcall(function()
+@@ -311,8 +323,9 @@
+   -- cache has to be mounted before the editor's Data:load.
+   if editorMode then
+     local version = os.getenv("POKEPORT_VERSION") or "red"
+-    require("src.core.GameVersion").set(version)
+-    require("src.import.CacheFs").mountVersion(version)
++    local GameVersion = require("src.core.GameVersion")
++    GameVersion.set(version, os.getenv("POKEPORT_VARIANT"))
++    require("src.import.CacheFs").mountVersion(version, GameVersion.variant())
+     addEditorRequirePath()
+     EditorApp = require("App")
+     EditorApp.load(savePath, { version = version })
+@@ -325,7 +338,8 @@
+   -- Scripted / headless runs pick their game from POKEPORT_VERSION (default
+   -- Red); the launcher's per-column choice does not apply to them.
+   local scriptedVersion = os.getenv("POKEPORT_VERSION") or "red"
+-  local ready = RomImporter.isReady(scriptedVersion)
++  local scriptedVariant = os.getenv("POKEPORT_VARIANT")
++  local ready = RomImporter.isReady(scriptedVersion, scriptedVariant)
+   -- Scripted / headless runs have to reach the game with no human pressing
+   -- Play: an autopilot, a frame driver, an import-only build step, or an
+   -- explicit ROM path all bypass the interactive launcher and keep today's
+@@ -337,18 +351,18 @@
+     if forceImport or not ready then
+       -- The importer detects the dropped/loaded ROM's version by SHA-1 and
+       -- passes it to onComplete; boot that version.
+-      Importer = RomImporter.new(function(version)
++      Importer = RomImporter.new(function(version, variant)
+         if os.getenv("POKEPORT_IMPORT_ONLY") == "1" then
+           love.event.quit()
+           return
+         end
+         Importer = nil
+-        bootGame(version or scriptedVersion)
++        bootGame(version or scriptedVersion, variant or scriptedVariant)
+       end)
+       if importPath then Importer:startPath(importPath) end
+       return
+     end
+-    bootGame(scriptedVersion)
++    bootGame(scriptedVersion, scriptedVariant)
+     return
+   end
+ 
+@@ -360,6 +374,10 @@
+   -- translation reaches the launcher too.  Game:load replaces this with the
+   -- real merged catalog once a version boots.
+   do
++    -- Built-in locale catalog for whatever variant the launcher will open on,
++    -- then the mod catalogs over it (same order Game:load uses).
++    local GameVersion = require("src.core.GameVersion")
++    require("src.core.Strings").loadLocale(GameVersion.language())
+     local preload = require("src.mods.LauncherMods").translationStrings()
+     if preload then require("src.core.Strings").load({ strings = preload }) end
+   end
+@@ -385,7 +403,7 @@
+       if launchSlot then LaunchOptions.selectSlot(launchGame, launchSlot) end
+       -- No launcher behind this session: love.quit must exit, not restart.
+       launchedIntoGame = true
+-      bootGame(launchGame)
++      bootGame(launchGame)  -- variant: whatever that game last used
+       return
+     end
+     -- Not importable yet: open the launcher already showing that game, so the
+@@ -398,9 +416,12 @@
+   -- Choose ROM / drag-drop when it is not.  Any dropped .gb is routed by its
+   -- SHA-1 (GameVersion.forSha1); pressing Play boots that game.  Edit on a
+   -- save row opens the bundled editor on that slot (openEditor).
+-  Importer = RomImporter.new(function(version)
++  -- Let the shell widen the launcher to the device before the player has to
++  -- read it.  No-op off the Web.
++  WebViewport.activateLauncher()
++  Importer = RomImporter.new(function(version, variant)
+     Importer = nil
+-    bootGame(version)
++    bootGame(version, variant)
+   end, {
+     launcher = true,
+     forceImport = forceImport,
+@@ -415,8 +436,12 @@
+   NxDisplay.sync()
+   if editorMode then return EditorApp.update(dt) end
+   if TouchEditor then return TouchEditor.update(dt) end
+-  if Importer then return Importer:update(dt) end
++  -- The adaptive viewport follows the device in the launcher too, so this
++  -- runs BEFORE the importer's early return.  Without it the preparation
++  -- screen is stuck at its portrait rectangle on a landscape phone and the
++  -- player has to scroll it to reach Play.
+   WebViewport.update(dt, Game)
++  if Importer then return Importer:update(dt) end
+ 
+   -- Scripted runs (autopilot / POKEPORT_DRIVER) observe and act exactly
+   -- once per Game:update, so they must keep a 1:1 relationship with the
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/Game.lua love_src/src/core/Game.lua
+--- love_orig/src/core/Game.lua	2026-08-11 23:06:16.000000000 +0000
++++ love_src/src/core/Game.lua	2026-08-14 18:27:55.024990324 +0000
+@@ -67,7 +67,12 @@
+   require("src.ui.Theme").load(Data)
+   -- the engine's own text, after the merge so a translation mod's catalog
+   -- is already in Data.strings; empty on a mod-free boot and skipped
+-  require("src.core.Strings").load(Data)
++  local Strings = require("src.core.Strings")
++  -- The built-in catalog for the running variant's language goes in first,
++  -- so a mod catalog (loaded right after) still overrides it.  A US build
++  -- resolves to "en" and loads nothing.
++  Strings.loadLocale(require("src.core.GameVersion").language())
++  Strings.load(Data)
+ 
+   self.stack = StateStack
+   StateStack:init()
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/GameVersion.lua love_src/src/core/GameVersion.lua
+--- love_orig/src/core/GameVersion.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/core/GameVersion.lua	2026-08-14 18:14:14.569152082 +0000
+@@ -1,68 +1,218 @@
+--- Which Gen-1 game this process is running: Red (the historical default),
+--- Blue, or Yellow.  One source of truth for everything that differs by
+--- version -- the accepted ROM hash, the import manifest, where the
+--- extracted cache lives, and the save-file suffix -- so the importer,
+--- cache mount, SaveData, title screen and palette all agree.
+---
+--- Red keeps the un-suffixed save paths it always used (save.lua) so existing
+--- saves are untouched, but its extracted cache lives under red/ like Blue and
+--- Yellow (issue #899); a legacy root cache is moved into red/ once by
+--- CacheFs.migrateLegacyRedCache.  All three versions can be imported and
+--- played side by side.
++-- Which Gen-1 game this process is running, and in which regional variant.
++--
++-- There are three LOGICAL GAMES -- red, blue, yellow -- and each exists in one
++-- or more VARIANTS (a language/region release of that same game).  The logical
++-- game is the identity everything structural keys off: mods target "red", the
++-- launcher shows three columns, scripts ask isYellow().  The variant only
++-- decides which bytes we accept and where the extracted data lives:
++--
++--     game    variant   ROM SHA-1        manifest                    cache
++--     red     us        ea9bcae6...      rom_manifest.json           red/
++--     red     fr        47a7622f...      rom_manifest_red_fr.json    red-fr/
++--     blue    us        d7037c83...      rom_manifest_blue.json      blue/
++--     blue    fr        47faa910...      rom_manifest_blue_fr.json   blue-fr/
++--     yellow  us        cc7d0326...      rom_manifest_yellow.json    yellow/
++--     yellow  fr        0aceec0e...      rom_manifest_yellow_fr.json yellow-fr/
++--
++-- The `us` variant keeps every historical path byte-for-byte (Red still saves
++-- to save.lua and caches under red/, Blue to save_blue.lua and blue/, ...), so
++-- an existing install keeps finding its caches and saves.  A regional variant
++-- gets its own cache prefix and save suffix, so a US and a FR copy of the same
++-- game never share extracted data or progress.
++--
++-- Adding a language later (es/de/it) means adding a row to VARIANT_DATA and a
++-- manifest; nothing else in the engine has to change.
+ --
+ -- Zero requires, so it loads during love.conf and under plain Lua for tools
+--- and tests.  The active version is a process-global set once at boot from
+--- the launcher's column choice (main.lua); it defaults to Red.
++-- and tests.  The active game+variant is a process-global set once at boot
++-- from the launcher's choice (main.lua); it defaults to Red US.
+ 
+ local GameVersion = {}
+ 
+-GameVersion.VERSIONS = {
++-- ---------------------------------------------------------------------------
++-- Logical games
++-- ---------------------------------------------------------------------------
++
++-- Fields here are variant-independent: they are the game's identity.
++GameVersion.GAMES = {
+   red = {
+     id = "red",
+     label = "Red",
+-    displayName = "Pokemon Red",
+     launcherName = "Red",       -- game-panel header in the launcher
+-    sha1 = "ea9bcae617fdf159b045185467ae58b2e4a48b9a",
+-    manifest = "tools/rom_manifest.json",
+-    cachePrefix = "red/",   -- red/data/generated, red/assets/generated (#899)
+-    saveSuffix = "",        -- save.lua / save.lua.bak / save.lua.tmp
+   },
+   blue = {
+     id = "blue",
+     label = "Blue",
+-    displayName = "Pokemon Blue",
+     launcherName = "Blue",
+-    sha1 = "d7037c83e1ae5b39bde3c30787637ba1d4c48ce2",
+-    manifest = "tools/rom_manifest_blue.json",
+-    cachePrefix = "blue/",  -- blue/data/generated, blue/assets/generated
+-    saveSuffix = "_blue",   -- save_blue.lua / .bak / .tmp
+   },
+   yellow = {
+     id = "yellow",
+     label = "Yellow",
+-    displayName = "Pokemon Yellow",
+     launcherName = "Yellow",
+-    sha1 = "cc7d03262ebfaf2f06772c1a480c7d9d5f4a38e1",
+-    manifest = "tools/rom_manifest_yellow.json",
+-    cachePrefix = "yellow/",  -- yellow/data/generated, yellow/assets/generated
+-    saveSuffix = "_yellow",   -- save_yellow.lua / .bak / .tmp
+   },
+ }
+ 
+--- Launcher column order.
++-- Launcher column order.  Three games, never six.
+ GameVersion.ORDER = { "red", "blue", "yellow" }
+ 
++-- ---------------------------------------------------------------------------
++-- Variants
++-- ---------------------------------------------------------------------------
++
++-- Selector order inside a game panel.  "us" is first so it stays the default.
++GameVersion.VARIANT_ORDER = { "us", "fr" }
++
++GameVersion.VARIANT_INFO = {
++  us = {
++    variant = "us",
++    language = "en",
++    region = "us",
++    variantLabel = "US",        -- launcher selector chip
++    languageLabel = "EN",
++  },
++  fr = {
++    variant = "fr",
++    language = "fr",
++    region = "fr",
++    variantLabel = "FR",
++    languageLabel = "FR",
++  },
++}
++
++-- Per game+variant: the ROM we accept, the manifest that describes it, and
++-- the two namespaces that must never collide between variants.
++--
++-- saveSuffix "" (Red US) and "_blue"/"_yellow" are the historical names and
++-- must not change: they are the files existing players already have.
++GameVersion.VARIANT_DATA = {
++  red = {
++    us = {
++      sha1 = "ea9bcae617fdf159b045185467ae58b2e4a48b9a",
++      manifest = "tools/rom_manifest.json",
++      cachePrefix = "red/",   -- red/data/generated, red/assets/generated (#899)
++      saveSuffix = "",        -- save.lua / save.lua.bak / save.lua.tmp
++      displayName = "Pokemon Red",
++    },
++    fr = {
++      sha1 = "47a7622fa30e6402a3891fe65b3a930bf9bd7aec",
++      manifest = "tools/rom_manifest_red_fr.json",
++      cachePrefix = "red-fr/",
++      saveSuffix = "_fr",     -- save_fr.lua
++      displayName = "Pokemon Version Rouge",
++    },
++  },
++  blue = {
++    us = {
++      sha1 = "d7037c83e1ae5b39bde3c30787637ba1d4c48ce2",
++      manifest = "tools/rom_manifest_blue.json",
++      cachePrefix = "blue/",  -- blue/data/generated, blue/assets/generated
++      saveSuffix = "_blue",   -- save_blue.lua / .bak / .tmp
++      displayName = "Pokemon Blue",
++    },
++    fr = {
++      sha1 = "47faa910d0e073c600665bf9c83b6bd17babdf8a",
++      manifest = "tools/rom_manifest_blue_fr.json",
++      cachePrefix = "blue-fr/",
++      saveSuffix = "_blue_fr",
++      displayName = "Pokemon Version Bleue",
++    },
++  },
++  yellow = {
++    us = {
++      sha1 = "cc7d03262ebfaf2f06772c1a480c7d9d5f4a38e1",
++      manifest = "tools/rom_manifest_yellow.json",
++      cachePrefix = "yellow/",  -- yellow/data/generated, yellow/assets/generated
++      saveSuffix = "_yellow",   -- save_yellow.lua / .bak / .tmp
++      displayName = "Pokemon Yellow",
++    },
++    fr = {
++      sha1 = "0aceec0ef7aa2ca5aa831554598d91f61a925591",
++      manifest = "tools/rom_manifest_yellow_fr.json",
++      cachePrefix = "yellow-fr/",
++      saveSuffix = "_yellow_fr",
++      displayName = "Pokemon Version Jaune",
++    },
++  },
++}
++
++-- ---------------------------------------------------------------------------
++-- Resolved records
++-- ---------------------------------------------------------------------------
++
++-- One frozen table per (game, variant): everything a caller can need about a
++-- concrete playable build.  Built once at load; callers never mutate them.
++local RESOLVED = {}
++for game, variants in pairs(GameVersion.VARIANT_DATA) do
++  RESOLVED[game] = {}
++  for variant, data in pairs(variants) do
++    local info = {}
++    for k, v in pairs(GameVersion.GAMES[game]) do info[k] = v end
++    for k, v in pairs(GameVersion.VARIANT_INFO[variant]) do info[k] = v end
++    for k, v in pairs(data) do info[k] = v end
++    info.game = game
++    -- Identity of a save slot: the pair, not the game alone, so a US and a FR
++    -- playthrough of the same game can coexist.
++    info.saveId = variant == "us" and game or (game .. "-" .. variant)
++    RESOLVED[game][variant] = info
++  end
++end
++GameVersion.RESOLVED = RESOLVED
++
++-- ---------------------------------------------------------------------------
++-- Active game / variant
++-- ---------------------------------------------------------------------------
++
+ GameVersion.current = "red"
++GameVersion.currentVariant = "us"
+ 
+-function GameVersion.set(id)
+-  GameVersion.current = GameVersion.VERSIONS[id] and id or "red"
+-  return GameVersion.current
++-- Per-game variant choice, so the launcher can remember that (say) Yellow is
++-- being played in French while Red is being played in English.  The active
++-- game's entry is always in sync with currentVariant.
++GameVersion.selected = { red = "us", blue = "us", yellow = "us" }
++
++function GameVersion.hasVariant(id, variant)
++  local variants = GameVersion.VARIANT_DATA[id]
++  return (variants and variant and variants[variant]) ~= nil
++end
++
++-- The variant currently chosen for a game (defaults to us).
++function GameVersion.variantFor(id)
++  id = id or GameVersion.current
++  local chosen = GameVersion.selected[id]
++  if GameVersion.hasVariant(id, chosen) then return chosen end
++  return "us"
++end
++
++-- Remember a variant for a game without making that game active.
++function GameVersion.selectVariant(id, variant)
++  if not GameVersion.hasVariant(id, variant) then return GameVersion.variantFor(id) end
++  GameVersion.selected[id] = variant
++  if id == GameVersion.current then GameVersion.currentVariant = variant end
++  return variant
++end
++
++-- Make a game (and optionally a variant) active.  Historical single-argument
++-- callers keep working: the game's remembered variant is used.
++function GameVersion.set(id, variant)
++  GameVersion.current = GameVersion.GAMES[id] and id or "red"
++  if variant == nil then
++    variant = GameVersion.variantFor(GameVersion.current)
++  elseif not GameVersion.hasVariant(GameVersion.current, variant) then
++    variant = "us"
++  end
++  GameVersion.currentVariant = variant
++  GameVersion.selected[GameVersion.current] = variant
++  return GameVersion.current, variant
+ end
+ 
+ function GameVersion.get()
+   return GameVersion.current
+ end
+ 
++function GameVersion.variant()
++  return GameVersion.currentVariant
++end
++
+ function GameVersion.isBlue()
+   return GameVersion.current == "blue"
+ end
+@@ -71,25 +221,122 @@
+   return GameVersion.current == "yellow"
+ end
+ 
+--- Metadata for a version id, defaulting to the active one.
+-function GameVersion.info(id)
+-  return GameVersion.VERSIONS[id or GameVersion.current]
++-- True when the active build is a localised (non-US) release.
++function GameVersion.isRegional(id, variant)
++  return GameVersion.variantOf(id, variant) ~= "us"
+ end
+ 
+-function GameVersion.saveSuffix(id)
+-  return GameVersion.info(id).saveSuffix
++function GameVersion.language(id, variant)
++  return GameVersion.info(id, variant).language
+ end
+ 
+-function GameVersion.cachePrefix(id)
+-  return GameVersion.info(id).cachePrefix
++-- Normalise the (id, variant) pair a caller passed, filling in the active /
++-- remembered values.  Every accessor below funnels through this, so a call
++-- with no arguments always describes the running build.
++function GameVersion.variantOf(id, variant)
++  id = id or GameVersion.current
++  if variant == nil then variant = GameVersion.variantFor(id) end
++  if not GameVersion.hasVariant(id, variant) then variant = "us" end
++  return variant
+ end
+ 
+--- The version a ROM belongs to, by its SHA-1, or nil for an unknown ROM.
+-function GameVersion.forSha1(sha1)
+-  for id, info in pairs(GameVersion.VERSIONS) do
+-    if info.sha1 == sha1 then return id end
++-- Metadata for a game+variant, defaulting to the active one.
++function GameVersion.info(id, variant)
++  id = id or GameVersion.current
++  local byVariant = RESOLVED[id]
++  if not byVariant then return nil end
++  return byVariant[GameVersion.variantOf(id, variant)]
++end
++
++function GameVersion.saveSuffix(id, variant)
++  return GameVersion.info(id, variant).saveSuffix
++end
++
++function GameVersion.cachePrefix(id, variant)
++  return GameVersion.info(id, variant).cachePrefix
++end
++
++function GameVersion.manifestPath(id, variant)
++  return GameVersion.info(id, variant).manifest
++end
++
++function GameVersion.displayName(id, variant)
++  return GameVersion.info(id, variant).displayName
++end
++
++-- ---------------------------------------------------------------------------
++-- ROM identification
++-- ---------------------------------------------------------------------------
++
++-- The (game, variant) a ROM belongs to, by its SHA-1.  Returns nil for a ROM
++-- that is not one of the six supported dumps -- a patched, hacked, truncated
++-- or overdumped file has a different SHA-1 and is refused here.
++function GameVersion.identify(sha1)
++  if type(sha1) ~= "string" then return nil end
++  sha1 = sha1:lower()
++  for _, game in ipairs(GameVersion.ORDER) do
++    for _, variant in ipairs(GameVersion.VARIANT_ORDER) do
++      local info = RESOLVED[game] and RESOLVED[game][variant]
++      if info and info.sha1 == sha1 then return game, variant end
++    end
+   end
+   return nil
+ end
+ 
++-- The logical game a ROM belongs to, or nil for an unknown ROM.  Historical
++-- signature: callers that only care which column a ROM lands in.
++function GameVersion.forSha1(sha1)
++  local game = GameVersion.identify(sha1)
++  return game
++end
++
++-- Every supported (game, variant) pair, in launcher order.  Used by the
++-- importer's "supported ROMs" listing and by the tests.
++function GameVersion.allVariants()
++  local out = {}
++  for _, game in ipairs(GameVersion.ORDER) do
++    for _, variant in ipairs(GameVersion.VARIANT_ORDER) do
++      local info = RESOLVED[game] and RESOLVED[game][variant]
++      if info then out[#out + 1] = info end
++    end
++  end
++  return out
++end
++
++-- The variants of one game, in launcher order.
++function GameVersion.variantsOf(id)
++  local out = {}
++  for _, variant in ipairs(GameVersion.VARIANT_ORDER) do
++    if GameVersion.hasVariant(id, variant) then out[#out + 1] = variant end
++  end
++  return out
++end
++
++-- ---------------------------------------------------------------------------
++-- Backwards compatibility
++-- ---------------------------------------------------------------------------
++
++-- GameVersion.VERSIONS used to be `id -> {sha1, manifest, cachePrefix,
++-- saveSuffix, displayName, ...}`.  Callers still use it two ways: as a
++-- membership test (`if GameVersion.VERSIONS[v] then`) and as a metadata read.
++-- Membership works unchanged.  Metadata reads resolve through the *currently
++-- selected variant of that game*, which is what every historical caller
++-- meant, so a FR playthrough reads FR paths without touching those call
++-- sites.  Prefer GameVersion.info(id, variant) in new code: it is explicit.
++GameVersion.VERSIONS = {}
++for _, game in ipairs(GameVersion.ORDER) do
++  GameVersion.VERSIONS[game] = setmetatable({}, {
++    __index = function(_, key)
++      local base = GameVersion.GAMES[game]
++      if base[key] ~= nil then return base[key] end
++      local info = RESOLVED[game][GameVersion.variantFor(game)]
++      return info[key]
++    end,
++    __newindex = function()
++      error("GameVersion.VERSIONS is read-only; edit VARIANT_DATA instead", 2)
++    end,
++    __metatable = false,
++  })
++end
++
+ return GameVersion
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/SaveData.lua love_src/src/core/SaveData.lua
+--- love_orig/src/core/SaveData.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/core/SaveData.lua	2026-08-14 18:19:06.910946749 +0000
+@@ -552,14 +552,26 @@
+ -- use" and the flat legacy path (save.lua / save_blue.lua / save_yellow.lua)
+ -- is used, which keeps a brand-new install and every pre-slots caller
+ -- working unchanged.
+-local activeSlotCache = {}   -- version -> slotId in use, or false when none
+-local slotsChecked = {}      -- version -> true once resolved this process
++-- Keyed by SAVE KEY, not by version: a regional variant is a separate
++-- playthrough namespace (see saveKey below).
++local activeSlotCache = {}   -- saveKey -> slotId in use, or false when none
++local slotsChecked = {}      -- saveKey -> true once resolved this process
+ -- At most one New Game can be the live candidate for a first public tool
+ -- request. A single strong reference models that runtime fact without adding
+ -- marker data to the save or retaining abandoned playthrough tables.
+ local freshPlaythrough
+ 
+-local function slotDir(version) return "saves/" .. version end
++-- The save namespace for a version.  A US build keeps the bare game id, so
++-- every existing saves/red/... directory and options.saveSlots.red registry
++-- is found exactly where it always was.  A regional variant gets its own
++-- key ("red-fr"), so a US and a FR playthrough of the same game never share
++-- a slot list, an active slot, or a file on disk.
++local function saveKey(version)
++  local info = GameVersion.info(version)
++  return (info and info.saveId) or version
++end
++
++local function slotDir(version) return "saves/" .. saveKey(version) end
+ 
+ local function slotNames(version, id)
+   local main = slotDir(version) .. "/" .. id .. ".lua"
+@@ -629,7 +641,7 @@
+   remove(fs, ltmp)
+   local opts = SaveData.loadOptions(fs)
+   opts.saveSlots = opts.saveSlots or {}
+-  opts.saveSlots[version] = { list = { id }, active = id }
++  opts.saveSlots[saveKey(version)] = { list = { id }, active = id }
+   SaveData.saveOptions(opts, fs)
+   return id
+ end
+@@ -638,19 +650,19 @@
+ -- existing registry wins; otherwise a lazy legacy migration may create
+ -- slot1; otherwise false, meaning the flat legacy path.
+ local function ensureVersionSlots(version, fs)
+-  if slotsChecked[version] then return end
+-  slotsChecked[version] = true
++  if slotsChecked[saveKey(version)] then return end
++  slotsChecked[saveKey(version)] = true
+   if not knownVersion(version) then
+-    activeSlotCache[version] = false
++    activeSlotCache[saveKey(version)] = false
+     return
+   end
+   local opts = SaveData.loadOptions(fs)
+-  local reg = opts.saveSlots and opts.saveSlots[version]
++  local reg = opts.saveSlots and opts.saveSlots[saveKey(version)]
+   if reg and type(reg.list) == "table" and #reg.list > 0 then
+-    activeSlotCache[version] = reg.active or reg.list[1]
++    activeSlotCache[saveKey(version)] = reg.active or reg.list[1]
+     return
+   end
+-  activeSlotCache[version] = tryMigrateLegacy(version, fs) or false
++  activeSlotCache[saveKey(version)] = tryMigrateLegacy(version, fs) or false
+ end
+ 
+ -- (body for the forward-declared saveNames.)  Resolves the ACTIVE slot for
+@@ -659,7 +671,7 @@
+   version = version or GameVersion.get()
+   local fs = persistFs(nil)
+   ensureVersionSlots(version, fs)
+-  local slot = activeSlotCache[version]
++  local slot = activeSlotCache[saveKey(version)]
+   if slot then return slotNames(version, slot) end
+   return legacyNames(version)
+ end
+@@ -716,7 +728,7 @@
+   local fs = persistFs(nil)
+   ensureVersionSlots(version, fs)
+   local opts = SaveData.loadOptions(fs)
+-  local reg = opts.saveSlots and opts.saveSlots[version]
++  local reg = opts.saveSlots and opts.saveSlots[saveKey(version)]
+   local list = (reg and reg.list) or {}
+   local out = {}
+   for _, id in ipairs(list) do
+@@ -743,7 +755,7 @@
+   local fs = persistFs(nil)
+   local opts = SaveData.loadOptions(fs)
+   opts.saveSlots = opts.saveSlots or {}
+-  local reg = opts.saveSlots[version]
++  local reg = opts.saveSlots[saveKey(version)]
+   if not reg or not reg.list then return false, "slot not registered" end
+   local found = false
+   for _, id in ipairs(reg.list) do
+@@ -755,7 +767,7 @@
+   reg.names = reg.names or {}
+   reg.names[slotId] = label
+   if next(reg.names) == nil then reg.names = nil end
+-  opts.saveSlots[version] = reg
++  opts.saveSlots[saveKey(version)] = reg
+   SaveData.saveOptions(opts, fs)
+   return true
+ end
+@@ -769,17 +781,17 @@
+   local fs = persistFs(nil)
+   local opts = SaveData.loadOptions(fs)
+   opts.saveSlots = opts.saveSlots or {}
+-  local reg = opts.saveSlots[version] or { list = {}, active = nil }
++  local reg = opts.saveSlots[saveKey(version)] or { list = {}, active = nil }
+   local found = false
+   for _, id in ipairs(reg.list) do
+     if id == slotId then found = true break end
+   end
+   if not found then reg.list[#reg.list + 1] = slotId end
+   reg.active = slotId
+-  opts.saveSlots[version] = reg
++  opts.saveSlots[saveKey(version)] = reg
+   SaveData.saveOptions(opts, fs)
+-  slotsChecked[version] = true
+-  activeSlotCache[version] = slotId
++  slotsChecked[saveKey(version)] = true
++  activeSlotCache[saveKey(version)] = slotId
+   return slotId
+ end
+ 
+@@ -795,7 +807,7 @@
+   ensureVersionSlots(version, fs)
+   local opts = SaveData.loadOptions(fs)
+   opts.saveSlots = opts.saveSlots or {}
+-  local reg = opts.saveSlots[version] or { list = {}, active = nil }
++  local reg = opts.saveSlots[saveKey(version)] or { list = {}, active = nil }
+   local maxN = 0
+   for _, id in ipairs(reg.list) do
+     local n = tonumber(tostring(id):match("^slot(%d+)$"))
+@@ -803,7 +815,7 @@
+   end
+   local id = "slot" .. (maxN + 1)
+   reg.list[#reg.list + 1] = id
+-  opts.saveSlots[version] = reg
++  opts.saveSlots[saveKey(version)] = reg
+   SaveData.saveOptions(opts, fs)
+   return id
+ end
+@@ -817,7 +829,7 @@
+   if not knownVersion(version) then return nil end
+   local fs = persistFs(nil)
+   ensureVersionSlots(version, fs)
+-  return activeSlotCache[version] or nil
++  return activeSlotCache[saveKey(version)] or nil
+ end
+ 
+ -- Write saveTable into an existing slot's file (SaveSerializer.encode), through
+@@ -863,7 +875,7 @@
+   ensureVersionSlots(version, fs)
+   local opts = SaveData.loadOptions(fs)
+   opts.saveSlots = opts.saveSlots or {}
+-  local reg = opts.saveSlots[version]
++  local reg = opts.saveSlots[saveKey(version)]
+   if not reg or not reg.list then return false, "slot not registered" end
+   local found, idx = false, nil
+   for i, id in ipairs(reg.list) do
+@@ -881,10 +893,10 @@
+   if reg.active == slotId then
+     reg.active = reg.list[1]  -- may be nil when the list is now empty
+   end
+-  opts.saveSlots[version] = reg
++  opts.saveSlots[saveKey(version)] = reg
+   SaveData.saveOptions(opts, fs)
+-  slotsChecked[version] = true
+-  activeSlotCache[version] = reg.active or false
++  slotsChecked[saveKey(version)] = true
++  activeSlotCache[saveKey(version)] = reg.active or false
+   return true
+ end
+ 
+@@ -923,7 +935,7 @@
+   version = version or GameVersion.get()
+   local fs = persistFs(injectedFs)
+   ensureVersionSlots(version, fs)
+-  return activeSlotCache[version] or "legacy"
++  return activeSlotCache[saveKey(version)] or "legacy"
+ end
+ 
+ local function rememberPlaythroughId(save, opts, injectedFs)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/Strings.lua love_src/src/core/Strings.lua
+--- love_orig/src/core/Strings.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/core/Strings.lua	2026-08-14 18:25:08.317190943 +0000
+@@ -37,6 +37,9 @@
+ local Strings = {}
+ 
+ local catalog = nil   -- Data.strings once a mod has put something in it
++local base = nil      -- the built-in catalog for the running variant's
++                      -- language, below any mod catalog (see loadLocale)
++local baseLanguage = nil
+ local missing = {}    -- format-arity complaints, reported once each
+ 
+ -- Called from Game after the mod merge, and again on dev-mode hot reload.
+@@ -52,22 +55,74 @@
+   end
+ end
+ 
++-- The built-in catalog for a regional variant.
++--
++-- Dialogue, names, items and every other word that comes out of the ROM is
++-- already French when a French ROM is imported -- it is decoded from the
++-- player's own cartridge.  What is NOT in the ROM is the text Gen1Recomp
++-- authors itself (battle lines the original engine phrased differently, menu
++-- labels this port added, save/mod screens).  Left alone that produced a
++-- half-French game, so a French build loads data/strings/fr.lua here.
++--
++-- It sits UNDER any mod catalog: a translation mod still wins, and the
++-- English source is still the key, so an entry this catalog does not cover
++-- falls through to English exactly as before.  A US variant never loads it,
++-- so an English playthrough is byte-identical to the baseline.
++--
++-- Adding es/de/it later is one more file plus the GameVersion row.
++function Strings.loadLocale(language)
++  if language == baseLanguage then return base ~= nil end
++  baseLanguage = language
++  base = nil
++  if not language or language == "en" then return false end
++  local ok, mod = pcall(require, "data.strings." .. language)
++  if not ok or type(mod) ~= "table" then
++    -- Fused / mounted builds where the module path is unusual.
++    if love and love.filesystem and love.filesystem.getInfo
++        and love.filesystem.getInfo("data/strings/" .. language .. ".lua") then
++      local chunk = love.filesystem.load("data/strings/" .. language .. ".lua")
++      if chunk then
++        local okr, t = pcall(chunk)
++        if okr and type(t) == "table" then mod = t else mod = nil end
++      end
++    else
++      mod = nil
++    end
++  end
++  if type(mod) ~= "table" then return false end
++  for _ in pairs(mod) do
++    base = mod
++    return true
++  end
++  return false
++end
++
++function Strings.localeLanguage()
++  return baseLanguage
++end
++
+ function Strings.active()
+-  return catalog ~= nil
++  return catalog ~= nil or base ~= nil
+ end
+ 
+ -- The lookup itself.  `context` is optional and only disambiguates sources
+ -- that collide; the plain key is tried after it, so a translation that does
+ -- not care about the distinction can supply one entry for both.
+ function Strings.lookup(source, context)
+-  if not catalog then return source end
+-  if context then
+-    local hit = catalog[context .. "|" .. source]
++  if not (catalog or base) then return source end
++  -- Mod catalog first, built-in locale catalog second: a translation mod
++  -- overrides the shipped French exactly the way it overrides English.
++  local function pick(t)
++    if not t then return nil end
++    if context then
++      local hit = t[context .. "|" .. source]
++      if type(hit) == "string" then return hit end
++    end
++    local hit = t[source]
+     if type(hit) == "string" then return hit end
++    return nil
+   end
+-  local hit = catalog[source]
+-  if type(hit) == "string" then return hit end
+-  return source
++  return pick(catalog) or pick(base) or source
+ end
+ 
+ -- Count `%`-directives so a translation that drops or adds one is caught
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/WebViewport.lua love_src/src/core/WebViewport.lua
+--- love_orig/src/core/WebViewport.lua	2026-08-13 23:34:06.000000000 +0000
++++ love_src/src/core/WebViewport.lua	2026-08-15 07:51:50.969844518 +0000
+@@ -29,11 +29,23 @@
+ 
+ local WebViewport = {}
+ local REQUEST = "web-adaptive-wide-request.txt"
++-- Which rectangle rule the shell should apply.  It cannot be inferred from
++-- the page: the calls Lua makes into the shell go through
++-- love.system.openURL, which love.js implements as window.open(), and Safari
++-- refuses a javascript: URL there -- so enterGameViewport never arrives on
++-- iOS.  The mode therefore travels as a file, like every other Web request.
++--   "launcher" : take the whole frame, both axes.  The preparation screen is
++--                a UI, not the 160x144 world, so height is free and using it
++--                is what removes the scrolling in landscape.
++--   "game"     : widen only.  Renderer:fitScale is an integer fit against
++--                160x144, so the drawable HEIGHT is the framing invariant.
++local MODE = "web-viewport-mode.txt"
+ local state = {
+   active = false,
+   baseW = nil,
+   baseH = nil,
+   lastSequence = -1,
++  mode = "game",
+   elapsed = 0,
+   interval = 0.25,
+   reportTicks = 0,
+@@ -89,9 +101,21 @@
+   state.lastSequence = sequence
+   targetW = math.floor(targetW + 0.5)
+   targetH = math.floor(targetH + 0.5)
+-  -- Bounds reject stale or corrupt save data.  The height is the framing
+-  -- invariant, so a request that moves it is refused outright.
+-  if targetH ~= state.baseH or targetW < state.baseW or targetW > 4096 then
++  -- Bounds reject stale or corrupt save data.
++  --
++  -- In GAME mode the height is the framing invariant -- Renderer:fitScale is
++  -- an integer fit of the drawable against 160x144, so moving it changes the
++  -- vertical world span and the apparent size of everything -- and a request
++  -- that moves it is refused outright.
++  --
++  -- In LAUNCHER mode there is no world: the preparation screen is a Kit UI
++  -- that lays itself out to whatever rectangle it is given, and taking the
++  -- device's full height is exactly what lets it stop scrolling in
++  -- landscape.  It may still only grow, never shrink below its design size.
++  if targetW < state.baseW or targetW > 4096 then return false end
++  if state.mode == "launcher" then
++    if targetH < state.baseH or targetH > 4096 then return false end
++  elseif targetH ~= state.baseH then
+     return false
+   end
+   local windowW, windowH = love.window.getMode()
+@@ -115,21 +139,66 @@
+   return newW == targetW and newH == targetH
+ end
+ 
+--- Called from bootGame, at the actual Red/Blue/Yellow handoff.  The
+--- preparation module never reaches this, so it keeps its validated rectangle
+--- and its touch coordinate space.
++-- Called once the launcher is on screen.  The preparation module used to be
++-- deliberately excluded from the adaptive viewport, which is right for a
++-- desktop window but wrong for a phone: held in landscape it kept the
++-- portrait rectangle, letterboxed, and its own content did not fit -- the
++-- player had to scroll the launcher to reach Play.  The launcher already
++-- lays out in two columns when it is wide enough; it only needed the width.
++--
++-- Height is still never touched, so the framing invariant above holds, and
++-- the shell derives the target from the engine's own rectangle exactly as it
++-- does at the game handoff.
++function WebViewport.activateLauncher()
++  if state.active then return false end
++  if not Platform.isWeb()
++     or not (love.window and love.window.getMode and love.window.setMode)
++     or not (love.graphics and love.graphics.getDimensions) then
++    return false
++  end
++  local baseW, baseH = love.window.getMode()
++  if not (baseW and baseH and baseW > 0 and baseH > 0) then return false end
++  state.active = true
++  state.baseW, state.baseH = baseW, baseH
++  -- Remembered separately: the launcher is allowed to grow to the device,
++  -- and the game must not inherit whatever rectangle that left behind.
++  state.designW, state.designH = baseW, baseH
++  state.elapsed = 0
++  state.reportTicks = REPORT_TICKS
++  state.mode = "launcher"
++  pcall(love.filesystem.write, MODE, "launcher")
++  report()
++  return true
++end
++
++-- Called from bootGame, at the actual Red/Blue/Yellow handoff.  Re-bases on
++-- the game's own geometry, which is what the shell then adapts.
+ function WebViewport.configure()
++  state.active = false
+   if not Platform.isWeb()
+      or not (love.window and love.window.getMode and love.window.setMode)
+      or not (love.graphics and love.graphics.getDimensions) then
+     return false
+   end
++  -- Coming out of the launcher the window may be the device-sized rectangle
++  -- the preparation screen grew into.  The game has to start from the
++  -- validated design rectangle instead, because from here on the height is
++  -- the framing invariant and everything is measured against it.
++  if state.designW and state.designH then
++    local w, h, flags = love.window.getMode()
++    if w ~= state.designW or h ~= state.designH then
++      pcall(love.window.setMode, state.designW, state.designH, flags)
++    end
++  end
+   local baseW, baseH = love.window.getMode()
+   if not (baseW and baseH and baseW > 0 and baseH > 0) then return false end
+   state.active = true
+   state.baseW, state.baseH = baseW, baseH
++  state.lastSequence = -1
+   state.elapsed = 0
+   state.reportTicks = REPORT_TICKS
++  state.mode = "game"
++  pcall(love.filesystem.write, MODE, "game")
+   -- The engine's own geometry is the baseline: the shell derives the target
+   -- from it and never invents a resolution.
+   bridgeCall(string.format(
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/CacheFs.lua love_src/src/import/CacheFs.lua
+--- love_orig/src/import/CacheFs.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/import/CacheFs.lua	2026-08-14 18:17:30.649420569 +0000
+@@ -518,11 +518,20 @@
+   return mounted
+ end
+ 
+-function CacheFs.mountVersion(version)
++-- `variant` defaults to the one currently selected for `version`, so the
++-- historical single-argument call still mounts whatever is about to boot.
++-- Passing it explicitly matters when unmounting the *previous* build during a
++-- variant switch: red/ and red-fr/ are different trees and the wrong one
++-- would be left on the read path.
++function CacheFs.mountVersion(version, variant)
++  local GameVersion = require("src.core.GameVersion")
++  variant = GameVersion.variantOf(version, variant)
+   -- A legacy root Red cache has to move into red/ before anything probes
+-  -- red/ paths (idempotent and near-free once migrated, issue #899).
+-  if version == "red" then CacheFs.migrateLegacyRedCache() end
+-  local prefix = require("src.core.GameVersion").cachePrefix(version)
++  -- red/ paths (idempotent and near-free once migrated, issue #899).  Only
++  -- US Red ever wrote to the root; a regional variant never had a legacy
++  -- cache to migrate.
++  if version == "red" and variant == "us" then CacheFs.migrateLegacyRedCache() end
++  local prefix = GameVersion.cachePrefix(version, variant)
+   local sub = prefix:gsub("/+$", "")
+ 
+   -- Save-dir relative mount first (NX / no-FFI). Prepend so the version wins.
+@@ -557,8 +566,8 @@
+ -- path, not what require already cached.
+ --
+ -- Returns true when nothing was mounted or the unmount took.
+-function CacheFs.unmountVersion(version)
+-  local prefix = require("src.core.GameVersion").cachePrefix(version)
++function CacheFs.unmountVersion(version, variant)
++  local prefix = require("src.core.GameVersion").cachePrefix(version, variant)
+   if prefix == "" then return true end
+   local sub = prefix:gsub("/+$", "")
+   local base = CacheFs.root()
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/LauncherView.lua love_src/src/import/LauncherView.lua
+--- love_orig/src/import/LauncherView.lua	2026-08-11 12:17:22.000000000 +0000
++++ love_src/src/import/LauncherView.lua	2026-08-14 18:23:59.697186864 +0000
+@@ -311,6 +311,43 @@
+   return CART_COLOR[version] or PAL.green
+ end
+ 
++-- ------- regional variant selector (US | FR)
++--
++-- The launcher keeps THREE game panels, never six: a French cart is the same
++-- logical game, imported into its own cache.  When a player has imported more
++-- than one variant of a game, the panel grows a chip row so they can pick
++-- which one Play boots.  With a single variant imported nothing is drawn, so
++-- the historical panel is unchanged for anyone with only US ROMs.
++--
++-- Each chip is an ordinary Kit.button, so it inherits mouse, touch, keyboard
++-- focus and pad-cursor activation for free.
++local function variantChipRow(imp, x, y, w, m, version)
++  local imported = imp.importedVariants and imp:importedVariants(version) or {}
++  local active = GameVersion.variantFor(version)
++  if #imported == 0 then return 0 end
++  -- A single US import is the historical case: draw nothing.  A single
++  -- regional import still draws its chip, so a player with only a French
++  -- cart can see which release the panel is about to boot.
++  if #imported < 2 and active == "us" then return 0 end
++  local gap = math.floor(6 * m.s)
++  local h = math.floor(Kit.textHeight("micro") + 12 * m.s)
++  local chipW = math.floor(math.min((w - gap * (#imported - 1)) / #imported,
++    math.max(48 * m.s, w * 0.22)))
++  for index, variant in ipairs(imported) do
++    local info = GameVersion.info(version, variant)
++    local on = variant == active
++    btn(imp, x + (index - 1) * (chipW + gap), y, chipW, h,
++      "variant-" .. version .. "-" .. variant,
++      info.variantLabel, {
++        font = "micro",
++        fill = on and cartColor(version) or nil,
++        ink = on and PAL.inverse or nil,
++        action = function() imp:selectVariant(version, variant) end,
++      })
++  end
++  return h + math.floor(8 * m.s)
++end
++
+ local function modStatusColor(status)
+   if status == "ok" then return Strings("Ready"), PAL.green end
+   if status == "conflict" then return Strings("Conflict"), PAL.red end
+@@ -962,6 +999,11 @@
+   local cy = y + titleH + math.floor(12 * m.s)
+   local remaining = availH - (titleH + math.floor(12 * m.s))
+ 
++  -- US | FR, only when this game has more than one imported variant.
++  local chipH = variantChipRow(imp, x, cy, w, m, version)
++  cy = cy + chipH
++  remaining = remaining - chipH
++
+   local gap = m.gap
+   local lx, lw, rx2, rw
+   if m.twoCol then
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomExtractor.lua love_src/src/import/RomExtractor.lua
+--- love_orig/src/import/RomExtractor.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/import/RomExtractor.lua	2026-08-15 08:29:56.623833593 +0000
+@@ -1094,20 +1094,42 @@
+   local kind, consumed = self.rom:readString(
+     pointerTable.bank, address, self.manifest.charmap, 0x50, 32)
+   address = address + consumed
+-  local heightFt = self.rom:byte(pointerTable.bank, address)
+-  local heightIn = self.rom:byte(pointerTable.bank, address + 1)
+-  local weight = self.rom:word(pointerTable.bank, address + 2)
+-  address = address + 4
++  -- The international releases store height as feet + inches (two bytes) and
++  -- weight in tenths of a pound; the European localisations store height as a
++  -- single decimetre byte and weight in hectograms, which makes the body one
++  -- byte shorter and moves the TX_FAR that follows it.  The manifest says
++  -- which shape this ROM uses; a manifest without the block is an older
++  -- imperial one, so existing US caches and manifests are unaffected.
++  local dexSpec = self.manifest.pokedex or {}
++  local metric = dexSpec.measurements == "metric"
++  local heightFt, heightIn, heightM
++  if metric then
++    -- decimetres
++    heightM = self.rom:byte(pointerTable.bank, address) / 10
++    address = address + 1
++  else
++    heightFt = self.rom:byte(pointerTable.bank, address)
++    heightIn = self.rom:byte(pointerTable.bank, address + 1)
++    address = address + 2
++  end
++  local weight = self.rom:word(pointerTable.bank, address)
++  address = address + 2
+   assert(self.rom:byte(pointerTable.bank, address) == 0x17,
+     "dex entry " .. index .. " has no TX_FAR command")
+   local textAddress = self.rom:word(pointerTable.bank, address + 1)
+   local textBank = self.rom:byte(pointerTable.bank, address + 3)
+   local textLabel = self.manifest.dexEntryLabels[species]
+     or ("_DexEntry_%02X_%04X"):format(textBank, textAddress)
+-  return {
++  local entry = {
+     kind = kind, heightFt = heightFt, heightIn = heightIn,
+     weight = weight, text = textLabel,
+   }
++  if metric then
++    -- DexEntryMenu draws the metric rows when heightM is present.
++    entry.heightM = heightM
++    entry.weightKg = weight / 10   -- hectograms
++  end
++  return entry
+ end
+ 
+ function RomExtractor:extractPokemon()
+@@ -1774,11 +1796,26 @@
+     "title/gamefreak_inc.png"); tick()
+ 
+   do
++    -- The copyright line on the title screen is "©'95.'96.'98 " + <this> +
++    -- "GAME FREAK inc.".  <this> is whatever sits between the GAME FREAK logo
++    -- and TextBoxGraphics, and its size is NOT the same in every release:
++    -- the international pokeyellow has a one-tile NineTile there (the "9" of
++    -- '99), the French one has a two-tile ZerosTile.  Extract the block
++    -- whatever its length instead of only recognising the one-tile shape --
++    -- otherwise title/nine.png is silently never written and TitleState is
++    -- left asking for a file that does not exist.
+     local gf = self.symbols["GameFreakLogoGraphics"]
+     local tb = self.symbols["TextBoxGraphics"]
+-    if gf and tb and tb[2] == gf[2] + 9 * 16 + 16 then
+-      local raw = self.rom:bytes(gf[1], gf[2] + 9 * 16, 16)
+-      self:save(ImageWriter.decode2bpp(raw, 8, 8, false), "title/nine.png")
++    if gf and tb and gf[1] == tb[1] then
++      local from = gf[2] + 9 * 16
++      local size = tb[2] - from
++      if size > 0 and size <= 4 * 16 and size % 16 == 0 then
++        local raw = self.rom:bytes(gf[1], from, size)
++        local tiles = size / 16
++        self:save(
++          ImageWriter.decode2bpp(raw, tiles * 8, 8, false),
++          "title/nine.png")
++      end
+     end
+   end
+   tick()
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lua love_src/src/import/RomImporter.lua
+--- love_orig/src/import/RomImporter.lua	2026-08-13 21:15:14.000000000 +0000
++++ love_src/src/import/RomImporter.lua	2026-08-15 08:31:34.147832674 +0000
+@@ -41,8 +41,10 @@
+ 
+ -- The marker a finished import writes for a version: the generation tag plus
+ -- that version's ROM hash, so both a format bump and a swapped ROM invalidate.
+-local function markerFor(version)
+-  return CACHE_FORMAT .. GameVersion.info(version).sha1
++-- The hash is the *variant's*, so a US marker never validates a FR cache and
++-- vice versa even if the two ever landed under the same prefix.
++local function markerFor(version, variant)
++  return CACHE_FORMAT .. GameVersion.info(version, variant).sha1
+ end
+ local COMMUNITY_URL = "https://bois.icu"
+ local TRUST_WARNING = "if you did not get this from bryanthaboi's github " ..
+@@ -72,6 +74,15 @@
+ local WEB_MOD_REFRESH = "web-mod-refresh.flag"
+ local WEB_MOD_RESULT = "web-mod-result.txt"
+ local WEB_MOD_ERROR = "web-mod-error.txt"
++-- The shell cannot be called into: love.system.openURL is window.open() in
++-- love.js, and Safari refuses a javascript: URL there, so the historical
++-- openURL("javascript:...Gen1WebBridge.pickRom()") never reached the page on
++-- iOS.  A file picker also has to be opened from a real DOM gesture, which a
++-- canvas touch delivered to Lua a frame later no longer is.  So the request
++-- travels the same way every other Web request does -- as a small file in the
++-- save directory -- and the shell answers it with its own prompt, which IS a
++-- DOM gesture.  Contents: "rom" or "mod".
++local WEB_PICK_REQUEST = "web-pick-request.txt"
+ 
+ local function clearWebImportFiles()
+   if not Platform.isWeb() or not (love and love.filesystem) then return end
+@@ -94,6 +105,13 @@
+     -- cache reads as incomplete and re-importing cannot clear it.
+     "assets/generated/battle/profoakb.png",
+     "assets/generated/pikachu/pikapic_1.png",
++    -- The tile(s) between the GAME FREAK logo and TextBoxGraphics, drawn in
++    -- the title copyright line.  The extractor used to insist on the
++    -- one-tile international shape (NineTile), so a French Yellow cache was
++    -- written without the file at all; both Yellow manifests produce it now,
++    -- and listing it here re-imports exactly those caches -- Yellow US
++    -- already has it, Red and Blue never ask for it.
++    "assets/generated/title/nine.png",
+   },
+ }
+ 
+@@ -153,10 +171,10 @@
+ -- otherwise the save directory through love.filesystem.  It honors
+ -- CacheFs.prefix, so we point it at the version's cache subtree (red/,
+ -- blue/, yellow/).
+-local function allRequiredFilesExist(version)
++local function allRequiredFilesExist(version, variant)
+   local CacheFs = require("src.import.CacheFs")
+   local saved = CacheFs.prefix
+-  CacheFs.prefix = GameVersion.cachePrefix(version)
++  CacheFs.prefix = GameVersion.cachePrefix(version, variant)
+   local ok = true
+   for _, path in ipairs(REQUIRED_FILES) do
+     if not CacheFs.exists(path) then ok = false; break end
+@@ -173,9 +191,13 @@
+ -- Imported Red caches still live under red/.  Check source paths directly so
+ -- that cache prefix cannot hide Red's source tree, and keep save-dir caches
+ -- from counting as current source data.
+-local function sourceTreeHasData(version)
++-- Only the historical US Red tree ever sat at the root; every other version,
++-- and every regional variant including Red FR, lives under its own prefix.
++local function sourceTreeHasData(version, variant)
+   if not love.filesystem.getRealDirectory then return false end
+-  local prefix = version == "red" and "" or GameVersion.cachePrefix(version)
++  variant = GameVersion.variantOf(version, variant)
++  local prefix = (version == "red" and variant == "us") and ""
++    or GameVersion.cachePrefix(version, variant)
+   for _, path in ipairs(REQUIRED_FILES) do
+     if love.filesystem.getInfo(prefix .. path, "file") == nil then return false end
+   end
+@@ -251,8 +273,12 @@
+ end
+ 
+ -- Whether a given game version's ROM has already been imported and cached.
+-function RomImporter.isReady(version)
++-- `variant` defaults to the one currently selected for that game, so the
++-- historical single-argument call keeps meaning "is the game I am about to
++-- play ready?".
++function RomImporter.isReady(version, variant)
+   version = version or "red"
++  variant = GameVersion.variantOf(version, variant)
+   local CacheFs = require("src.import.CacheFs")
+   if CacheFs.root() then
+     -- Portable: the cache lives in the game folder next to the executable
+@@ -261,23 +287,28 @@
+     purgeSaveDirCache()
+   end
+   -- Generated data in a developer checkout / Python build is always current.
+-  if sourceTreeHasData(version) then return true end
++  if sourceTreeHasData(version, variant) then return true end
+   local saved = CacheFs.prefix
+-  CacheFs.prefix = GameVersion.cachePrefix(version)
++  CacheFs.prefix = GameVersion.cachePrefix(version, variant)
+   local marker = CacheFs.read(MARKER_PATH)
+   CacheFs.prefix = saved
+-  return marker == markerFor(version) and allRequiredFilesExist(version)
++  return marker == markerFor(version, variant)
++    and allRequiredFilesExist(version, variant)
+ end
+ 
+--- Load the import manifest for a version and confirm it matches that ROM.
+-local function decodeManifest(version)
+-  local path = GameVersion.info(version).manifest
++-- Load the import manifest for a version+variant and confirm it matches that
++-- ROM.  The SHA-1 assertion is what keeps a FR manifest from ever being used
++-- to decode a US ROM (or the reverse): the manifest names the exact dump it
++-- was generated from.
++local function decodeManifest(version, variant)
++  local info = GameVersion.info(version, variant)
++  local path = info.manifest
+   local raw, readError = love.filesystem.read(path)
+   if not raw then error("ROM import metadata is missing: " .. tostring(readError)) end
+   local Json = require("src.link.Json")
+   local manifest, decodeError = Json.decode(raw)
+   if not manifest then error("ROM import metadata is invalid: " .. tostring(decodeError)) end
+-  assert(manifest.romSha1 == GameVersion.info(version).sha1,
++  assert(manifest.romSha1 == info.sha1,
+     "ROM import metadata version mismatch")
+   return manifest
+ end
+@@ -456,6 +487,100 @@
+   }
+ end
+ 
++-- ------- Regional variants (US / FR)
++--
++-- The launcher keeps three game panels.  A panel that has more than one
++-- imported variant shows a small selector; picking one re-points ready[] and
++-- everything downstream (cache prefix, manifest, save file) at that variant,
++-- because those all resolve through GameVersion.variantFor(game).
++
++-- Re-derive ready[game] from the per-variant map after a selection change.
++function RomImporter:_refreshReady(version)
++  local byVariant = self.readyVariants and self.readyVariants[version]
++  if not byVariant then return end
++  self.ready[version] = byVariant[GameVersion.variantFor(version)] or false
++  self:_syncLauncherLocale()
++end
++
++-- The launcher's own chrome follows the panel on screen: a player whose only
++-- import is a French cart should not read an English launcher on the way to a
++-- French game.  Game:load does the same thing again for the booted variant.
++function RomImporter:_syncLauncherLocale()
++  local version = self.tab
++  if not GameVersion.GAMES[version] then version = GameVersion.get() end
++  local info = GameVersion.info(version)
++  if info then
++    pcall(function() require("src.core.Strings").loadLocale(info.language) end)
++  end
++end
++
++-- Variants of a game the player has actually imported.  The selector is only
++-- worth drawing when this returns more than one.
++function RomImporter:importedVariants(version)
++  local out = {}
++  local byVariant = self.readyVariants and self.readyVariants[version] or {}
++  for _, variant in ipairs(GameVersion.variantsOf(version)) do
++    if byVariant[variant] then out[#out + 1] = variant end
++  end
++  return out
++end
++
++-- Switch a game panel to another variant.  Refuses variants that are not
++-- imported, so the selector can never point Play at an empty cache.
++function RomImporter:selectVariant(version, variant)
++  if not GameVersion.hasVariant(version, variant) then return false end
++  local byVariant = self.readyVariants and self.readyVariants[version]
++  if not (byVariant and byVariant[variant]) then return false end
++  if GameVersion.variantFor(version) == variant then return true end
++  GameVersion.selectVariant(version, variant)
++  self:_refreshReady(version)
++  self:_persistVariantChoice(version, variant)
++  return true
++end
++
++-- Step to the next imported variant of a game (selector click / A button).
++function RomImporter:cycleVariant(version)
++  local imported = self:importedVariants(version)
++  if #imported < 2 then return false end
++  local current = GameVersion.variantFor(version)
++  for index, variant in ipairs(imported) do
++    if variant == current then
++      return self:selectVariant(version, imported[index % #imported + 1])
++    end
++  end
++  return self:selectVariant(version, imported[1])
++end
++
++-- The per-game variant choice rides options.lua next to lastVersion, so it
++-- survives a relaunch and lives with the rest of the launcher's persisted
++-- state (portable installs and POKEPORT_IDENTITY sandboxes included).  A
++-- failed write only costs the memory of the choice.
++function RomImporter:_persistVariantChoice(version, variant)
++  pcall(function()
++    local SaveData = require("src.core.SaveData")
++    local opts = SaveData.loadOptions()
++    opts.gameVariants = type(opts.gameVariants) == "table" and opts.gameVariants or {}
++    opts.gameVariants[version] = variant
++    SaveData.saveOptions(opts)
++  end)
++end
++
++-- Reload the remembered per-game variants before the readiness loop runs, so
++-- a player who last played Rouge FR opens on Rouge FR.
++function RomImporter:_restoreVariantChoices()
++  local okOpt, opts = pcall(function()
++    return require("src.core.SaveData").loadOptions()
++  end)
++  local stored = okOpt and opts and opts.gameVariants
++  if type(stored) ~= "table" then return end
++  for _, version in ipairs(GameVersion.ORDER) do
++    local variant = stored[version]
++    if type(variant) == "string" and GameVersion.hasVariant(version, variant) then
++      GameVersion.selectVariant(version, variant)
++    end
++  end
++end
++
+ function RomImporter:_resolveSaveVersion(version)
+   version = version or self.panelVersion or self.tab
+   if GameVersion.VERSIONS[version] then return version end
+@@ -1157,7 +1282,11 @@
+     end)(),
+     logo = love.graphics.newImage("assets/logo/logo.png"),
+     bcg = love.graphics.newImage("assets/logo/bcg.png"),
+-    ready = {}, returning = {}, romName = {},
++    -- ready[game] is "the variant currently selected for this game is
++    -- imported"; readyVariants[game][variant] is the per-variant truth the
++    -- launcher's US|FR selector reads.  Keeping ready[] game-keyed is what
++    -- lets every existing call site stay as it is.
++    ready = {}, readyVariants = {}, returning = {}, romName = {},
+     importing = nil,      -- the version currently extracting, or nil
+     workState = nil,      -- "working" / "complete" / "error" for that import
+     errorVersion = nil,   -- which column shows the current error
+@@ -1215,10 +1344,27 @@
+   -- it under red/ before the readiness loop looks for red/ paths, or every
+   -- such install would read as "never imported" and demand the ROM again.
+   CacheFs.migrateLegacyRedCache()
++  self:_restoreVariantChoices()
+ 
+   for _, version in ipairs(GameVersion.ORDER) do
+-    local info = GameVersion.info(version)
+-    local ready = RomImporter.isReady(version) and not self.forceImport
++    -- Probe every variant of the game, then let the game settle on one:
++    -- the remembered choice if it is imported, otherwise the first variant
++    -- that is.  A player who only ever imported a FR cart lands on FR
++    -- without having to touch the selector.
++    self.readyVariants[version] = {}
++    local firstReady
++    for _, variant in ipairs(GameVersion.variantsOf(version)) do
++      local ok = RomImporter.isReady(version, variant) and not self.forceImport
++      self.readyVariants[version][variant] = ok
++      if ok and not firstReady then firstReady = variant end
++    end
++    if firstReady and not self.readyVariants[version][GameVersion.variantFor(version)] then
++      GameVersion.selectVariant(version, firstReady)
++    end
++
++    local variant = GameVersion.variantFor(version)
++    local info = GameVersion.info(version, variant)
++    local ready = self.readyVariants[version][variant] or false
+     self.ready[version] = ready
+     -- a marker present but for an older cache generation / different ROM means
+     -- "update required" (re-import) rather than a clean first-run choose
+@@ -1227,11 +1373,12 @@
+     local marker = CacheFs.read(MARKER_PATH)
+     CacheFs.prefix = saved
+     self.returning[version] =
+-      (not ready) and marker ~= nil and marker ~= markerFor(version)
++      (not ready) and marker ~= nil and marker ~= markerFor(version, variant)
+     self.romName[version] = "pokemon_" .. info.id
+       .. (info.id == "yellow" and ".gbc" or ".gb")
+   end
+   self:_applyLastVersionTab()
++  self:_syncLauncherLocale()
+   self:_queueBaseRomScan()
+ 
+   -- Android: import a save-dir .gb/.gbc that is not yet ready (USB drop or a
+@@ -1451,14 +1598,21 @@
+     return
+   end
+   local actualHash = sha1(data)
+-  local version = GameVersion.forSha1(actualHash)
++  -- SHA-1 is the only thing that decides which game AND which regional
++  -- variant a file is.  Size and the Game Boy header are checked above as a
++  -- courtesy (a nicer message for an obviously wrong file); they never
++  -- select a manifest.
++  local version, variant = GameVersion.identify(actualHash)
+   if not version then
+-    self:setError(("Unsupported ROM (SHA-1 %s). This needs a clean US Pokemon "
+-      .. "Red, Blue, or Yellow dump; patched, trimmed or \"fixed\" dumps "
+-      .. "(tagged [b] or [BF]) never verify."):format(actualHash))
++    self:setError(("Unsupported ROM (SHA-1 %s). This needs a clean Pokemon "
++      .. "Red, Blue or Yellow dump (US English or French); patched, trimmed "
++      .. "or \"fixed\" dumps (tagged [b] or [BF]) never verify."):format(actualHash))
+     return
+   end
+-  local info = GameVersion.info(version)
++  -- Point the game panel at the variant this cart actually is, before
++  -- anything downstream resolves a cache prefix, manifest or save file.
++  GameVersion.selectVariant(version, variant)
++  local info = GameVersion.info(version, variant)
+ 
+   -- Bring the launcher to this version's tab so its progress bar is on screen
+   -- (a dropped cart is routed by SHA-1 regardless of which tab was showing).
+@@ -1493,7 +1647,7 @@
+     CacheFs.removeTree("assets/generated")
+     CacheFs.remove(MARKER_PATH)
+ 
+-    local manifest = decodeManifest(version)
++    local manifest = decodeManifest(version, variant)
+     local RomExtractor = require("src.import.RomExtractor")
+     local extractor = RomExtractor.new(self.romData, manifest,
+       function(progress, total, stage, current, stageTotal)
+@@ -1508,11 +1662,14 @@
+     collectgarbage("collect")
+     -- Written last: the marker is what isReady() checks, so it must only
+     -- appear once every required file is in place.
+-    local ok, writeError = CacheFs.write(MARKER_PATH, markerFor(version))
++    local ok, writeError = CacheFs.write(MARKER_PATH, markerFor(version, variant))
+     CacheFs.prefix = ""   -- restore the default so later writes stay at the root
+     if not ok then error("could not finish the private cache: " .. tostring(writeError)) end
+     if self.web then pcall(love.filesystem.remove, WEB_IMPORT_ACTIVE) end
+-    self.ready[version] = true
++    self.readyVariants[version] = self.readyVariants[version] or {}
++    self.readyVariants[version][variant] = true
++    self:_persistVariantChoice(version, variant)
++    self:_refreshReady(version)
+     self.returning[version] = false
+     self.romName[version] = (displayName
+       and (displayName:match("[^/\\]+$") or displayName)) or self.romName[version]
+@@ -1542,7 +1699,7 @@
+     self._handedOff = true
+     resetPointerCursor(self)
+     if self._flex then require("src.import.LauncherView").detach(self) end
+-    if self.onComplete then self.onComplete(version) end
++    if self.onComplete then self.onComplete(version, variant) end
+   end)
+ end
+ 
+@@ -1653,12 +1810,17 @@
+     end
+     self.pickPending = true
+     self.pickTimer = 0
+-    local ok = love.system and love.system.openURL and love.system.openURL(
+-      "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickMod()")
++    local ok = love.filesystem.write(WEB_PICK_REQUEST, "mod")
++    pcall(function()
++      if love.system and love.system.openURL then
++        love.system.openURL(
++          "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickMod()")
++      end
++    end)
+     if not ok then
+       self.pickPending = nil
+       self.modNotice = { ok = false,
+-        text = "Could not open the browser mod picker." }
++        text = "Could not ask the page for a mod picker." }
+     end
+     return
+   end
+@@ -1907,11 +2069,18 @@
+     end
+     self.pickPending = true
+     self.pickTimer = 0
+-    local ok = love.system and love.system.openURL and love.system.openURL(
+-      "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickRom()")
++    local ok = love.filesystem.write(WEB_PICK_REQUEST, "rom")
++    -- Kept as a second attempt for shells that can still take it; it is a
++    -- no-op on iOS and must never be the only path.
++    pcall(function()
++      if love.system and love.system.openURL then
++        love.system.openURL(
++          "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickRom()")
++      end
++    end)
+     if not ok then
+       self.pickPending = nil
+-      self:setError("Could not open the browser file picker.")
++      self:setError("Could not ask the page for a file picker.")
+     end
+     return
+   end
+@@ -2059,6 +2228,8 @@
+ 
+ function RomImporter:update(dt)
+   self.pulse = self.pulse + dt
++  -- Follows the tab the player is on; a no-op once the language matches.
++  self:_syncLauncherLocale()
+   self:_updatePadCursor(dt)
+   self:_stepBaseRomScan()
+   -- Pump the FlexLove view (input polling + the queued click actions).  The
+@@ -2456,17 +2627,22 @@
+   -- of its own, so portable installs and POKEPORT_IDENTITY sandboxes keep it
+   -- with the rest of the launcher's persisted state.  A failed write only
+   -- costs the memory of the choice, so it must never block the boot.
++  local variant = GameVersion.variantFor(version)
+   pcall(function()
+     local SaveData = require("src.core.SaveData")
+     local opts = SaveData.loadOptions()
+     opts.lastVersion = version
++    -- Remember the variant with it, so relaunching lands on Rouge FR rather
++    -- than on Red US's column with a French cache selected.
++    opts.gameVariants = type(opts.gameVariants) == "table" and opts.gameVariants or {}
++    opts.gameVariants[version] = variant
+     SaveData.saveOptions(opts)
+   end)
+   resetPointerCursor(self)
+   -- The game draws with raw love.graphics from here on; drop the view's
+   -- element tree and canvases before the handoff.
+   if self._flex then require("src.import.LauncherView").detach(self) end
+-  if self.onComplete then self.onComplete(version) end
++  if self.onComplete then self.onComplete(version, variant) end
+ end
+ 
+ -- "re-import" a column: drop it back to the choose/drop state so a fresh ROM
+@@ -2475,6 +2651,11 @@
+   if self.workState == "working" then return end
+   if not self.ready[version] then return end
+   self.ready[version] = false
++  if self.readyVariants[version] then
++    -- Only the variant on screen is being replaced; the other one keeps its
++    -- cache and stays selectable.
++    self.readyVariants[version][GameVersion.variantFor(version)] = false
++  end
+   self.returning[version] = false
+   self.chooseVersion = version
+   if self.baseRomDiscovery then
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/SaveFileIO.lua love_src/src/import/SaveFileIO.lua
+--- love_orig/src/import/SaveFileIO.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/import/SaveFileIO.lua	2026-08-14 18:23:10.929921291 +0000
+@@ -74,8 +74,9 @@
+ -- this returns false, nil, { needsConfirm = true, size = #bytes } so the
+ -- launcher can ask the player before truncating; with force the extra bytes
+ -- are dropped and the 32768-byte save imports.
+-function SaveFileIO.importToSlot(source, version, force)
++function SaveFileIO.importToSlot(source, version, force, variant)
+   version = version or GameVersion.get()
++  variant = GameVersion.variantOf(version, variant)
+   local bytes, readErr = readSource(source)
+   if not bytes then return false, readErr end
+   if #bytes ~= SAVE_SIZE then
+@@ -96,7 +97,10 @@
+   -- 3rd arg: the crosswalk has to come from THIS game's ROM cache.  The
+   -- launcher imports before the cache is mounted on the un-prefixed paths, so
+   -- SaveConvert cannot find the generated tables by itself here (#420).
+-  local save, convertErr = SaveConvert.importSav(bytes, version, version)
++  -- 4th arg: a French cart's name fields are charmap-encoded differently
++  -- ($BA is "à", not "é"), so the codec must be told which variant this
++  -- .sav belongs to or every accented name decodes wrong.
++  local save, convertErr = SaveConvert.importSav(bytes, version, version, variant)
+   if not save then return false, convertErr end
+   -- Tag the game version and normalize the meta stamp: SaveConvert leaves
+   -- meta.format = "gen1_import", but SaveData.load's migration pass compares
+@@ -121,11 +125,12 @@
+ -- folder when portable mode is on, otherwise the save directory (created if
+ -- absent).  Returns true + the absolute path on success, false + a friendly
+ -- message otherwise.
+-function SaveFileIO.exportActiveSlot(version)
++function SaveFileIO.exportActiveSlot(version, variant)
+   version = version or GameVersion.get()
++  variant = GameVersion.variantOf(version, variant)
+   local save = SaveData.load(version)
+   if not save then return false, "this game has no save to export yet" end
+-  local bytes, exportErr = SaveConvert.exportSav(save, version)
++  local bytes, exportErr = SaveConvert.exportSav(save, version, variant)
+   if not bytes then return false, exportErr end
+   local slotId = SaveData.activeSlot(version) or "save"
+   -- Portable mode is the same seam SaveData's own persistFs uses: when
+@@ -137,12 +142,16 @@
+   local portableFs = SaveData.portableFs()
+   local fs = portableFs or (love and love.filesystem)
+   if not (fs and fs.write) then return false, "no filesystem available to export to" end
++  -- Per-game folder so MTP browsing matches inbox layout (red/blue/yellow).
++  -- A regional variant exports beside it under its own save id (red-fr/...)
++  -- so a FR export can never overwrite the US one, and the filename says
++  -- which cart the .sav belongs in.
++  local exportId = GameVersion.info(version, variant).saveId
+   if fs.createDirectory then
+     fs.createDirectory("exports")
+-    fs.createDirectory("exports/" .. version)
++    fs.createDirectory("exports/" .. exportId)
+   end
+-  -- Per-game folder so MTP browsing matches inbox layout (red/blue/yellow).
+-  local rel = ("exports/%s/gen1recomp-%s-%s.sav"):format(version, version, slotId)
++  local rel = ("exports/%s/gen1recomp-%s-%s.sav"):format(exportId, exportId, slotId)
+   local ok, writeErr = fs.write(rel, bytes)
+   if not ok then return false, "could not write the export: " .. tostring(writeErr) end
+   -- Absolute path for the notice line, resolved against whichever root took
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/render/SafeImage.lua love_src/src/render/SafeImage.lua
+--- love_orig/src/render/SafeImage.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/src/render/SafeImage.lua	2026-08-15 08:56:37.795818513 +0000
+@@ -0,0 +1,65 @@
++-- Load an optional image without betting the process on it.
++--
++-- Every optional asset in the UI was loaded as
++--
++--     local ok, img = pcall(love.graphics.newImage, path)
++--     return ok and img or nil
++--
++-- which is correct on desktop and NOT correct on the Web build.  love.js is
++-- compiled without catchable C++ exceptions, so a LÖVE exception unwinds
++-- straight past pcall and kills the main loop -- the same hazard
++-- src/core/WebViewport.lua already documents for love.filesystem.read on a
++-- missing file:
++--
++--     "love.filesystem.read on a MISSING file aborts this runtime ... getInfo
++--      is the only safe probe, and it is always taken first."
++--
++-- The consequence was not theoretical.  Yellow's title copyright line draws
++-- one extra tile after the GAME FREAK logo: the international release has a
++-- single "9" (NineTile) there, the French one has a two-tile "zeros" block,
++-- and the extractor only recognised the one-tile shape -- so on a French
++-- Yellow import assets/generated/title/nine.png was never written.  On
++-- desktop TitleState shrugged and drew nothing.  On iPhone the same pcall let
++-- the exception through and the game died on Play with LÖVE's pre-window
++-- alert, with the launcher still saying GOOD TO GO.
++--
++-- So: probe with getInfo, which returns nil instead of throwing, and only
++-- then load.  The pcall stays as a second net for a file that exists but is
++-- not decodable.
++
++local SafeImage = {}
++
++-- The only safe existence probe on this runtime: getInfo returns nil for a
++-- missing file instead of throwing.
++function SafeImage.exists(path)
++  if type(path) ~= "string" or path == "" then return false end
++  if love.filesystem and love.filesystem.getInfo then
++    return love.filesystem.getInfo(path, "file") ~= nil
++  end
++  return true
++end
++
++-- Optional image, or nil.  `path` may be nil.  `resolver` is applied to the
++-- path first (Assets.resolve, for mod-derived art) when supplied.
++function SafeImage.load(path, resolver)
++  if type(path) ~= "string" or path == "" then return nil end
++  local resolved = path
++  if resolver then
++    local okResolve, out = pcall(resolver, path)
++    if okResolve and type(out) == "string" and out ~= "" then resolved = out end
++  end
++  if not SafeImage.exists(resolved) then return nil end
++  local ok, img = pcall(love.graphics.newImage, resolved)
++  return ok and img or nil
++end
++
++-- An image built from ImageData already in memory: no file to miss, so the
++-- pcall really is the whole net here.  It lives next to load() so that every
++-- optional-image path in the engine goes through one place.
++function SafeImage.fromData(imageData)
++  if not imageData then return nil end
++  local ok, img = pcall(love.graphics.newImage, imageData)
++  return ok and img or nil
++end
++
++return SafeImage
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/SaveConvert.lua love_src/src/save_convert/SaveConvert.lua
+--- love_orig/src/save_convert/SaveConvert.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/save_convert/SaveConvert.lua	2026-08-14 18:21:55.711211417 +0000
+@@ -65,6 +65,50 @@
+   "src/save_convert/data/event_flags_yellow.lua",
+ }
+ 
++-- Name fields (player / rival / OT / nicknames) are charmap-encoded BYTES, and
++-- a localised release re-points the upper half of that table: $BA is "é" in
++-- the international ROMs and "à" in the French ones, $BB..$BF are the English
++-- elisions ('d 'l 's 't 'v) and the French accents (è é ù ß ç), and $D4..$DF
++-- carry the French elisions (c' d' j' ...) where the international table keeps
++-- vestigial kana.  Decoding a French .sav through the international table
++-- silently mangles every accented name, so each variant names its own
++-- committed crosswalk (generated by `python3 -m extract.charmap` against the
++-- matching disassembly -- see tools/manifests/README.md).
++--
++-- pokered-fr and pokeyellow-fr agree on every *glyph* byte but not on a few
++-- bracketed encode-only tokens (<G>/<g>, <to>/→), so Jaune gets its own file
++-- rather than an approximation -- the same exactness the single international
++-- charmap already has (pret/pokered and pret/pokeyellow are byte-identical
++-- there).
++local CHARMAP_MODULES = {
++  us = {
++    ["*"] = { "src.save_convert.data.charmap", "src/save_convert/data/charmap.lua" },
++  },
++  fr = {
++    ["*"] = { "src.save_convert.data.charmap_fr",
++              "src/save_convert/data/charmap_fr.lua" },
++    yellow = { "src.save_convert.data.charmap_fr_yellow",
++               "src/save_convert/data/charmap_fr_yellow.lua" },
++  },
++}
++
++local function charmapModule(gameVersion, variant)
++  local byVariant = CHARMAP_MODULES[variant] or CHARMAP_MODULES.us
++  return byVariant[gameVersion] or byVariant["*"]
++end
++
++-- The variant a caller means.  Explicit wins; otherwise ask GameVersion,
++-- which knows what the launcher selected / what booted.  Falls back to "us"
++-- when GameVersion is unavailable (plain-Lua CLI runs).
++local function resolveVariant(gameVersion, variant)
++  if variant then return variant end
++  local ok, GameVersion = pcall(require, "src.core.GameVersion")
++  if ok and GameVersion and GameVersion.variantOf then
++    return GameVersion.variantOf(gameVersion, nil)
++  end
++  return "us"
++end
++
+ local function loadTable(requirePath, filePath)
+   local ok, mod = pcall(require, requirePath)
+   if ok and type(mod) == "table" then return mod end
+@@ -97,13 +141,15 @@
+ -- read the tables out of the cache whenever the caller names the game the
+ -- save belongs to, and let the require path above cover everything else
+ -- (#420).
+-local function loadCacheTable(gameVersion, filePath)
++local function loadCacheTable(gameVersion, filePath, variant)
+   if not (gameVersion and love and love.filesystem) then return nil end
+   if not filePath:match("^data/generated/") then return nil end
+   local okc, CacheFs = pcall(require, "src.import.CacheFs")
+   local okg, GameVersion = pcall(require, "src.core.GameVersion")
+   if not (okc and okg and type(CacheFs) == "table") then return nil end
+-  local info = GameVersion.VERSIONS[gameVersion]
++  -- The variant decides the cache tree: red/ and red-fr/ hold different
++  -- species/item/map tables and must never cross.
++  local info = GameVersion.info(gameVersion, variant)
+   if not info then return nil end
+   -- CacheFs.prefix is launcher-owned global state (it points at whatever
+   -- import last ran), so borrow it for this read and put it back.
+@@ -123,10 +169,13 @@
+ -- require-resolved set): Yellow's tables are not Red's, so one import must
+ -- never be handed the previous import's data (#420).
+ local crosswalks = {}   -- [key] = { pokemon=, moves=, items=, maps=, eventFlags= }
+-local charmapReady
+-
+-local function ensureData(gameVersion)
+-  local key = gameVersion or "*"
++-- Which charmap GenSave currently holds, as a "<game>/<variant>" key: the
++-- codec has one global charmap, so switching variants must re-install it.
++local charmapKey
++
++local function ensureData(gameVersion, variant)
++  variant = resolveVariant(gameVersion, variant)
++  local key = (gameVersion or "*") .. "/" .. variant
+   if not crosswalks[key] then
+     local data = {}
+     for name, spec in pairs(DATA_MODULES) do
+@@ -134,7 +183,7 @@
+         if name == "eventFlags" and gameVersion == "yellow" then
+           spec = YELLOW_EVENT_FLAGS -- Yellow's bit numbering differs (#838)
+         end
+-        local mod = loadCacheTable(gameVersion, spec[2])
++        local mod = loadCacheTable(gameVersion, spec[2], variant)
+         if not mod then
+           local e
+           mod, e = loadTable(spec[1], spec[2])
+@@ -150,13 +199,15 @@
+     -- bytes (wPikachuFriendship) on it, since those offsets are map
+     -- scratch in Red/Blue (#763, #838)
+     data.gameVersion = gameVersion
++    data.variant = variant
+     crosswalks[key] = data
+   end
+-  if not charmapReady then
+-    local cm, err = loadTable(DATA_MODULES.charmap[1], DATA_MODULES.charmap[2])
++  if charmapKey ~= key then
++    local spec = charmapModule(gameVersion, variant)
++    local cm, err = loadTable(spec[1], spec[2])
+     if not cm then return nil, err end
+     GenSave.setCharmap(cm)
+-    charmapReady = true
++    charmapKey = key
+   end
+   return crosswalks[key]
+ end
+@@ -164,8 +215,8 @@
+ -- Exposed for the CLI/tests so they can share the exact data set the codec
+ -- uses (and so a caller can pre-warm the cache).  gameVersion picks whose ROM
+ -- cache the generated tables come from.  Returns data, err.
+-function SaveConvert.loadData(gameVersion)
+-  return ensureData(gameVersion)
++function SaveConvert.loadData(gameVersion, variant)
++  return ensureData(gameVersion, variant)
+ end
+ 
+ -- ------------------------------------------------------------------
+@@ -222,14 +273,14 @@
+ -- names the game the save is being imported for, which is what selects the
+ -- crosswalk tables; omit it to take whatever `require` resolves. On any
+ -- failure returns nil + a message (never raises).
+-function SaveConvert.importSav(bytes, version, gameVersion)
++function SaveConvert.importSav(bytes, version, gameVersion, variant)
+   if type(bytes) ~= "string" then
+     return nil, "expected raw save bytes as a string"
+   end
+   if #bytes ~= GenSave.SAVE_SIZE then
+     return nil, ("save must be %d bytes, got %d"):format(GenSave.SAVE_SIZE, #bytes)
+   end
+-  local data, derr = ensureData(gameVersion)
++  local data, derr = ensureData(gameVersion, variant)
+   if not data then return nil, derr end
+ 
+   local ok, decoded = pcall(GenSave.decode, bytes, data)
+@@ -254,11 +305,11 @@
+ -- GenSave reproduces every unmodeled region from it; otherwise those regions
+ -- are zero-filled. gameVersion selects the crosswalk tables exactly as in
+ -- importSav. On failure returns nil + a message (never raises).
+-function SaveConvert.exportSav(saveTable, gameVersion)
++function SaveConvert.exportSav(saveTable, gameVersion, variant)
+   if type(saveTable) ~= "table" then
+     return nil, "expected a save table"
+   end
+-  local data, derr = ensureData(gameVersion)
++  local data, derr = ensureData(gameVersion, variant)
+   if not data then return nil, derr end
+   local ok, bytes = pcall(GenSave.encode, saveTable, data, nil)
+   if not ok then return nil, "encode failed: " .. tostring(bytes) end
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/charmap_fr.lua love_src/src/save_convert/data/charmap_fr.lua
+--- love_orig/src/save_convert/data/charmap_fr.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/src/save_convert/data/charmap_fr.lua	2026-08-14 18:20:40.746373773 +0000
+@@ -0,0 +1,604 @@
++-- Generated by tools/build_data.py. DO NOT EDIT.
++-- Gen1 text byte <-> glyph/token charmap (fixed-length name
++-- fields: player/rival/OT names, nicknames -- box/party mon
++-- names are NUL-free, '@' ($50) terminated, space-padded).
++-- byToken's key is the literal glyph for ordinary characters
++-- ("A", "é", ...) or a bracketed control token
++-- ("<PLAYER>", "@") for terminators/substitutions -- only
++-- the plain single-glyph entries are meaningful inside a name.
++return {
++  byByte = {
++    [0] = "<NULL>",
++    [5] = "ガ",
++    [6] = "ギ",
++    [7] = "グ",
++    [8] = "ゲ",
++    [9] = "ゴ",
++    [10] = "ザ",
++    [11] = "ジ",
++    [12] = "ズ",
++    [13] = "ゼ",
++    [14] = "ゾ",
++    [15] = "ダ",
++    [16] = "ヂ",
++    [17] = "ヅ",
++    [18] = "デ",
++    [19] = "ド",
++    [25] = "バ",
++    [26] = "ビ",
++    [27] = "ブ",
++    [28] = "ボ",
++    [38] = "が",
++    [39] = "ぎ",
++    [40] = "ぐ",
++    [41] = "げ",
++    [42] = "ご",
++    [43] = "ざ",
++    [44] = "じ",
++    [45] = "ず",
++    [46] = "ぜ",
++    [47] = "ぞ",
++    [48] = "だ",
++    [49] = "ぢ",
++    [50] = "づ",
++    [51] = "で",
++    [52] = "ど",
++    [58] = "ば",
++    [59] = "び",
++    [60] = "ぶ",
++    [61] = "べ",
++    [62] = "ぼ",
++    [64] = "パ",
++    [65] = "ピ",
++    [66] = "プ",
++    [67] = "ポ",
++    [68] = "ぱ",
++    [69] = "ぴ",
++    [70] = "ぷ",
++    [71] = "ぺ",
++    [72] = "ぽ",
++    [73] = "<PAGE>",
++    [74] = "<PKMN>",
++    [75] = "<_CONT>",
++    [76] = "<SCROLL>",
++    [78] = "<NEXT>",
++    [79] = "<LINE>",
++    [80] = "@",
++    [81] = "<PARA>",
++    [82] = "<PLAYER>",
++    [83] = "<RIVAL>",
++    [84] = "#",
++    [85] = "<CONT>",
++    [86] = "<……>",
++    [87] = "<DONE>",
++    [88] = "<PROMPT>",
++    [89] = "<TARGET>",
++    [90] = "<USER>",
++    [91] = "<PC>",
++    [92] = "<TM>",
++    [93] = "<TRAINER>",
++    [94] = "<ROCKET>",
++    [95] = "<DEXEND>",
++    [96] = "<BOLD_A>",
++    [97] = "<BOLD_B>",
++    [98] = "<BOLD_C>",
++    [99] = "<BOLD_D>",
++    [100] = "<BOLD_E>",
++    [101] = "<BOLD_F>",
++    [102] = "<BOLD_G>",
++    [103] = "<BOLD_H>",
++    [104] = "<BOLD_I>",
++    [105] = "<BOLD_V>",
++    [106] = "<BOLD_S>",
++    [107] = "<BOLD_L>",
++    [108] = "<BOLD_M>",
++    [109] = "<COLON>",
++    [110] = "ぃ",
++    [111] = "ぅ",
++    [112] = "‘",
++    [113] = "’",
++    [114] = "“",
++    [115] = "”",
++    [116] = "·",
++    [117] = "…",
++    [118] = "ぁ",
++    [119] = "ぇ",
++    [120] = "ぉ",
++    [121] = "┌",
++    [122] = "─",
++    [123] = "┐",
++    [124] = "│",
++    [125] = "└",
++    [126] = "┘",
++    [127] = " ",
++    [128] = "A",
++    [129] = "B",
++    [130] = "C",
++    [131] = "D",
++    [132] = "E",
++    [133] = "F",
++    [134] = "G",
++    [135] = "H",
++    [136] = "I",
++    [137] = "J",
++    [138] = "K",
++    [139] = "L",
++    [140] = "M",
++    [141] = "N",
++    [142] = "O",
++    [143] = "P",
++    [144] = "Q",
++    [145] = "R",
++    [146] = "S",
++    [147] = "T",
++    [148] = "U",
++    [149] = "V",
++    [150] = "W",
++    [151] = "X",
++    [152] = "Y",
++    [153] = "Z",
++    [154] = "(",
++    [155] = ")",
++    [156] = ":",
++    [157] = ";",
++    [158] = "[",
++    [159] = "]",
++    [160] = "a",
++    [161] = "b",
++    [162] = "c",
++    [163] = "d",
++    [164] = "e",
++    [165] = "f",
++    [166] = "g",
++    [167] = "h",
++    [168] = "i",
++    [169] = "j",
++    [170] = "k",
++    [171] = "l",
++    [172] = "m",
++    [173] = "n",
++    [174] = "o",
++    [175] = "p",
++    [176] = "q",
++    [177] = "r",
++    [178] = "s",
++    [179] = "t",
++    [180] = "u",
++    [181] = "v",
++    [182] = "w",
++    [183] = "x",
++    [184] = "y",
++    [185] = "z",
++    [186] = "à",
++    [187] = "è",
++    [188] = "é",
++    [189] = "ù",
++    [190] = "ß",
++    [191] = "ç",
++    [192] = "Ä",
++    [193] = "Ö",
++    [194] = "Ü",
++    [195] = "ä",
++    [196] = "ö",
++    [197] = "ü",
++    [198] = "ë",
++    [199] = "ï",
++    [200] = "â",
++    [201] = "ô",
++    [202] = "û",
++    [203] = "ê",
++    [204] = "î",
++    [205] = "へ",
++    [206] = "ほ",
++    [207] = "ま",
++    [208] = "み",
++    [209] = "む",
++    [210] = "め",
++    [211] = "も",
++    [212] = "c'",
++    [213] = "d'",
++    [214] = "j'",
++    [215] = "l'",
++    [216] = "m'",
++    [217] = "n'",
++    [218] = "p'",
++    [219] = "s'",
++    [220] = "'s",
++    [221] = "t'",
++    [222] = "u'",
++    [223] = "y'",
++    [224] = "'",
++    [225] = "<PK>",
++    [226] = "<MN>",
++    [227] = "-",
++    [228] = "+",
++    [229] = "ﾞ",
++    [230] = "?",
++    [231] = "!",
++    [232] = ".",
++    [233] = "ァ",
++    [234] = "ゥ",
++    [235] = "ェ",
++    [236] = "▷",
++    [237] = "▲",
++    [238] = "▼",
++    [239] = "♂",
++    [240] = "<ED>",
++    [241] = "×",
++    [242] = "<DOT>",
++    [243] = "/",
++    [244] = ",",
++    [245] = "♀",
++    [246] = "0",
++    [247] = "1",
++    [248] = "2",
++    [249] = "3",
++    [250] = "4",
++    [251] = "5",
++    [252] = "6",
++    [253] = "7",
++    [254] = "8",
++    [255] = "9",
++  },
++  byToken = {
++    [" "] = 127,
++    ["!"] = 231,
++    ["#"] = 84,
++    ["'"] = 224,
++    ["'s"] = 220,
++    ["("] = 154,
++    [")"] = 155,
++    ["+"] = 228,
++    [","] = 244,
++    ["-"] = 227,
++    ["."] = 232,
++    ["/"] = 243,
++    ["0"] = 246,
++    ["1"] = 247,
++    ["2"] = 248,
++    ["3"] = 249,
++    ["4"] = 250,
++    ["5"] = 251,
++    ["6"] = 252,
++    ["7"] = 253,
++    ["8"] = 254,
++    ["9"] = 255,
++    [":"] = 156,
++    [";"] = 157,
++    ["<BOLD_A>"] = 96,
++    ["<BOLD_B>"] = 97,
++    ["<BOLD_C>"] = 98,
++    ["<BOLD_D>"] = 99,
++    ["<BOLD_E>"] = 100,
++    ["<BOLD_F>"] = 101,
++    ["<BOLD_G>"] = 102,
++    ["<BOLD_H>"] = 103,
++    ["<BOLD_I>"] = 104,
++    ["<BOLD_L>"] = 107,
++    ["<BOLD_M>"] = 108,
++    ["<BOLD_P>"] = 114,
++    ["<BOLD_S>"] = 106,
++    ["<BOLD_V>"] = 105,
++    ["<COLON>"] = 109,
++    ["<CONT>"] = 85,
++    ["<DEXEND>"] = 95,
++    ["<DONE>"] = 87,
++    ["<DOT>"] = 242,
++    ["<ED>"] = 240,
++    ["<G>"] = 98,
++    ["<ID>"] = 115,
++    ["<K>"] = 97,
++    ["<LINE>"] = 79,
++    ["<LV>"] = 110,
++    ["<M>"] = 96,
++    ["<MN>"] = 226,
++    ["<NEXT>"] = 78,
++    ["<NULL>"] = 0,
++    ["<PAGE>"] = 73,
++    ["<PARA>"] = 81,
++    ["<PC>"] = 91,
++    ["<PK>"] = 225,
++    ["<PKMN>"] = 74,
++    ["<PLAYER>"] = 82,
++    ["<PROMPT>"] = 88,
++    ["<RIVAL>"] = 83,
++    ["<ROCKET>"] = 94,
++    ["<SCROLL>"] = 76,
++    ["<TARGET>"] = 89,
++    ["<TM>"] = 92,
++    ["<TRAINER>"] = 93,
++    ["<USER>"] = 90,
++    ["<_CONT>"] = 75,
++    ["<to>"] = 112,
++    ["<……>"] = 86,
++    ["?"] = 230,
++    ["@"] = 80,
++    A = 128,
++    B = 129,
++    C = 130,
++    D = 131,
++    E = 132,
++    F = 133,
++    G = 134,
++    H = 135,
++    I = 136,
++    J = 137,
++    K = 138,
++    L = 139,
++    M = 140,
++    N = 141,
++    O = 142,
++    P = 143,
++    Q = 144,
++    R = 145,
++    S = 146,
++    T = 147,
++    U = 148,
++    V = 149,
++    W = 150,
++    X = 151,
++    Y = 152,
++    Z = 153,
++    ["["] = 158,
++    ["]"] = 159,
++    a = 160,
++    b = 161,
++    c = 162,
++    ["c'"] = 212,
++    d = 163,
++    ["d'"] = 213,
++    e = 164,
++    f = 165,
++    g = 166,
++    h = 167,
++    i = 168,
++    j = 169,
++    ["j'"] = 214,
++    k = 170,
++    l = 171,
++    ["l'"] = 215,
++    m = 172,
++    ["m'"] = 216,
++    n = 173,
++    ["n'"] = 217,
++    o = 174,
++    p = 175,
++    ["p'"] = 218,
++    q = 176,
++    r = 177,
++    s = 178,
++    ["s'"] = 219,
++    t = 179,
++    ["t'"] = 221,
++    u = 180,
++    ["u'"] = 222,
++    v = 181,
++    w = 182,
++    x = 183,
++    y = 184,
++    ["y'"] = 223,
++    z = 185,
++    ["¥"] = 240,
++    ["·"] = 116,
++    ["Ä"] = 192,
++    ["Ö"] = 193,
++    ["×"] = 241,
++    ["Ü"] = 194,
++    ["ß"] = 190,
++    ["à"] = 186,
++    ["â"] = 200,
++    ["ä"] = 195,
++    ["ç"] = 191,
++    ["è"] = 187,
++    ["é"] = 188,
++    ["ê"] = 203,
++    ["ë"] = 198,
++    ["î"] = 204,
++    ["ï"] = 199,
++    ["ô"] = 201,
++    ["ö"] = 196,
++    ["ù"] = 189,
++    ["û"] = 202,
++    ["ü"] = 197,
++    ["‘"] = 112,
++    ["’"] = 113,
++    ["“"] = 114,
++    ["”"] = 115,
++    ["…"] = 117,
++    ["№"] = 116,
++    ["⋯"] = 117,
++    ["─"] = 122,
++    ["│"] = 124,
++    ["┌"] = 121,
++    ["┐"] = 123,
++    ["└"] = 125,
++    ["┘"] = 126,
++    ["▲"] = 237,
++    ["▶"] = 237,
++    ["▷"] = 236,
++    ["▼"] = 238,
++    ["♀"] = 245,
++    ["♂"] = 239,
++    ["　"] = 127,
++    ["。"] = 232,
++    ["「"] = 112,
++    ["」"] = 113,
++    ["『"] = 114,
++    ["』"] = 115,
++    ["ぁ"] = 118,
++    ["あ"] = 177,
++    ["ぃ"] = 110,
++    ["い"] = 178,
++    ["ぅ"] = 111,
++    ["う"] = 179,
++    ["ぇ"] = 119,
++    ["え"] = 180,
++    ["ぉ"] = 120,
++    ["お"] = 181,
++    ["か"] = 182,
++    ["が"] = 38,
++    ["き"] = 183,
++    ["ぎ"] = 39,
++    ["く"] = 184,
++    ["ぐ"] = 40,
++    ["け"] = 185,
++    ["げ"] = 41,
++    ["こ"] = 186,
++    ["ご"] = 42,
++    ["さ"] = 187,
++    ["ざ"] = 43,
++    ["し"] = 188,
++    ["じ"] = 44,
++    ["す"] = 189,
++    ["ず"] = 45,
++    ["せ"] = 190,
++    ["ぜ"] = 46,
++    ["そ"] = 191,
++    ["ぞ"] = 47,
++    ["た"] = 192,
++    ["だ"] = 48,
++    ["ち"] = 193,
++    ["ぢ"] = 49,
++    ["っ"] = 223,
++    ["つ"] = 194,
++    ["づ"] = 50,
++    ["て"] = 195,
++    ["で"] = 51,
++    ["と"] = 196,
++    ["ど"] = 52,
++    ["な"] = 197,
++    ["に"] = 198,
++    ["ぬ"] = 199,
++    ["ね"] = 200,
++    ["の"] = 201,
++    ["は"] = 202,
++    ["ば"] = 58,
++    ["ぱ"] = 68,
++    ["ひ"] = 203,
++    ["び"] = 59,
++    ["ぴ"] = 69,
++    ["ふ"] = 204,
++    ["ぶ"] = 60,
++    ["ぷ"] = 70,
++    ["へ"] = 205,
++    ["べ"] = 61,
++    ["ぺ"] = 71,
++    ["ほ"] = 206,
++    ["ぼ"] = 62,
++    ["ぽ"] = 72,
++    ["ま"] = 207,
++    ["み"] = 208,
++    ["む"] = 209,
++    ["め"] = 210,
++    ["も"] = 211,
++    ["ゃ"] = 224,
++    ["や"] = 212,
++    ["ゅ"] = 225,
++    ["ゆ"] = 213,
++    ["ょ"] = 226,
++    ["よ"] = 214,
++    ["ら"] = 215,
++    ["り"] = 216,
++    ["る"] = 217,
++    ["れ"] = 218,
++    ["ろ"] = 219,
++    ["わ"] = 220,
++    ["を"] = 221,
++    ["ん"] = 222,
++    ["ァ"] = 233,
++    ["ア"] = 128,
++    ["ィ"] = 176,
++    ["イ"] = 129,
++    ["ゥ"] = 234,
++    ["ウ"] = 130,
++    ["ェ"] = 235,
++    ["エ"] = 131,
++    ["ォ"] = 244,
++    ["オ"] = 132,
++    ["カ"] = 133,
++    ["ガ"] = 5,
++    ["キ"] = 134,
++    ["ギ"] = 6,
++    ["ク"] = 135,
++    ["グ"] = 7,
++    ["ケ"] = 136,
++    ["ゲ"] = 8,
++    ["コ"] = 137,
++    ["ゴ"] = 9,
++    ["サ"] = 138,
++    ["ザ"] = 10,
++    ["シ"] = 139,
++    ["ジ"] = 11,
++    ["ス"] = 140,
++    ["ズ"] = 12,
++    ["セ"] = 141,
++    ["ゼ"] = 13,
++    ["ソ"] = 142,
++    ["ゾ"] = 14,
++    ["タ"] = 143,
++    ["ダ"] = 15,
++    ["チ"] = 144,
++    ["ヂ"] = 16,
++    ["ッ"] = 172,
++    ["ツ"] = 145,
++    ["ヅ"] = 17,
++    ["テ"] = 146,
++    ["デ"] = 18,
++    ["ト"] = 147,
++    ["ド"] = 19,
++    ["ナ"] = 148,
++    ["ニ"] = 149,
++    ["ヌ"] = 150,
++    ["ネ"] = 151,
++    ["ノ"] = 152,
++    ["ハ"] = 153,
++    ["バ"] = 25,
++    ["パ"] = 64,
++    ["ヒ"] = 154,
++    ["ビ"] = 26,
++    ["ピ"] = 65,
++    ["フ"] = 155,
++    ["ブ"] = 27,
++    ["プ"] = 66,
++    ["ホ"] = 156,
++    ["ボ"] = 28,
++    ["ポ"] = 67,
++    ["マ"] = 157,
++    ["ミ"] = 158,
++    ["ム"] = 159,
++    ["メ"] = 160,
++    ["モ"] = 161,
++    ["ャ"] = 173,
++    ["ヤ"] = 162,
++    ["ュ"] = 174,
++    ["ユ"] = 163,
++    ["ョ"] = 175,
++    ["ヨ"] = 164,
++    ["ラ"] = 165,
++    ["ル"] = 166,
++    ["レ"] = 167,
++    ["ロ"] = 168,
++    ["ワ"] = 169,
++    ["ヲ"] = 170,
++    ["ン"] = 171,
++    ["ー"] = 227,
++    ["円"] = 240,
++    ["！"] = 231,
++    ["．"] = 242,
++    ["／"] = 243,
++    ["０"] = 246,
++    ["１"] = 247,
++    ["２"] = 248,
++    ["３"] = 249,
++    ["４"] = 250,
++    ["５"] = 251,
++    ["６"] = 252,
++    ["７"] = 253,
++    ["８"] = 254,
++    ["９"] = 255,
++    ["？"] = 230,
++    ["ﾞ"] = 229,
++    ["ﾟ"] = 228,
++  },
++  source = "pokered constants/charmap.asm",
++}
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/charmap_fr_yellow.lua love_src/src/save_convert/data/charmap_fr_yellow.lua
+--- love_orig/src/save_convert/data/charmap_fr_yellow.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/src/save_convert/data/charmap_fr_yellow.lua	2026-08-14 18:21:12.427824014 +0000
+@@ -0,0 +1,605 @@
++-- Generated by tools/build_data.py. DO NOT EDIT.
++-- Gen1 text byte <-> glyph/token charmap (fixed-length name
++-- fields: player/rival/OT names, nicknames -- box/party mon
++-- names are NUL-free, '@' ($50) terminated, space-padded).
++-- byToken's key is the literal glyph for ordinary characters
++-- ("A", "é", ...) or a bracketed control token
++-- ("<PLAYER>", "@") for terminators/substitutions -- only
++-- the plain single-glyph entries are meaningful inside a name.
++return {
++  byByte = {
++    [0] = "<NULL>",
++    [5] = "ガ",
++    [6] = "ギ",
++    [7] = "グ",
++    [8] = "ゲ",
++    [9] = "ゴ",
++    [10] = "ザ",
++    [11] = "ジ",
++    [12] = "ズ",
++    [13] = "ゼ",
++    [14] = "ゾ",
++    [15] = "ダ",
++    [16] = "ヂ",
++    [17] = "ヅ",
++    [18] = "デ",
++    [19] = "ド",
++    [25] = "バ",
++    [26] = "ビ",
++    [27] = "ブ",
++    [28] = "ボ",
++    [38] = "が",
++    [39] = "ぎ",
++    [40] = "ぐ",
++    [41] = "げ",
++    [42] = "ご",
++    [43] = "ざ",
++    [44] = "じ",
++    [45] = "ず",
++    [46] = "ぜ",
++    [47] = "ぞ",
++    [48] = "だ",
++    [49] = "ぢ",
++    [50] = "づ",
++    [51] = "で",
++    [52] = "ど",
++    [58] = "ば",
++    [59] = "び",
++    [60] = "ぶ",
++    [61] = "べ",
++    [62] = "ぼ",
++    [64] = "パ",
++    [65] = "ピ",
++    [66] = "プ",
++    [67] = "ポ",
++    [68] = "ぱ",
++    [69] = "ぴ",
++    [70] = "ぷ",
++    [71] = "ぺ",
++    [72] = "ぽ",
++    [73] = "<PAGE>",
++    [74] = "<PKMN>",
++    [75] = "<_CONT>",
++    [76] = "<SCROLL>",
++    [78] = "<NEXT>",
++    [79] = "<LINE>",
++    [80] = "@",
++    [81] = "<PARA>",
++    [82] = "<PLAYER>",
++    [83] = "<RIVAL>",
++    [84] = "#",
++    [85] = "<CONT>",
++    [86] = "<……>",
++    [87] = "<DONE>",
++    [88] = "<PROMPT>",
++    [89] = "<TARGET>",
++    [90] = "<USER>",
++    [91] = "<PC>",
++    [92] = "<TM>",
++    [93] = "<TRAINER>",
++    [94] = "<ROCKET>",
++    [95] = "<DEXEND>",
++    [96] = "<BOLD_A>",
++    [97] = "<BOLD_B>",
++    [98] = "<BOLD_C>",
++    [99] = "<BOLD_D>",
++    [100] = "<BOLD_E>",
++    [101] = "<BOLD_F>",
++    [102] = "<BOLD_G>",
++    [103] = "<BOLD_H>",
++    [104] = "<BOLD_I>",
++    [105] = "<BOLD_V>",
++    [106] = "<BOLD_S>",
++    [107] = "<BOLD_L>",
++    [108] = "<BOLD_M>",
++    [109] = "<COLON>",
++    [110] = "ぃ",
++    [111] = "ぅ",
++    [112] = "‘",
++    [113] = "’",
++    [114] = "“",
++    [115] = "”",
++    [116] = "·",
++    [117] = "…",
++    [118] = "ぁ",
++    [119] = "ぇ",
++    [120] = "ぉ",
++    [121] = "┌",
++    [122] = "─",
++    [123] = "┐",
++    [124] = "│",
++    [125] = "└",
++    [126] = "┘",
++    [127] = " ",
++    [128] = "A",
++    [129] = "B",
++    [130] = "C",
++    [131] = "D",
++    [132] = "E",
++    [133] = "F",
++    [134] = "G",
++    [135] = "H",
++    [136] = "I",
++    [137] = "J",
++    [138] = "K",
++    [139] = "L",
++    [140] = "M",
++    [141] = "N",
++    [142] = "O",
++    [143] = "P",
++    [144] = "Q",
++    [145] = "R",
++    [146] = "S",
++    [147] = "T",
++    [148] = "U",
++    [149] = "V",
++    [150] = "W",
++    [151] = "X",
++    [152] = "Y",
++    [153] = "Z",
++    [154] = "(",
++    [155] = ")",
++    [156] = ":",
++    [157] = ";",
++    [158] = "[",
++    [159] = "]",
++    [160] = "a",
++    [161] = "b",
++    [162] = "c",
++    [163] = "d",
++    [164] = "e",
++    [165] = "f",
++    [166] = "g",
++    [167] = "h",
++    [168] = "i",
++    [169] = "j",
++    [170] = "k",
++    [171] = "l",
++    [172] = "m",
++    [173] = "n",
++    [174] = "o",
++    [175] = "p",
++    [176] = "q",
++    [177] = "r",
++    [178] = "s",
++    [179] = "t",
++    [180] = "u",
++    [181] = "v",
++    [182] = "w",
++    [183] = "x",
++    [184] = "y",
++    [185] = "z",
++    [186] = "à",
++    [187] = "è",
++    [188] = "é",
++    [189] = "ù",
++    [190] = "ß",
++    [191] = "ç",
++    [192] = "Ä",
++    [193] = "Ö",
++    [194] = "Ü",
++    [195] = "ä",
++    [196] = "ö",
++    [197] = "ü",
++    [198] = "ë",
++    [199] = "ï",
++    [200] = "â",
++    [201] = "ô",
++    [202] = "û",
++    [203] = "ê",
++    [204] = "î",
++    [205] = "へ",
++    [206] = "ほ",
++    [207] = "ま",
++    [208] = "み",
++    [209] = "む",
++    [210] = "め",
++    [211] = "も",
++    [212] = "c'",
++    [213] = "d'",
++    [214] = "j'",
++    [215] = "l'",
++    [216] = "m'",
++    [217] = "n'",
++    [218] = "p'",
++    [219] = "s'",
++    [220] = "'s",
++    [221] = "t'",
++    [222] = "u'",
++    [223] = "y'",
++    [224] = "'",
++    [225] = "<PK>",
++    [226] = "<MN>",
++    [227] = "-",
++    [228] = "+",
++    [229] = "ﾞ",
++    [230] = "?",
++    [231] = "!",
++    [232] = ".",
++    [233] = "ァ",
++    [234] = "ゥ",
++    [235] = "ェ",
++    [236] = "▷",
++    [237] = "▲",
++    [238] = "▼",
++    [239] = "♂",
++    [240] = "<ED>",
++    [241] = "×",
++    [242] = "<DOT>",
++    [243] = "/",
++    [244] = ",",
++    [245] = "♀",
++    [246] = "0",
++    [247] = "1",
++    [248] = "2",
++    [249] = "3",
++    [250] = "4",
++    [251] = "5",
++    [252] = "6",
++    [253] = "7",
++    [254] = "8",
++    [255] = "9",
++  },
++  byToken = {
++    [" "] = 127,
++    ["!"] = 231,
++    ["#"] = 84,
++    ["'"] = 224,
++    ["'s"] = 220,
++    ["("] = 154,
++    [")"] = 155,
++    ["+"] = 228,
++    [","] = 244,
++    ["-"] = 227,
++    ["."] = 232,
++    ["/"] = 243,
++    ["0"] = 246,
++    ["1"] = 247,
++    ["2"] = 248,
++    ["3"] = 249,
++    ["4"] = 250,
++    ["5"] = 251,
++    ["6"] = 252,
++    ["7"] = 253,
++    ["8"] = 254,
++    ["9"] = 255,
++    [":"] = 156,
++    [";"] = 157,
++    ["<'>"] = 224,
++    ["<BOLD_A>"] = 96,
++    ["<BOLD_B>"] = 97,
++    ["<BOLD_C>"] = 98,
++    ["<BOLD_D>"] = 99,
++    ["<BOLD_E>"] = 100,
++    ["<BOLD_F>"] = 101,
++    ["<BOLD_G>"] = 102,
++    ["<BOLD_H>"] = 103,
++    ["<BOLD_I>"] = 104,
++    ["<BOLD_L>"] = 107,
++    ["<BOLD_M>"] = 108,
++    ["<BOLD_P>"] = 114,
++    ["<BOLD_S>"] = 106,
++    ["<BOLD_V>"] = 105,
++    ["<COLON>"] = 109,
++    ["<CONT>"] = 85,
++    ["<DEXEND>"] = 95,
++    ["<DONE>"] = 87,
++    ["<DOT>"] = 242,
++    ["<ED>"] = 240,
++    ["<ID>"] = 115,
++    ["<LINE>"] = 79,
++    ["<LV>"] = 110,
++    ["<MN>"] = 226,
++    ["<NEXT>"] = 78,
++    ["<NULL>"] = 0,
++    ["<PAGE>"] = 73,
++    ["<PARA>"] = 81,
++    ["<PC>"] = 91,
++    ["<PK>"] = 225,
++    ["<PKMN>"] = 74,
++    ["<PLAYER>"] = 82,
++    ["<PROMPT>"] = 88,
++    ["<RIVAL>"] = 83,
++    ["<ROCKET>"] = 94,
++    ["<SCROLL>"] = 76,
++    ["<TARGET>"] = 89,
++    ["<TM>"] = 92,
++    ["<TRAINER>"] = 93,
++    ["<USER>"] = 90,
++    ["<_CONT>"] = 75,
++    ["<g>"] = 98,
++    ["<k>"] = 97,
++    ["<m>"] = 96,
++    ["<……>"] = 86,
++    ["?"] = 230,
++    ["@"] = 80,
++    A = 128,
++    B = 129,
++    C = 130,
++    D = 131,
++    E = 132,
++    F = 133,
++    G = 134,
++    H = 135,
++    I = 136,
++    J = 137,
++    K = 138,
++    L = 139,
++    M = 140,
++    N = 141,
++    O = 142,
++    P = 143,
++    Q = 144,
++    R = 145,
++    S = 146,
++    T = 147,
++    U = 148,
++    V = 149,
++    W = 150,
++    X = 151,
++    Y = 152,
++    Z = 153,
++    ["["] = 158,
++    ["]"] = 159,
++    a = 160,
++    b = 161,
++    c = 162,
++    ["c'"] = 212,
++    d = 163,
++    ["d'"] = 213,
++    e = 164,
++    f = 165,
++    g = 166,
++    h = 167,
++    i = 168,
++    j = 169,
++    ["j'"] = 214,
++    k = 170,
++    l = 171,
++    ["l'"] = 215,
++    m = 172,
++    ["m'"] = 216,
++    n = 173,
++    ["n'"] = 217,
++    o = 174,
++    p = 175,
++    ["p'"] = 218,
++    q = 176,
++    r = 177,
++    s = 178,
++    ["s'"] = 219,
++    t = 179,
++    ["t'"] = 221,
++    u = 180,
++    ["u'"] = 222,
++    v = 181,
++    w = 182,
++    x = 183,
++    y = 184,
++    ["y'"] = 223,
++    z = 185,
++    ["¥"] = 240,
++    ["·"] = 116,
++    ["Ä"] = 192,
++    ["Ö"] = 193,
++    ["×"] = 241,
++    ["Ü"] = 194,
++    ["ß"] = 190,
++    ["à"] = 186,
++    ["â"] = 200,
++    ["ä"] = 195,
++    ["ç"] = 191,
++    ["è"] = 187,
++    ["é"] = 188,
++    ["ê"] = 203,
++    ["ë"] = 198,
++    ["î"] = 204,
++    ["ï"] = 199,
++    ["ô"] = 201,
++    ["ö"] = 196,
++    ["ù"] = 189,
++    ["û"] = 202,
++    ["ü"] = 197,
++    ["‘"] = 112,
++    ["’"] = 113,
++    ["“"] = 114,
++    ["”"] = 115,
++    ["…"] = 117,
++    ["№"] = 116,
++    ["→"] = 112,
++    ["⋯"] = 117,
++    ["─"] = 122,
++    ["│"] = 124,
++    ["┌"] = 121,
++    ["┐"] = 123,
++    ["└"] = 125,
++    ["┘"] = 126,
++    ["▲"] = 237,
++    ["▶"] = 237,
++    ["▷"] = 236,
++    ["▼"] = 238,
++    ["♀"] = 245,
++    ["♂"] = 239,
++    ["　"] = 127,
++    ["。"] = 232,
++    ["「"] = 112,
++    ["」"] = 113,
++    ["『"] = 114,
++    ["』"] = 115,
++    ["ぁ"] = 118,
++    ["あ"] = 177,
++    ["ぃ"] = 110,
++    ["い"] = 178,
++    ["ぅ"] = 111,
++    ["う"] = 179,
++    ["ぇ"] = 119,
++    ["え"] = 180,
++    ["ぉ"] = 120,
++    ["お"] = 181,
++    ["か"] = 182,
++    ["が"] = 38,
++    ["き"] = 183,
++    ["ぎ"] = 39,
++    ["く"] = 184,
++    ["ぐ"] = 40,
++    ["け"] = 185,
++    ["げ"] = 41,
++    ["こ"] = 186,
++    ["ご"] = 42,
++    ["さ"] = 187,
++    ["ざ"] = 43,
++    ["し"] = 188,
++    ["じ"] = 44,
++    ["す"] = 189,
++    ["ず"] = 45,
++    ["せ"] = 190,
++    ["ぜ"] = 46,
++    ["そ"] = 191,
++    ["ぞ"] = 47,
++    ["た"] = 192,
++    ["だ"] = 48,
++    ["ち"] = 193,
++    ["ぢ"] = 49,
++    ["っ"] = 223,
++    ["つ"] = 194,
++    ["づ"] = 50,
++    ["て"] = 195,
++    ["で"] = 51,
++    ["と"] = 196,
++    ["ど"] = 52,
++    ["な"] = 197,
++    ["に"] = 198,
++    ["ぬ"] = 199,
++    ["ね"] = 200,
++    ["の"] = 201,
++    ["は"] = 202,
++    ["ば"] = 58,
++    ["ぱ"] = 68,
++    ["ひ"] = 203,
++    ["び"] = 59,
++    ["ぴ"] = 69,
++    ["ふ"] = 204,
++    ["ぶ"] = 60,
++    ["ぷ"] = 70,
++    ["へ"] = 205,
++    ["べ"] = 61,
++    ["ぺ"] = 71,
++    ["ほ"] = 206,
++    ["ぼ"] = 62,
++    ["ぽ"] = 72,
++    ["ま"] = 207,
++    ["み"] = 208,
++    ["む"] = 209,
++    ["め"] = 210,
++    ["も"] = 211,
++    ["ゃ"] = 224,
++    ["や"] = 212,
++    ["ゅ"] = 225,
++    ["ゆ"] = 213,
++    ["ょ"] = 226,
++    ["よ"] = 214,
++    ["ら"] = 215,
++    ["り"] = 216,
++    ["る"] = 217,
++    ["れ"] = 218,
++    ["ろ"] = 219,
++    ["わ"] = 220,
++    ["を"] = 221,
++    ["ん"] = 222,
++    ["ァ"] = 233,
++    ["ア"] = 128,
++    ["ィ"] = 176,
++    ["イ"] = 129,
++    ["ゥ"] = 234,
++    ["ウ"] = 130,
++    ["ェ"] = 235,
++    ["エ"] = 131,
++    ["ォ"] = 244,
++    ["オ"] = 132,
++    ["カ"] = 133,
++    ["ガ"] = 5,
++    ["キ"] = 134,
++    ["ギ"] = 6,
++    ["ク"] = 135,
++    ["グ"] = 7,
++    ["ケ"] = 136,
++    ["ゲ"] = 8,
++    ["コ"] = 137,
++    ["ゴ"] = 9,
++    ["サ"] = 138,
++    ["ザ"] = 10,
++    ["シ"] = 139,
++    ["ジ"] = 11,
++    ["ス"] = 140,
++    ["ズ"] = 12,
++    ["セ"] = 141,
++    ["ゼ"] = 13,
++    ["ソ"] = 142,
++    ["ゾ"] = 14,
++    ["タ"] = 143,
++    ["ダ"] = 15,
++    ["チ"] = 144,
++    ["ヂ"] = 16,
++    ["ッ"] = 172,
++    ["ツ"] = 145,
++    ["ヅ"] = 17,
++    ["テ"] = 146,
++    ["デ"] = 18,
++    ["ト"] = 147,
++    ["ド"] = 19,
++    ["ナ"] = 148,
++    ["ニ"] = 149,
++    ["ヌ"] = 150,
++    ["ネ"] = 151,
++    ["ノ"] = 152,
++    ["ハ"] = 153,
++    ["バ"] = 25,
++    ["パ"] = 64,
++    ["ヒ"] = 154,
++    ["ビ"] = 26,
++    ["ピ"] = 65,
++    ["フ"] = 155,
++    ["ブ"] = 27,
++    ["プ"] = 66,
++    ["ホ"] = 156,
++    ["ボ"] = 28,
++    ["ポ"] = 67,
++    ["マ"] = 157,
++    ["ミ"] = 158,
++    ["ム"] = 159,
++    ["メ"] = 160,
++    ["モ"] = 161,
++    ["ャ"] = 173,
++    ["ヤ"] = 162,
++    ["ュ"] = 174,
++    ["ユ"] = 163,
++    ["ョ"] = 175,
++    ["ヨ"] = 164,
++    ["ラ"] = 165,
++    ["ル"] = 166,
++    ["レ"] = 167,
++    ["ロ"] = 168,
++    ["ワ"] = 169,
++    ["ヲ"] = 170,
++    ["ン"] = 171,
++    ["ー"] = 227,
++    ["円"] = 240,
++    ["！"] = 231,
++    ["．"] = 242,
++    ["／"] = 243,
++    ["０"] = 246,
++    ["１"] = 247,
++    ["２"] = 248,
++    ["３"] = 249,
++    ["４"] = 250,
++    ["５"] = 251,
++    ["６"] = 252,
++    ["７"] = 253,
++    ["８"] = 254,
++    ["９"] = 255,
++    ["？"] = 230,
++    ["ﾞ"] = 229,
++    ["ﾟ"] = 228,
++  },
++  source = "pokered constants/charmap.asm",
++}
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/Credits.lua love_src/src/ui/Credits.lua
+--- love_orig/src/ui/Credits.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/Credits.lua	2026-08-15 08:56:47.059818426 +0000
+@@ -75,9 +75,7 @@
+ local COPY_CREATURES = { 11, 12, 13, 14, 15, 16, 17, 18 } -- Creatures inc.
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ -- DisplayCreditsMon shows the mon as a black silhouette: BGP %11111100
+@@ -87,7 +85,11 @@
+ -- (headless stub) fall back to a black tint (second return value), which
+ -- also blackens interior color-0 pixels.
+ local function silhouette(path)
+-  if not path then return nil end
++  -- Probe before either loader touches the file: on love.js a LOVE exception
++  -- unwinds past pcall and kills the main loop, so "try it and catch" is not
++  -- a strategy there.  See src/render/SafeImage.lua.
++  local SafeImage = require("src.render.SafeImage")
++  if not SafeImage.exists(path) then return nil end
+   if love.image and love.image.newImageData then
+     local ok, imgData = pcall(love.image.newImageData, path)
+     if ok and imgData then
+@@ -95,12 +97,12 @@
+         if a > 0 and r + g + b < 2.9 then return 0, 0, 0, 1 end
+         return r, g, b, a
+       end)
+-      local ok2, img = pcall(love.graphics.newImage, imgData)
+-      if ok2 and img then return img, false end
++      local img = SafeImage.fromData(imgData)
++      if img then return img, false end
+     end
+   end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  if ok and img then return img, true end
++  local img = SafeImage.load(path)
++  if img then return img, true end
+   return nil
+ end
+ 
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/DexEntryMenu.lua love_src/src/ui/DexEntryMenu.lua
+--- love_orig/src/ui/DexEntryMenu.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/DexEntryMenu.lua	2026-08-14 18:43:35.604881311 +0000
+@@ -100,7 +100,9 @@
+   -- height/weight print only once owned, like the description
+   -- (pokedex.asm: "if the pokemon has not been owned, don't print the
+   -- height, weight, or description")
+-  if owned and e.heightFt then
++  -- heightFt (imperial) or heightM (metric): either means the entry carries
++  -- measurements.  A localised ROM has only the metric pair.
++  if owned and (e.heightFt or e.heightM) then
+     -- feet/inches use the dex screen's ′/″ glyphs ("HT  ?′??″" in
+     -- pokedex.asm; the tiles come from gfx/pokedex/pokedex.png via
+     -- engine/gfx/load_pokedex_tiles.asm)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/HallOfFame.lua love_src/src/ui/HallOfFame.lua
+--- love_orig/src/ui/HallOfFame.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/HallOfFame.lua	2026-08-15 08:27:00.127476576 +0000
+@@ -73,9 +73,7 @@
+ -- through Assets.resolve so an enabled mod's overrides/ shadows these the
+ -- same way it shadows every other generated asset
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, Assets.resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path, Assets.resolve)
+ end
+ 
+ -- POKéDEX rating tiers (engine/events/pokedex_rating.asm DexRatingsTable)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/IntroMovie.lua love_src/src/ui/IntroMovie.lua
+--- love_orig/src/ui/IntroMovie.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/IntroMovie.lua	2026-08-15 08:27:00.125654672 +0000
+@@ -117,9 +117,7 @@
+ }
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ function IntroMovie.new(game, onDone)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/OakSpeech.lua love_src/src/ui/OakSpeech.lua
+--- love_orig/src/ui/OakSpeech.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/OakSpeech.lua	2026-08-15 08:27:00.126046730 +0000
+@@ -68,9 +68,7 @@
+ -- through Assets.resolve so an enabled mod's overrides/ shadows these the
+ -- same way it shadows every other generated asset
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, Assets.resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path, Assets.resolve)
+ end
+ 
+ -- Resolve a pic descriptor to (image, flip, trueColor).
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/TitleState.lua love_src/src/ui/TitleState.lua
+--- love_orig/src/ui/TitleState.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/TitleState.lua	2026-08-15 08:29:58.251833577 +0000
+@@ -130,14 +130,12 @@
+ local BALL_REST = 100
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+   -- resolve through Assets so a mod's derived art (save/mod-derived/)
+   -- wins here the way it does for every other generated sheet -- but
+   -- load uncached, because on NX the per-version overlay redirects the
+   -- open itself and a cached image would leak across Yellow/Blue boots
+-  local ok, img = pcall(love.graphics.newImage,
+-    require("src.render.Assets").resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path,
++    require("src.render.Assets").resolve)
+ end
+ 
+ -- the importer seeds field.title with {path,width,height} descriptors
+@@ -679,7 +677,8 @@
+     end
+     if self.nineImg then
+       love.graphics.draw(self.nineImg, x, y)
+-      x = x + 8
++      -- One tile on the international release, two on the French one.
++      x = x + self.nineImg:getWidth()
+     end
+     love.graphics.draw(self.gfInc, x, y)
+     return
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/TradeAnim.lua love_src/src/ui/TradeAnim.lua
+--- love_orig/src/ui/TradeAnim.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/TradeAnim.lua	2026-08-15 08:27:00.126464628 +0000
+@@ -36,9 +36,7 @@
+ }
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ local function nameOf(game, mon)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/TrainerCard.lua love_src/src/ui/TrainerCard.lua
+--- love_orig/src/ui/TrainerCard.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/TrainerCard.lua	2026-08-15 08:27:00.125371772 +0000
+@@ -21,9 +21,7 @@
+ -- through Assets.resolve so an enabled mod's overrides/ shadows these the
+ -- same way it shadows every other generated asset
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, Assets.resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path, Assets.resolve)
+ end
+ 
+ local function quads16(img, count, stride, x0, y0)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/YellowIntro.lua love_src/src/ui/YellowIntro.lua
+--- love_orig/src/ui/YellowIntro.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/YellowIntro.lua	2026-08-15 08:27:00.126788548 +0000
+@@ -220,8 +220,7 @@
+ end
+ 
+ local function tryImage(path)
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ -- ------- state --------------------------------------------------------

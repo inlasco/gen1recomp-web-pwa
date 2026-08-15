@@ -233,3 +233,28 @@ body.web-immersive #immersive-exit {
     font-size: .82rem;
   }
 }
+
+/* The pick prompt (web-bridge-v13.js): the DOM gesture that opens a file
+   picker. iOS only allows one from a real user event, and a canvas touch
+   reaches Lua a frame too late to still count, so the engine asks the page
+   and the page asks the player. Hidden until then, so nothing permanent sits
+   on screen. */
+#pick-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: none;
+  width: 100%;
+  padding: 1.2rem max(1.2rem, env(safe-area-inset-right))
+    calc(1.2rem + env(safe-area-inset-bottom))
+    max(1.2rem, env(safe-area-inset-left));
+  border: 0;
+  background: rgba(5, 7, 11, .82);
+  color: #eff6ff;
+  font: 700 1.05rem/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-align: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+body.web-pick-prompt #pick-prompt { display: block; }
+#pick-prompt:active { background: rgba(29, 78, 216, .55); }

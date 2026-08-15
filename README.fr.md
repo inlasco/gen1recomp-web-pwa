@@ -2,68 +2,119 @@
 
 [English](README.md) | **Français**
 
-Jouez à Gen1Recomp directement depuis votre navigateur mobile — sans sideloading ni émulateur.
+Jouez à Gen1Recomp dans le navigateur de votre téléphone, avec votre propre ROM. Pas d'émulateur, pas de sideloading, pas d'App Store.
 
 <p align="center">
-  <a href="http://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/Application%20Web-en%20ligne-2f9e44?style=flat-square" alt="Application Web : en ligne"></a>
   <img src="https://img.shields.io/badge/Web-PWA-111827?style=flat-square" alt="Web / PWA">
-  <img src="https://img.shields.io/badge/iPhone%20%2F%20Safari-valid%C3%A9%20sur%20mat%C3%A9riel-0b7285?style=flat-square" alt="iPhone / Safari : validé sur matériel réel">
+  <img src="https://img.shields.io/badge/ROM-US%20%2B%20FR-2f9e44?style=flat-square" alt="ROM originales US et françaises prises en charge">
+  <img src="https://img.shields.io/badge/iPhone%20%2F%20Safari-valid%C3%A9%20sur%20mat%C3%A9riel-0b7285?style=flat-square" alt="iPhone / Safari : validé sur matériel">
   <img src="https://img.shields.io/badge/Android-test%C3%A9%20avec%20succ%C3%A8s-2f9e44?style=flat-square" alt="Android : testé avec succès">
-  <img src="https://img.shields.io/badge/WebGL1-pris%20en%20charge-5c7cfa?style=flat-square" alt="WebGL1 pris en charge">
-  <img src="https://img.shields.io/badge/Tactile-commandes-495057?style=flat-square" alt="Commandes tactiles">
-  <img src="https://img.shields.io/badge/Manette-prise%20en%20charge-495057?style=flat-square" alt="Manette prise en charge">
-  <img src="https://img.shields.io/badge/baseline-v1.0-862e9e?style=flat-square" alt="Baseline v1.0">
-  <img src="https://img.shields.io/badge/ROM-non%20fournie-c92a2a?style=flat-square" alt="Aucune ROM fournie">
+  <img src="https://img.shields.io/badge/WebGL1-support%C3%A9-5c7cfa?style=flat-square" alt="WebGL1 supporté">
+  <img src="https://img.shields.io/badge/Tactile%20%2B%20manette-support%C3%A9s-495057?style=flat-square" alt="Tactile et manette supportés">
+  <img src="https://img.shields.io/badge/ROM-non%20incluse-c92a2a?style=flat-square" alt="Aucune ROM incluse">
 </p>
 
 <p align="center">
   <img src="docs/screenshots/overworld-town.jpeg"
-       alt="Overworld voxel 3D de Gen1Recomp Web/PWA sur appareil mobile"
+       alt="Monde en 3D voxel de Gen1Recomp Web/PWA sur un appareil mobile"
        width="100%">
 </p>
 
 <p align="center">
-  <a href="http://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Lancer%20l%27application%20Web-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Lancer l'application Web sur gen1recomp.inlasco.fr"></a>
+  <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Lancer%20l'application%20Web-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Lancer l'application Web sur gen1recomp.inlasco.fr"></a><br>
+  <sub>S'ouvre directement dans votre navigateur mobile. Aucun téléchargement, aucun App Store, aucun compte GitHub.</sub>
 </p>
 
 <p align="center">
-  <strong><a href="http://gen1recomp.inlasco.fr/">▶ Lancer l'application Web — http://gen1recomp.inlasco.fr/</a></strong><br>
-  <sub>S'ouvre directement dans votre navigateur mobile. Aucun téléchargement, aucun App Store, aucun compte GitHub nécessaire.</sub><br>
-  <sub><em>Accès temporaire : la mise en service HTTPS de ce nouveau sous-domaine est encore en cours. L'application est actuellement accessible en HTTP ; le lien repassera en HTTPS dès que le certificat sera pleinement opérationnel.</em></sub>
+  <strong>Soutenir le projet</strong><br>
+  <sub>Le projet vous plaît ? Si vous souhaitez soutenir la poursuite du développement et des tests du port Web/PWA, vous pouvez faire un petit don PayPal à <strong>inlasco</strong>. Chaque contribution aide le projet.</sub>
+</p>
+
+<p align="center">
+  <a href="https://www.paypal.com/qrcodes/p2pqrc/3SUFQM7Z3MG6L">
+    <img src="docs/assets/paypal-inlasco-qr.png"
+         alt="QR code PayPal pour soutenir inlasco"
+         width="200">
+  </a><br>
+  <strong><a href="https://www.paypal.com/qrcodes/p2pqrc/3SUFQM7Z3MG6L">Faire un don via PayPal</a></strong>
 </p>
 
 > [!IMPORTANT]
-> **Aucune ROM n'est fournie.** Vous devez utiliser votre propre ROM compatible, obtenue légalement. Elle est lue localement sur votre appareil et n'est jamais envoyée vers ce dépôt ni vers le serveur d'hébergement.
+> **Aucune ROM n'est incluse.** Vous fournissez la vôtre, obtenue légalement et prise en charge. Elle est lue localement sur votre appareil et n'est jamais envoyée vers ce dépôt ni vers le serveur d'hébergement.
+
+> [!TIP]
+> **Les ROM françaises originales sont désormais prises en charge.**
+> Les versions françaises commerciales originales et non modifiées de **Pokémon Version Rouge**, **Pokémon Version Bleue** et **Pokémon Version Jaune — Édition Spéciale Pikachu** sont prises en charge, en plus des versions US originales de Red, Blue et Yellow. Les dialogues, les noms de Pokémon et d'attaques, les objets et les entrées du Pokédex proviennent tous de votre propre cartouche française.
+>
+> Un seul dump canonique par jeu et par région est reconnu — voir [ROM originales prises en charge](#rom-originales-prises-en-charge). Les ROM patchées, hackées, fan-traduites ou autrement modifiées ne font pas partie de la baseline prise en charge et sont refusées par l'importeur.
 
 ---
 
-## Je veux simplement jouer
+## Jouer en 4 étapes
 
-Aucun compte GitHub n'est nécessaire, et il est inutile de télécharger ce dépôt. Cinq étapes, depuis votre téléphone.
+Aucun compte GitHub n'est nécessaire. Vous n'avez pas besoin de télécharger ni de compiler ce dépôt.
 
-> [!NOTE]
-> Les intitulés indiqués ci-dessous sont exactement ceux affichés à l'écran.
+1. **Ouvrir l'application Web**  
+   Ouvrez **[gen1recomp.inlasco.fr](https://gen1recomp.inlasco.fr/)** et attendez l'apparition du launcher.
 
-### Démarrage rapide
+2. **Choisir sa ROM**  
+   Touchez `Import ROM`. Un bandeau plein écran apparaît — touchez-le, et le sélecteur de fichiers de votre appareil s'ouvre. Choisissez votre propre ROM originale de Rouge / Bleue / Jaune, obtenue légalement, en version US ou française. L'extraction prend une quinzaine de secondes. **La ROM reste sur votre appareil.**
 
-1. **Ouvrir l'application Web** — rendez-vous sur **[http://gen1recomp.inlasco.fr/](http://gen1recomp.inlasco.fr/)** et patientez jusqu'à ce que la ligne d'état affiche `Prêt`.
-2. **Importer sa ROM** — touchez `Importer une ROM` et choisissez votre propre fichier `.gb` / `.gbc` obtenu légalement. Il doit faire exactement 1 Mio. Le jeu démarre dans la foulée.
-3. **Importer Dramatic Shape** — téléchargez [`mods/DramaticShape-v1.0-widescreen-test.zip`](mods/DramaticShape-v1.0-widescreen-test.zip) depuis ce dépôt, touchez `Importer un mod` et sélectionnez-le. Ouvrez ensuite l'onglet `MODS` du launcher et activez **Dramatic Shape Voxel Mod**.
-4. **Activer le preset 3D testé** — en jeu, appuyez sur `START` → `OPTION` et appliquez les valeurs de la section [Réglage 3D recommandé](#réglage-3d-recommandé) ci-dessous.
-5. **Jouer** — avec les commandes tactiles à l'écran, ou avec une manette (détectée automatiquement). `Plein écran` offre un affichage immersif ; le **×** dans le coin permet d'en sortir.
+3. **Activer Dramatic Shape pour le rendu 3D**  
+   Téléchargez [`mods/DramaticShape-v1.0-widescreen-test.zip`](mods/DramaticShape-v1.0-widescreen-test.zip) depuis ce dépôt. Dans l'application Web, ouvrez l'onglet `MODS`, touchez `Import mod .zip`, sélectionnez le ZIP, puis activez **Dramatic Shape Voxel Mod**.
 
-### Réglage 3D recommandé
+4. **Appliquer les réglages 3D recommandés et jouer**  
+   En jeu, appuyez sur `START` → `OPTION`, appliquez les réglages ci-dessous, puis jouez avec les commandes tactiles ou une manette connectée.
 
-Pour obtenir un rendu proche des captures de cette page, voici le preset mobile actuellement testé avec succès avec cette build Web/PWA. Il n'a rien d'obligatoire, et il ne s'agit pas d'une configuration officielle de Dramatic Shape : c'est un point de départ que vous pouvez ensuite personnaliser.
+**Ce qu'il vous faut :** un iPhone / iPad ou un appareil Android récent, et votre propre ROM `.gb` / `.gbc` de très exactement 1 Mio, obtenue légalement. Une manette est facultative et détectée automatiquement.
 
-**Où se trouvent ces réglages**
+## ROM originales prises en charge
 
-- Appuyez sur `START` (pad tactile ou manette) pour ouvrir le menu de pause, puis choisissez `OPTION`.
-- Une fois Dramatic Shape activé, ses lignes apparaissent dans cette même liste `OPTION`, sous les lignes propres au moteur. Faites défiler vers le bas pour les atteindre.
-- `Haut` / `Bas` déplacent le curseur, `Gauche` / `Droite` modifient la valeur sélectionnée.
-- Pour revenir au jeu : appuyez sur `B` ou `START`, ou descendez sur `CANCEL` et appuyez sur `A`.
+| Jeu | Version US originale | Version française originale |
+| --- | --- | --- |
+| Pokémon Red / Version Rouge | ✅ | ✅ **Pokémon Version Rouge** |
+| Pokémon Blue / Version Bleue | ✅ | ✅ **Pokémon Version Bleue** |
+| Pokémon Yellow / Version Jaune | ✅ | ✅ **Pokémon Version Jaune — Édition Spéciale Pikachu** |
 
-**Le preset**
+L'importeur identifie votre ROM par son empreinte SHA-1 et accepte **un seul dump canonique par jeu et par région** — six au total. Tout le reste, y compris les fichiers patchés, hackés, fan-traduits, randomisés, surdumpés ou tronqués, est refusé par conception : l'importeur lit votre cartouche à des adresses précises, et un dump modifié produirait un jeu cassé plutôt qu'une erreur honnête.
+
+Chaque jeu conserve ses imports US et français côte à côte, dans des espaces séparés, avec des sauvegardes séparées. Importer Rouge ne perturbe pas un Red existant.
+
+<details>
+<summary><strong>Les dumps exacts acceptés par l'importeur (SHA-1)</strong></summary>
+
+| Jeu | Région | SHA-1 |
+| --- | --- | --- |
+| Pokémon Red | US | `ea9bcae617fdf159b045185467ae58b2e4a48b9a` |
+| Pokémon Version Rouge | FR | `47a7622fa30e6402a3891fe65b3a930bf9bd7aec` |
+| Pokémon Blue | US | `d7037c83e1ae5b39bde3c30787637ba1d4c48ce2` |
+| Pokémon Version Bleue | FR | `47faa910d0e073c600665bf9c83b6bd17babdf8a` |
+| Pokémon Yellow | US | `cc7d03262ebfaf2f06772c1a480c7d9d5f4a38e1` |
+| Pokémon Version Jaune | FR | `0aceec0ef7aa2ca5aa831554598d91f61a925591` |
+
+Ce sont les dumps commerciaux canoniques. La taille et l'en-tête ne sont que des contrôles secondaires ; c'est le SHA-1 qui décide.
+
+</details>
+
+**Aucune ROM n'est fournie, hébergée ni liée par ce projet.**
+
+## Réglages 3D recommandés
+
+Pour un rendu proche des captures de cette page. En jeu, `START` → `OPTION` ; une fois Dramatic Shape activé, ses lignes apparaissent en bas de cette liste.
+
+| Réglage | Valeur | Pourquoi |
+| --- | --- | --- |
+| `PERFORMANCE` | `HIGH` | le profil mobile testé |
+| `VOXEL` | `50` | l'angle de caméra de la vue 3D voxel |
+| `3D-BTL` | `ON` | combats mis en scène sur la carte plutôt que sur l'écran plat |
+| `BACK SPRITES` | `ON` | conserve le cadrage du sprite de dos de votre Pokémon |
+| `DAYTIME` | `GOLDEN` | fige l'horloge sur la lumière dorée des captures ci-dessus |
+| `G-SHADOW` | `ON` | les ombres géométriques validées |
+| `WATER` | `FULL` | eau complète, reflets de rive compris |
+| `AA` | `OFF` | conserve le rendu pixel art net |
+
+<details>
+<summary><strong>Preset testé complet</strong></summary>
 
 | Réglage | Valeur |
 | --- | --- |
@@ -82,183 +133,139 @@ Pour obtenir un rendu proche des captures de cette page, voici le preset mobile 
 | `G-SHADOW` | `ON` |
 | `AA` | `OFF` |
 
-Les autres options peuvent rester sur leurs valeurs actuelles, sauf si vous souhaitez les personnaliser.
+Laissez les autres options telles quelles, sauf si vous voulez les personnaliser. `Haut` / `Bas` déplacent le curseur, `Gauche` / `Droite` changent une valeur, `B` ou `START` revient au jeu.
 
-**À quoi servent les principales options**
+Ce preset vient d'un usage mobile validé sur matériel. Ce n'est pas une configuration officielle de Dramatic Shape, et ce n'est pas une promesse de fluidité sur tous les appareils — si le vôtre peine, baissez les options de rendu avant de conclure que le port Web dysfonctionne.
 
-- `VOXEL = 50` — le cran d'angle de caméra de la vue voxel 3D (50°).
-- `3D-BTL = ON` — les combats se déroulent sur la carte elle-même au lieu de l'écran de combat classique.
-- `BACK SPRITES = ON` — conserve le cadrage du sprite de dos de votre propre Pokémon en combat.
-- `DAYTIME = GOLDEN` — fige l'horloge jour/nuit sur la lumière dorée utilisée dans les captures.
-- `G-SHADOW = ON` — active les ombres géométriques ancrées dans l'espace monde, validées sur matériel.
-- `WATER = FULL` — rendu complet de l'eau, y compris les reflets de rive en espace écran.
-- `AA = OFF` — pas de suréchantillonnage, ce qui conserve le rendu pixel-art net retenu pour cette baseline mobile.
+</details>
 
-> [!NOTE]
-> Ce preset provient d'une utilisation mobile validée sur matériel réel, mais il ne constitue pas une promesse de fluidité sur tous les appareils. Si votre appareil manque de performances, réduisez d'abord certaines options graphiques avant de conclure à un dysfonctionnement du port Web.
+## L'installer comme une application
 
-### Ce qu'il vous faut
+**iPhone / iPad :** ouvrez l'application Web dans Safari → Partager → Sur l'écran d'accueil.
 
-- un iPhone / iPad ou un appareil Android compatible, avec un navigateur moderne ;
-- votre propre ROM compatible de Pokémon Rouge, Bleu ou Jaune, obtenue légalement — un fichier `.gb` ou `.gbc` d'exactement 1 Mio ;
-- aucune installation depuis l'App Store, et aucun compte GitHub ;
-- une manette Bluetooth est facultative.
+**Android :** ouvrez l'application Web dans un navigateur compatible → menu du navigateur → Installer l'application / Ajouter à l'écran d'accueil.
 
-### Installer comme une application
+Une fois installée, elle fonctionne aussi hors ligne, et elle se met à jour toute seule : une nouvelle version publiée sur le serveur est prise en compte au lancement suivant, sans rien à purger ni à réinstaller.
 
-Vous pouvez l'ajouter à votre écran d'accueil et la lancer comme une application classique.
-
-**iPhone / iPad** — ouvrez l'application dans **Safari**, touchez **Partager**, choisissez **Sur l'écran d'accueil**, puis lancez-la depuis son icône.
-
-**Android** — ouvrez l'application dans un navigateur compatible, ouvrez le **menu du navigateur**, choisissez **Installer l'application**, **Ajouter à l'écran d'accueil** ou l'option équivalente, puis lancez-la depuis son icône.
-
-> [!NOTE]
-> L'accès HTTP temporaire est destiné à l'utilisation dans le navigateur. Selon le navigateur, l'installation complète en PWA peut nécessiter HTTPS.
-
-### Votre ROM et vos sauvegardes restent locales
+## Votre ROM et vos sauvegardes restent locales
 
 > [!IMPORTANT]
-> - Aucune ROM n'est fournie, distribuée ni référencée par ce projet. Disposer d'une copie légale relève de votre responsabilité.
-> - La ROM que vous sélectionnez est lue et traitée localement, dans votre navigateur, sur votre appareil : ce port ne l'envoie ni vers ce dépôt ni vers le serveur d'hébergement.
-> - Les données générées, les réglages et les sauvegardes sont conservés localement via le stockage de votre navigateur.
-> - **Supprimer les données du site peut effacer vos sauvegardes locales.** Il n'existe aucune sauvegarde côté serveur.
-
----
+> - La ROM que vous choisissez est lue et traitée **dans votre navigateur, sur votre appareil**. Ce port ne l'envoie ni vers ce dépôt ni vers le serveur d'hébergement.
+> - Les données générées, les réglages et les sauvegardes vivent dans le stockage local de votre navigateur, séparément pour chaque jeu et chaque région.
+> - **Effacer les données du site dans votre navigateur supprime vos sauvegardes locales.** Il n'existe aucune copie côté serveur.
+> - Aucune ROM n'est fournie, distribuée ni liée par ce projet. Disposer d'une copie légale relève de votre responsabilité.
 
 ## Compatibilité
 
-| Plateforme / Fonction | Statut |
+| Plateforme / Fonctionnalité | Statut |
 | --- | --- |
-| iPhone / Safari | ✅ Validé sur matériel réel |
+| iPhone / Safari | ✅ Validé sur matériel |
 | Android | ✅ Testé avec succès |
-| Commandes tactiles | ✅ Prises en charge |
-| Manette de jeu | ✅ Prise en charge |
+| ROM US originales — Red / Blue / Yellow | ✅ |
+| ROM françaises originales — Rouge / Bleue / Jaune | ✅ |
+| Commandes tactiles | ✅ |
+| Manette de jeu | ✅ |
 | PWA installable | ✅ |
 | Import local de ROM | ✅ |
 | Import local de mod | ✅ |
-| Voxel 3D Dramatic Shape | ✅ |
+| 3D voxel Dramatic Shape | ✅ |
 | WebGL1 | ✅ |
 
-**iPhone / Safari** est la plateforme qui a fait l'objet de la campagne matérielle approfondie à l'origine de la baseline v1.0. **Android** a été testé avec succès. Cela ne constitue pas une garantie de compatibilité avec tous les appareils ou navigateurs Android.
+**iPhone / Safari** est la plateforme qui a fait l'objet de la campagne matérielle approfondie de la baseline v1.0. **Android** a été testé avec succès — ce n'est pas une garantie pour tous les appareils ni tous les navigateurs Android.
+
+Les trois versions françaises ont chacune été importées via l'application Web puis jouées, en plus de la suite de tests régionaux automatisée.
 
 ## Aperçu du jeu
 
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/screenshots/battle-3d-touch.jpeg" alt="Combat voxel 3D entre Salamèche et Roucool avec commandes tactiles à l'écran" width="100%">
-      <br><sub>Combat voxel 3D avec commandes tactiles</sub>
+      <img src="docs/screenshots/battle-3d-touch.jpeg" alt="Combat 3D voxel entre Salamèche et Roucool avec commandes tactiles" width="100%">
+      <br><sub>Combat 3D voxel avec commandes tactiles</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/screenshots/overworld-touch-dialogue.jpeg" alt="Overworld voxel 3D avec boîte de dialogue et commandes tactiles à l'écran" width="100%">
-      <br><sub>Overworld voxel avec commandes tactiles mobiles</sub>
+      <img src="docs/screenshots/overworld-touch-dialogue.jpeg" alt="Monde 3D voxel avec boîte de dialogue et commandes tactiles" width="100%">
+      <br><sub>Monde voxel avec commandes tactiles mobiles</sub>
     </td>
   </tr>
 </table>
 
-L'overworld voxel, le combat 3D et les commandes tactiles ci-dessus — ainsi que l'image d'en-tête — correspondent au rendu que reproduit le [Réglage 3D recommandé](#réglage-3d-recommandé).
-
 ## Fonctionnalités
 
-**Dans le navigateur**
+**Dans le navigateur** — moteur LÖVE 11.5 / WebAssembly, WebGL1, import local de ROM, import local de mod, persistance locale au navigateur (IndexedDB), commandes tactiles, prise en charge des manettes, PWA installable et jouable hors ligne, viewport mobile adaptatif, rendu 2D Gen1 au format natif.
 
-- runtime LÖVE 11.5 / WebAssembly
-- WebGL1
-- import local de ROM
-- import local de mods
-- persistance IndexedDB / locale au navigateur
-- commandes tactiles
-- prise en charge des manettes
-- PWA installable
-- viewport mobile adaptatif
-- rendu 2D Gen1 au format natif
+**Rendu / Dramatic Shape** — monde 3D voxel large, build Web/mobile de Dramatic Shape, fleurs animées, `DAYTIME = GOLDEN`, ombres géométriques `G-SHADOW`, `VOID FILL = TREES`, combats en 3D.
 
-**Rendu / Dramatic Shape**
-
-- overworld voxel 3D large
-- build Web/mobile de Dramatic Shape
-- fleurs animées
-- `DAYTIME = GOLDEN`
-- `G-SHADOW` géométrique ancré dans l'espace monde
-- `VOID FILL = TREES`
-- combats 3D
+**Prise en charge régionale** — trois jeux logiques (Red, Blue, Yellow), chacun avec une variante US et une variante française. Les mods ciblent toujours le jeu et non la région : un mod écrit pour Red s'applique aussi à Rouge. Le texte de la cartouche est extrait de votre propre ROM à l'import ; les textes propres au portage disposent d'un catalogue français séparé.
 
 ## Dramatic Shape
 
-Le dépôt contient :
+Le dépôt inclut :
 
 ```text
 mods/DramaticShape-v1.0-widescreen-test.zip
 ```
 
-Il s'agit de la build Web/mobile exacte utilisée pour la validation matérielle v1.0. Son SHA-256 figure dans [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md).
+C'est le build Web/mobile exact utilisé pour la validation matérielle v1.0 ; son SHA-256 est documenté dans [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md).
 
-Le mod est basé sur **Dramatic Shape Voxel Mod** par DramaticShape — dépôt amont : <https://github.com/DramaticShape/DramaticShapeVoxelMod>. L'archive incluse conserve sa licence et ses attributions amont.
+Le mod est **Dramatic Shape Voxel Mod** de DramaticShape — dépôt d'origine : <https://github.com/DramaticShape/DramaticShapeVoxelMod>. Ce projet n'en est pas l'auteur ; l'archive conserve sa licence et son attribution d'origine.
 
 ---
 
-## Informations techniques / déploiement
+## Informations techniques
 
-### Exécuter ou déployer soi-même
+C'est une **application web statique** : servez la racine du dépôt en HTTPS en conservant l'arborescence.
 
-Il s'agit d'une **application Web statique**. Servez la racine du dépôt en **HTTPS** en conservant l'arborescence des fichiers.
-
-Le shell actuel charge :
+Le shell charge actuellement :
 
 ```text
-game-v13.3-viewport-final.love
+game-v13.4-fr.love
 11.5/love.js
 11.5/love.wasm
 ```
 
-Ouvrez ensuite l'URL de déploiement dans un navigateur mobile compatible.
+Le moteur est LÖVE 11.5 compilé en **WebAssembly** (`love.js` / `love.wasm`), avec un rendu **WebGL1**, le jeu étant livré sous forme d'archive `.love`. Les données générées à partir de la ROM, les options et les sauvegardes sont stockées localement par le navigateur via IndexedDB / IDBFS, dans un espace distinct par jeu et par région. Aucune synchronisation de sauvegarde côté serveur ne fait partie de la baseline actuelle.
 
-Le runtime est LÖVE 11.5 compilé en **WebAssembly** (`love.js` / `love.wasm`), avec un rendu **WebGL1**, le jeu étant livré sous forme d'archive `.love`. Le cache dérivé de la ROM, les réglages et les sauvegardes sont conservés localement par le navigateur via IndexedDB / IDBFS. Aucune synchronisation des sauvegardes côté serveur ne fait partie de la v1.0.
+Deux petits fichiers gèrent la publication :
 
-### Baseline v1.0 validée
+- `boot-guard.js` vérifie la taille exacte de chaque paquet présent dans le cache IndexedDB du chargeur avant le démarrage du moteur, et supprime ce qui ne correspond pas. Sans lui, un téléchargement interrompu peut rester épinglé indéfiniment dans un navigateur.
+- `sw.js` est le service worker : la page et les fichiers vivants sont récupérés réseau d'abord, le runtime figé est servi depuis le cache, et l'ensemble du cache est vidé au changement de version. C'est ce qui fait qu'une nouvelle version arrive dès le lancement suivant, et ce qui permet le jeu hors ligne.
 
-La baseline technique v1.0 a été **validée en profondeur sur du matériel Safari/iPhone réel** :
+`.htaccess` définit la politique de cache HTTP correspondante pour un hébergeur Apache, et `diagnostic.html` est une page autonome qui vérifie fichier par fichier ce que le serveur renvoie réellement.
 
-- démarrage de Gen1Recomp et du launcher
-- import local de ROM
-- import local de mod
-- contrôles tactiles
-- WebGL1
-- viewport large adaptatif
-- overworld voxel Dramatic Shape
-- fleurs animées
-- `DAYTIME = GOLDEN`
-- `G-SHADOW` géométrique ancré dans l'espace monde
-- `VOID FILL = TREES`
-- combats 3D
-- transitions intérieur/extérieur
+Les empreintes de chaque fichier publié sont listées dans [`SHA256SUMS`](SHA256SUMS).
 
-Elle a **depuis été testée avec succès sur Android**. Cela ne constitue pas une garantie universelle pour tous les appareils ou navigateurs Android, et la campagne matérielle consignée dans le document de baseline reste celle menée sur Safari/iPhone.
+> [!NOTE]
+> [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md) consigne la **campagne matérielle v1.0** et les empreintes des artefacts de cette baseline, dont `game-v13.3-viewport-final.love`. Cette archive est toujours publiée ici et fonctionne toujours, mais ce n'est plus celle que le shell charge par défaut. Ce document est l'histoire de la v1.0, pas la description du build actuel.
 
-Les SHA-256 exacts des artefacts et les décisions techniques sont documentés dans [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md). Les empreintes par fichier de l'ensemble de l'arborescence publiée figurent dans [`SHA256SUMS`](SHA256SUMS).
+### Implémentation régionale
+
+La prise en charge régionale est documentée dans [`docs/fr-regional/`](docs/fr-regional/) : notes de conception, dossier de validation, et l'outillage reproductible qui génère un manifeste régional à partir d'un désassemblage français. Les manifestes eux-mêmes sont dans `tools/`, un par jeu et par région, chacun lié à l'empreinte exacte de la ROM dont il est issu. La suite de tests :
+
+```sh
+tools/tests/run_fr_regional_tests.sh
+```
 
 ### Limitation connue
 
-Certaines géométries auxiliaires voxel, notamment `G-SHADOW` et `VOID FILL = TREES`, peuvent apparaître avec un délai après certaines transitions intérieur → extérieur. La baseline v1.0 conserve volontairement le comportement validé plutôt que d'intégrer des optimisations expérimentales non validées.
+Certaines géométries voxel auxiliaires, notamment `G-SHADOW` et `VOID FILL = TREES`, peuvent mettre un moment à apparaître après certaines transitions intérieur → extérieur. La baseline validée est délibérément conservée plutôt que de livrer des optimisations non validées.
 
 ## Origine du projet
 
-Ce dépôt est une adaptation Web/PWA indépendante et **n'est pas le dépôt officiel de Gen1Recomp**. Nous ne sommes ni les auteurs originaux de Gen1Recomp, ni ceux de Dramatic Shape, et ce projet n'est pas officiellement affilié aux projets amont.
-
-Principaux projets/composants amont :
+Ce dépôt est une adaptation Web/PWA indépendante et **n'est pas le dépôt officiel de Gen1Recomp**. Nous ne sommes ni les auteurs de Gen1Recomp, ni ceux de Dramatic Shape, et ce projet n'est pas officiellement affilié aux projets d'origine.
 
 - Gen1Recomp — <https://github.com/bryanthaboi/gen1recomp>
 - Dramatic Shape Voxel Mod — <https://github.com/DramaticShape/DramaticShapeVoxelMod>
-- runtime LÖVE 11.5 / love.js — licence conservée dans [`11.5/license.txt`](11.5/license.txt)
+- Moteur LÖVE 11.5 / love.js — licence conservée sous [`11.5/license.txt`](11.5/license.txt)
 
 Voir [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## ROM et marques
 
-Aucune ROM n'est distribuée dans ce dépôt. Les utilisateurs doivent fournir leur propre ROM compatible obtenue légalement.
+Aucune ROM n'est distribuée par ce dépôt. Il revient aux utilisateurs de fournir leur propre ROM compatible obtenue légalement.
 
-Pokémon, Nintendo, Game Boy ainsi que les noms, marques et éléments de propriété intellectuelle associés appartiennent à leurs titulaires respectifs. Ce projet est non officiel et n'est ni affilié ni approuvé par Nintendo, The Pokémon Company ou Game Freak.
+Pokémon, Nintendo, Game Boy et les noms, marques et propriétés intellectuelles associés appartiennent à leurs détenteurs respectifs. Ce projet est non officiel et n'est ni affilié à, ni approuvé par Nintendo, The Pokémon Company ou Game Freak.
 
 ## Licence
 
-Ce dépôt n'accorde **aucune licence globale unique** sur l'ensemble de son contenu. Chaque composant conserve les droits, licences et mentions de son projet d'origine. Voir [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) et les fichiers de licence fournis avec les composants concernés.
+Il n'existe **aucune licence globale** couvrant l'ensemble de ce dépôt. Chaque composant conserve sa licence et ses mentions d'origine. Voir [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) et les fichiers de licence livrés avec les composants concernés.

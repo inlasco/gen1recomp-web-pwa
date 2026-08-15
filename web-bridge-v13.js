@@ -7,6 +7,18 @@
   var PICKED_MOD = "picked_mod.zip";
   var IMPORT_FLAG = "web-import-active.flag";
   var WIDE_REQUEST = "web-adaptive-wide-request.txt";
+  // The engine asks the page for a file picker by writing this file.  It
+  // cannot call in: love.system.openURL is window.open() in love.js and
+  // Safari refuses a javascript: URL there, so the historical call never
+  // reached this script on iOS.  Contents: "rom" or "mod".
+  var PICK_REQUEST = "web-pick-request.txt";
+  // Which rectangle rule to apply, written by src/core/WebViewport.lua:
+  // "launcher" (take the whole frame) or "game" (widen only, height is the
+  // framing invariant).  It arrives as a file because the calls Lua makes
+  // into this script go through love.system.openURL, which love.js
+  // implements as window.open() -- and Safari refuses a javascript: URL
+  // there, so enterGameViewport never reaches iOS at all.
+  var VIEWPORT_MODE = "web-viewport-mode.txt";
   var SAVE_ROOT = "/home/web_user/love";
   var saveDirectory = null;
   var syncing = false;
@@ -50,6 +62,17 @@
   var ASPECT_DEADBAND = 0.02;
   var baseWidth = 0;
   var baseHeight = 0;
+  // The launcher gets the adaptive viewport too.  It used to be gameplay-only
+  // ("preparation stays on its proven rectangle"), which on a landscape phone
+  // left the preparation screen at its portrait rectangle -- letterboxed, and
+  // too short for its own content, so the player had to scroll it.  The
+  // launcher already has a two-column layout; it only ever needed the width.
+  //
+  // The baseline is not invented: it is the engine's OWN window, read off the
+  // canvas backing store once SDL has created it.  Same invariant as the game
+  // handoff, just taken from the canvas instead of from a call Lua makes.
+  var launcherLive = false;
+  var viewportMode = "launcher";
   var gameLive = false;
   var engineResizing = false;
   var geometrySequence = 0;
@@ -106,7 +129,19 @@
     var box = gameBoxSize();
     if (!(box.width > 0 && box.height > 0)) return null;
     if (box.width <= box.height) {
+      // Portrait keeps the design rectangle in both modes: it is what the
+      // launcher was laid out for and what the player already knows.
       return { width: baseWidth, height: baseHeight };
+    }
+    if (viewportMode === "launcher" && !gameLive) {
+      // The preparation screen is a UI, not the 160x144 world, so its height
+      // is free.  Taking the whole frame on both axes puts it at scale 1.0
+      // and gives it the room its two-column layout needs -- which is what
+      // stops the player having to scroll it in landscape.
+      return {
+        width: Math.max(baseWidth, Math.min(MAX_ENGINE_WIDTH, Math.round(box.width))),
+        height: Math.max(baseHeight, Math.round(box.height))
+      };
     }
     var width = Math.round(baseHeight * (box.width / box.height));
     width = Math.max(baseWidth, Math.min(MAX_ENGINE_WIDTH, width));
@@ -178,7 +213,7 @@
   // channel the ROM/mod pick already uses. Lua owns setMode; this only says
   // which rectangle the device can actually show.
   function publishTarget(force) {
-    if (!gameLive) return 0;
+    if (!gameLive && !launcherLive) return 0;
     var directory = resolveSaveDirectory();
     var fs = getFS();
     if (!directory || !fs) return 0;
@@ -252,7 +287,7 @@
   // debounced and deadbanded, so a viewport wobble cannot feed itself.
   function queueGeometrySync() {
     window.requestAnimationFrame(presentEngineRectangle);
-    if (!gameLive) return;
+    if (!gameLive && !launcherLive) return;
     if (resizeTimer !== null) window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
       resizeTimer = null;
@@ -297,8 +332,13 @@
   modPicker.setAttribute("aria-hidden", "true");
   document.body.appendChild(modPicker);
 
+  // The preparation rack (#rom-button / #mod-button / #fullscreen-button /
+  // #web-status) is OPTIONAL: a shell that lets the launcher's own controls
+  // drive the import omits it entirely, and the engine calls in through
+  // Gen1WebBridge.pickRom instead.  Every reference to those four elements is
+  // therefore guarded.  #rom-picker and #canvas are the only required ones.
   function setStatus(message) {
-    status.textContent = message;
+    if (status) status.textContent = message;
   }
 
   function getFS() {
@@ -506,16 +546,58 @@
     return true;
   }
 
-  function pickRom() {
-    picker.value = "";
-    picker.click();
+  // Opening a file picker is a privileged action: iOS only allows it inside a
+  // real DOM user gesture.  A click on the rack button below IS one.  A call
+  // arriving from Lua (love.system.openURL -> Gen1WebBridge.pickRom) is NOT:
+  // SDL hands the touch to the engine a frame later, so by the time this runs
+  // Safari has already closed the activation window and click() is a no-op
+  // that throws nothing and reports nothing.
+  //
+  // We cannot make that call legal, so we make the dead end visible: when the
+  // picker does not open, the status line says which button to press instead
+  // of leaving the player tapping a launcher button that never answers.
+  function openPicker(input, hint) {
+    input.value = "";
+    var opened = false;
+    try {
+      input.click();
+      opened = true;
+    } catch (_) {
+      opened = false;
+    }
+    if (!opened || !userGestureLikely()) {
+      setStatus(hint);
+    }
     return true;
   }
 
+  // navigator.userActivation is the direct answer where it exists (Chromium);
+  // elsewhere fall back to "was there a real pointer event in the last
+  // second", which is what a genuine button press looks like.
+  var lastGesture = 0;
+  ["pointerdown", "pointerup", "touchend", "click", "keydown"].forEach(
+    function (type) {
+      window.addEventListener(type, function () {
+        lastGesture = Date.now();
+      }, true);
+    });
+
+  function userGestureLikely() {
+    var activation = navigator.userActivation;
+    if (activation && typeof activation.isActive === "boolean") {
+      return activation.isActive;
+    }
+    return (Date.now() - lastGesture) < 1000;
+  }
+
+  function pickRom() {
+    return openPicker(picker,
+      "Touchez « Importer une ROM » en bas de l’écran pour choisir la cartouche.");
+  }
+
   function pickMod() {
-    modPicker.value = "";
-    modPicker.click();
-    return true;
+    return openPicker(modPicker,
+      "Touchez « Importer un mod » en bas de l’écran pour choisir le .zip.");
   }
 
   async function importSelectedMod(file) {
@@ -579,7 +661,7 @@
       return;
     }
 
-    pickerButton.disabled = true;
+    if (pickerButton) pickerButton.disabled = true;
     setStatus("Lecture locale et validation par Gen1Recomp…");
     try {
       var bytes = new Uint8Array(await file.arrayBuffer());
@@ -594,11 +676,11 @@
       scrubTransientRom();
       setStatus("Impossible de lire ce fichier local.");
     } finally {
-      pickerButton.disabled = false;
+      if (pickerButton) pickerButton.disabled = false;
     }
   }
 
-  pickerButton.addEventListener("click", pickRom);
+  if (pickerButton) pickerButton.addEventListener("click", pickRom);
   if (modButton) modButton.addEventListener("click", pickMod);
   if (fullscreenButton) fullscreenButton.addEventListener("click", enterFullscreen);
   immersiveExit.addEventListener("click", exitFullscreen);
@@ -641,13 +723,158 @@
     getSaveDirectory: function () { return saveDirectory; }
   };
 
+  // ------- the pick prompt
+  //
+  // A file picker only opens from a real DOM user gesture.  A touch on the
+  // canvas is consumed by SDL and handed to Lua a frame later, so the request
+  // that comes back is no longer inside that gesture and Safari refuses it,
+  // silently.  This prompt is the gesture: the engine asks, the page shows a
+  // full-screen button, and the player's tap on THAT is what opens the
+  // picker.  No permanent toolbar, and nothing that can be refused.
+  var promptEl = null;
+  var promptKind = null;
+
+  function buildPrompt() {
+    if (promptEl) return promptEl;
+    promptEl = document.createElement("button");
+    promptEl.type = "button";
+    promptEl.id = "pick-prompt";
+    promptEl.setAttribute("aria-live", "polite");
+    promptEl.hidden = true;
+    promptEl.addEventListener("click", function () {
+      // Synchronous, inside the click: this is the whole point.
+      var kind = promptKind;
+      hidePrompt();
+      if (kind === "mod") {
+        modPicker.value = "";
+        modPicker.click();
+      } else {
+        picker.value = "";
+        picker.click();
+      }
+    });
+    document.body.appendChild(promptEl);
+    return promptEl;
+  }
+
+  function showPrompt(kind) {
+    var node = buildPrompt();
+    promptKind = kind;
+    node.textContent = kind === "mod"
+      ? "Touchez ici pour choisir votre mod (.zip)"
+      : "Touchez ici pour choisir votre ROM (.gb / .gbc)";
+    node.hidden = false;
+    document.body.classList.add("web-pick-prompt");
+    setStatus(kind === "mod"
+      ? "Choisissez votre mod : le fichier est lu sur l’appareil, rien n’est envoyé."
+      : "Choisissez votre ROM : le fichier est lu sur l’appareil, rien n’est envoyé.");
+  }
+
+  function hidePrompt() {
+    if (!promptEl) return;
+    promptEl.hidden = true;
+    promptKind = null;
+    document.body.classList.remove("web-pick-prompt");
+  }
+
+  // Cancelling the picker leaves the engine waiting; it polls for the file
+  // and gives up on its own, and the prompt is already gone by then.
+  function pollPickRequest() {
+    var fs = getFS();
+    if (!fs || !saveDirectory) return;
+    var path = saveDirectory + "/" + PICK_REQUEST;
+    if (!pathExists(fs, path)) return;
+    var kind = "rom";
+    try {
+      var raw = fs.readFile(path, { encoding: "utf8" });
+      if (typeof raw === "string" && raw.indexOf("mod") === 0) kind = "mod";
+    } catch (_) {
+      kind = "rom";
+    }
+    // Consume it first: a request that survives its own handling would
+    // re-open the prompt on every tick.
+    try { fs.unlink(path); } catch (_) {}
+    showPrompt(kind);
+  }
+
+  window.setInterval(pollPickRequest, 200);
+
+  // Follow the engine's declared mode.  A change re-publishes immediately:
+  // the game handoff has to leave the launcher's full-frame rectangle behind
+  // in the same breath it takes over.
+  function pollViewportMode() {
+    var fs = getFS();
+    if (!fs || !saveDirectory) return;
+    var path = saveDirectory + "/" + VIEWPORT_MODE;
+    if (!pathExists(fs, path)) return;
+    var mode = "launcher";
+    try {
+      var raw = fs.readFile(path, { encoding: "utf8" });
+      if (typeof raw === "string" && raw.indexOf("game") === 0) mode = "game";
+    } catch (_) {
+      return;
+    }
+    if (mode === viewportMode) return;
+    viewportMode = mode;
+    setGeometryState("VIEWPORT_MODE_" + mode.toUpperCase());
+    if (mode === "game") {
+      // The engine has just put itself back on the design rectangle; re-adopt
+      // it as the baseline instead of keeping the launcher's device-sized
+      // one.  enterGameViewport would normally do this, but it arrives
+      // through love.system.openURL, which never reaches iOS.
+      launcherLive = false;
+      baseWidth = 0;
+      baseHeight = 0;
+      lastCanvasSample = "";
+      requestedGeometry = null;
+      return;
+    }
+    publishTarget(true);
+  }
+
+  window.setInterval(pollViewportMode, 250);
+
+  // Both pickers close the prompt when they answer, whichever way.
+  picker.addEventListener("change", hidePrompt);
+  modPicker.addEventListener("change", hidePrompt);
+
+  // Adopt the engine's own rectangle as the baseline as soon as SDL has made
+  // one, so the launcher can be widened before any game exists.  A later
+  // enterGameViewport re-bases on the game's geometry and takes over.
+  var lastCanvasSample = "";
+  function adoptLauncherViewport() {
+    if (gameLive || launcherLive) return;
+    if (!canvas) return;
+    var w = Number(canvas.width) || 0;
+    var h = Number(canvas.height) || 0;
+    // 0x0 and 1x1 are SDL mid-probe; 300x150 is the HTML default a <canvas>
+    // carries until SDL first sizes it.  Adopting either would make the
+    // baseline a fiction and every derived target nonsense.
+    if (!(w > 1 && h > 1)) return;
+    if (w === 300 && h === 150) return;
+    // And it has to hold still: window creation walks through sizes, so one
+    // sample proves nothing.
+    var sample = w + "x" + h;
+    if (sample !== lastCanvasSample) { lastCanvasSample = sample; return; }
+    baseWidth = w;
+    baseHeight = h;
+    launcherLive = true;
+    setGeometryState("LAUNCHER_VIEWPORT_" + sample);
+    publishTarget(true);
+  }
+
+  window.setInterval(function () {
+    if (gameLive) return;
+    adoptLauncherViewport();
+  }, 300);
+
   var readyPoll = window.setInterval(function () {
     var fs = getFS();
     if (!fs) return;
     saveDirectory = saveDirectory || findSaveDirectory(fs);
     if (!saveDirectory) return;
     window.clearInterval(readyPoll);
-    pickerButton.disabled = false;
+    if (pickerButton) pickerButton.disabled = false;
     if (modButton) modButton.disabled = false;
     setStatus("Prêt — ROM et mods traités uniquement sur cet appareil.");
     if (gameLive && !requestedGeometry) publishTarget(true);
