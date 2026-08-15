@@ -54,16 +54,16 @@ Jouez à Gen1Recomp dans le navigateur de votre téléphone, avec votre propre R
 
 Aucun compte GitHub n'est nécessaire. Vous n'avez pas besoin de télécharger ni de compiler ce dépôt.
 
-1. **Ouvrir l'application Web**
+1. **Ouvrir l'application Web**  
    Ouvrez **[gen1recomp.inlasco.fr](https://gen1recomp.inlasco.fr/)** et attendez l'apparition du launcher.
 
-2. **Choisir sa ROM**
+2. **Choisir sa ROM**  
    Touchez `Import ROM`. Un bandeau plein écran apparaît — touchez-le, et le sélecteur de fichiers de votre appareil s'ouvre. Choisissez votre propre ROM originale de Rouge / Bleue / Jaune, obtenue légalement, en version US ou française. L'extraction prend une quinzaine de secondes. **La ROM reste sur votre appareil.**
 
-3. **Activer Dramatic Shape pour le rendu 3D**
+3. **Activer Dramatic Shape pour le rendu 3D**  
    Téléchargez [`mods/DramaticShape-v1.0-widescreen-test.zip`](mods/DramaticShape-v1.0-widescreen-test.zip) depuis ce dépôt. Dans l'application Web, ouvrez l'onglet `MODS`, touchez `Import mod .zip`, sélectionnez le ZIP, puis activez **Dramatic Shape Voxel Mod**.
 
-4. **Appliquer les réglages 3D recommandés et jouer**
+4. **Appliquer les réglages 3D recommandés et jouer**  
    En jeu, appuyez sur `START` → `OPTION`, appliquez les réglages ci-dessous, puis jouez avec les commandes tactiles ou une manette connectée.
 
 **Ce qu'il vous faut :** un iPhone / iPad ou un appareil Android récent, et votre propre ROM `.gb` / `.gbc` de très exactement 1 Mio, obtenue légalement. Une manette est facultative et détectée automatiquement.
