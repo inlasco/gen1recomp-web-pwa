@@ -376,6 +376,109 @@ if loadedMaps.us and loadedMaps.fr then
 end
 
 -- ---------------------------------------------------------------------------
+section("Title copyright line: the block after the GAME FREAK logo")
+-- ---------------------------------------------------------------------------
+--
+-- The Yellow title screen draws "(c)'95.'96.'98 <block> GAME FREAK inc.".
+-- <block> is whatever the ROM stores between GameFreakLogoGraphicsEnd and
+-- TextBoxGraphics, and it is NOT the same size in every release: one tile in
+-- the international pokeyellow (NineTile), two in the French one
+-- (ZerosTile).  The extractor used to insist on the one-tile shape, so a
+-- French Yellow cache never got title/nine.png -- and on love.js the missing
+-- file was fatal, because pcall does not catch a LOVE exception there.
+
+local function symbolAt(text, name)
+  local bank, addr = text:match(
+    '"' .. name .. '"%s*:%s*%[%s*(%d+)%s*,%s*(%d+)%s*%]')
+  if not bank then return nil end
+  return tonumber(bank), tonumber(addr)
+end
+
+-- Same predicate as RomExtractor: same bank, whole tiles, at most four.
+local function copyrightBlockSize(text)
+  local gfBank, gfAddr = symbolAt(text, "GameFreakLogoGraphics")
+  local tbBank, tbAddr = symbolAt(text, "TextBoxGraphics")
+  if not (gfBank and tbBank) or gfBank ~= tbBank then return nil end
+  local size = tbAddr - (gfAddr + 9 * 16)
+  if size <= 0 or size > 4 * 16 or size % 16 ~= 0 then return 0 end
+  return size
+end
+
+-- Byte size the extractor must produce for each variant.  0 means "nothing
+-- sits there" -- Red and Blue US, whose logo is followed directly by
+-- TextBoxGraphics, and which have never had the file.
+local BLOCK = {
+  ["red/us"] = 0, ["red/fr"] = 16,
+  ["blue/us"] = 0, ["blue/fr"] = 16,
+  ["yellow/us"] = 16, ["yellow/fr"] = 32,
+}
+
+for _, info in ipairs(GameVersion.allVariants()) do
+  local label = info.game .. "/" .. info.variant
+  local raw = readFile(root .. "/" .. info.manifest)
+  if raw then
+    eq(copyrightBlockSize(raw), BLOCK[label],
+      ("%s copyright block is the expected size"):format(label))
+  end
+end
+
+-- Both Yellow variants must yield a block, because RomImporter now lists
+-- title/nine.png among the files a finished Yellow cache has to carry.  A
+-- variant that could not produce it would read as incomplete for ever.
+for _, variant in ipairs({ "us", "fr" }) do
+  local raw = readFile(root .. "/" .. GameVersion.info("yellow", variant).manifest)
+  if raw then
+    ok((copyrightBlockSize(raw) or 0) > 0,
+      ("yellow/%s can produce title/nine.png"):format(variant))
+  end
+end
+
+local extractor = readFile(root .. "/src/import/RomExtractor.lua")
+ok(extractor ~= nil, "RomExtractor.lua is in the .love")
+if extractor then
+  ok(extractor:find("9 %* 16 %+ 16") == nil,
+    "the extractor no longer hardcodes the one-tile international shape")
+  ok(extractor:find("tiles %* 8") ~= nil,
+    "the extractor sizes title/nine.png from the block it actually found")
+end
+
+local importer = readFile(root .. "/src/import/RomImporter.lua")
+if importer then
+  ok(importer:find("assets/generated/title/nine%.png") ~= nil,
+    "a Yellow cache without title/nine.png re-imports itself")
+end
+
+local titleState = readFile(root .. "/src/ui/TitleState.lua")
+if titleState then
+  ok(titleState:find("nineImg:getWidth%(%)") ~= nil,
+    "the copyright line advances by the block's real width")
+end
+
+-- The systemic half of the same bug: an optional image must never be able to
+-- kill the boot on a runtime where pcall cannot catch it.
+local safeImage = readFile(root .. "/src/render/SafeImage.lua")
+ok(safeImage ~= nil, "SafeImage.lua is in the .love")
+if safeImage then
+  ok(safeImage:find("love%.filesystem%.getInfo") ~= nil,
+    "SafeImage probes with getInfo before loading")
+end
+
+local TRY_IMAGE_USERS = {
+  "src/ui/TitleState.lua", "src/ui/IntroMovie.lua", "src/ui/OakSpeech.lua",
+  "src/ui/TradeAnim.lua", "src/ui/YellowIntro.lua", "src/ui/Credits.lua",
+  "src/ui/HallOfFame.lua", "src/ui/TrainerCard.lua",
+}
+for _, path in ipairs(TRY_IMAGE_USERS) do
+  local text = readFile(root .. "/" .. path)
+  if text then
+    ok(text:find("SafeImage") ~= nil,
+      ("%s loads optional art through SafeImage"):format(path))
+    ok(text:find("pcall%(love%.graphics%.newImage") == nil,
+      ("%s no longer bets the boot on pcall"):format(path))
+  end
+end
+
+-- ---------------------------------------------------------------------------
 section("Packaging: no ROM, no user data, no private cache")
 -- ---------------------------------------------------------------------------
 

@@ -1286,7 +1286,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/LauncherView.l
    if m.twoCol then
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomExtractor.lua love_src/src/import/RomExtractor.lua
 --- love_orig/src/import/RomExtractor.lua	2026-08-11 12:05:02.000000000 +0000
-+++ love_src/src/import/RomExtractor.lua	2026-08-14 18:43:35.604652982 +0000
++++ love_src/src/import/RomExtractor.lua	2026-08-15 08:29:56.623833593 +0000
 @@ -1094,20 +1094,42 @@
    local kind, consumed = self.rom:readString(
      pointerTable.bank, address, self.manifest.charmap, 0x50, 32)
@@ -1335,9 +1335,39 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomExtractor.l
  end
  
  function RomExtractor:extractPokemon()
+@@ -1774,11 +1796,26 @@
+     "title/gamefreak_inc.png"); tick()
+ 
+   do
++    -- The copyright line on the title screen is "©'95.'96.'98 " + <this> +
++    -- "GAME FREAK inc.".  <this> is whatever sits between the GAME FREAK logo
++    -- and TextBoxGraphics, and its size is NOT the same in every release:
++    -- the international pokeyellow has a one-tile NineTile there (the "9" of
++    -- '99), the French one has a two-tile ZerosTile.  Extract the block
++    -- whatever its length instead of only recognising the one-tile shape --
++    -- otherwise title/nine.png is silently never written and TitleState is
++    -- left asking for a file that does not exist.
+     local gf = self.symbols["GameFreakLogoGraphics"]
+     local tb = self.symbols["TextBoxGraphics"]
+-    if gf and tb and tb[2] == gf[2] + 9 * 16 + 16 then
+-      local raw = self.rom:bytes(gf[1], gf[2] + 9 * 16, 16)
+-      self:save(ImageWriter.decode2bpp(raw, 8, 8, false), "title/nine.png")
++    if gf and tb and gf[1] == tb[1] then
++      local from = gf[2] + 9 * 16
++      local size = tb[2] - from
++      if size > 0 and size <= 4 * 16 and size % 16 == 0 then
++        local raw = self.rom:bytes(gf[1], from, size)
++        local tiles = size / 16
++        self:save(
++          ImageWriter.decode2bpp(raw, tiles * 8, 8, false),
++          "title/nine.png")
++      end
+     end
+   end
+   tick()
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lua love_src/src/import/RomImporter.lua
 --- love_orig/src/import/RomImporter.lua	2026-08-13 21:15:14.000000000 +0000
-+++ love_src/src/import/RomImporter.lua	2026-08-15 07:16:46.307275047 +0000
++++ love_src/src/import/RomImporter.lua	2026-08-15 08:31:34.147832674 +0000
 @@ -41,8 +41,10 @@
  
  -- The marker a finished import writes for a version: the generation tag plus
@@ -1367,7 +1397,21 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  
  local function clearWebImportFiles()
    if not Platform.isWeb() or not (love and love.filesystem) then return end
-@@ -153,10 +164,10 @@
+@@ -94,6 +105,13 @@
+     -- cache reads as incomplete and re-importing cannot clear it.
+     "assets/generated/battle/profoakb.png",
+     "assets/generated/pikachu/pikapic_1.png",
++    -- The tile(s) between the GAME FREAK logo and TextBoxGraphics, drawn in
++    -- the title copyright line.  The extractor used to insist on the
++    -- one-tile international shape (NineTile), so a French Yellow cache was
++    -- written without the file at all; both Yellow manifests produce it now,
++    -- and listing it here re-imports exactly those caches -- Yellow US
++    -- already has it, Red and Blue never ask for it.
++    "assets/generated/title/nine.png",
+   },
+ }
+ 
+@@ -153,10 +171,10 @@
  -- otherwise the save directory through love.filesystem.  It honors
  -- CacheFs.prefix, so we point it at the version's cache subtree (red/,
  -- blue/, yellow/).
@@ -1380,7 +1424,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    local ok = true
    for _, path in ipairs(REQUIRED_FILES) do
      if not CacheFs.exists(path) then ok = false; break end
-@@ -173,9 +184,13 @@
+@@ -173,9 +191,13 @@
  -- Imported Red caches still live under red/.  Check source paths directly so
  -- that cache prefix cannot hide Red's source tree, and keep save-dir caches
  -- from counting as current source data.
@@ -1396,7 +1440,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    for _, path in ipairs(REQUIRED_FILES) do
      if love.filesystem.getInfo(prefix .. path, "file") == nil then return false end
    end
-@@ -251,8 +266,12 @@
+@@ -251,8 +273,12 @@
  end
  
  -- Whether a given game version's ROM has already been imported and cached.
@@ -1410,7 +1454,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    local CacheFs = require("src.import.CacheFs")
    if CacheFs.root() then
      -- Portable: the cache lives in the game folder next to the executable
-@@ -261,23 +280,28 @@
+@@ -261,23 +287,28 @@
      purgeSaveDirCache()
    end
    -- Generated data in a developer checkout / Python build is always current.
@@ -1446,7 +1490,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      "ROM import metadata version mismatch")
    return manifest
  end
-@@ -456,6 +480,100 @@
+@@ -456,6 +487,100 @@
    }
  end
  
@@ -1547,7 +1591,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  function RomImporter:_resolveSaveVersion(version)
    version = version or self.panelVersion or self.tab
    if GameVersion.VERSIONS[version] then return version end
-@@ -1157,7 +1275,11 @@
+@@ -1157,7 +1282,11 @@
      end)(),
      logo = love.graphics.newImage("assets/logo/logo.png"),
      bcg = love.graphics.newImage("assets/logo/bcg.png"),
@@ -1560,7 +1604,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      importing = nil,      -- the version currently extracting, or nil
      workState = nil,      -- "working" / "complete" / "error" for that import
      errorVersion = nil,   -- which column shows the current error
-@@ -1215,10 +1337,27 @@
+@@ -1215,10 +1344,27 @@
    -- it under red/ before the readiness loop looks for red/ paths, or every
    -- such install would read as "never imported" and demand the ROM again.
    CacheFs.migrateLegacyRedCache()
@@ -1590,7 +1634,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      self.ready[version] = ready
      -- a marker present but for an older cache generation / different ROM means
      -- "update required" (re-import) rather than a clean first-run choose
-@@ -1227,11 +1366,12 @@
+@@ -1227,11 +1373,12 @@
      local marker = CacheFs.read(MARKER_PATH)
      CacheFs.prefix = saved
      self.returning[version] =
@@ -1604,7 +1648,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    self:_queueBaseRomScan()
  
    -- Android: import a save-dir .gb/.gbc that is not yet ready (USB drop or a
-@@ -1451,14 +1591,21 @@
+@@ -1451,14 +1598,21 @@
      return
    end
    local actualHash = sha1(data)
@@ -1631,7 +1675,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  
    -- Bring the launcher to this version's tab so its progress bar is on screen
    -- (a dropped cart is routed by SHA-1 regardless of which tab was showing).
-@@ -1493,7 +1640,7 @@
+@@ -1493,7 +1647,7 @@
      CacheFs.removeTree("assets/generated")
      CacheFs.remove(MARKER_PATH)
  
@@ -1640,7 +1684,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      local RomExtractor = require("src.import.RomExtractor")
      local extractor = RomExtractor.new(self.romData, manifest,
        function(progress, total, stage, current, stageTotal)
-@@ -1508,11 +1655,14 @@
+@@ -1508,11 +1662,14 @@
      collectgarbage("collect")
      -- Written last: the marker is what isReady() checks, so it must only
      -- appear once every required file is in place.
@@ -1657,7 +1701,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      self.returning[version] = false
      self.romName[version] = (displayName
        and (displayName:match("[^/\\]+$") or displayName)) or self.romName[version]
-@@ -1542,7 +1692,7 @@
+@@ -1542,7 +1699,7 @@
      self._handedOff = true
      resetPointerCursor(self)
      if self._flex then require("src.import.LauncherView").detach(self) end
@@ -1666,7 +1710,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    end)
  end
  
-@@ -1653,12 +1803,17 @@
+@@ -1653,12 +1810,17 @@
      end
      self.pickPending = true
      self.pickTimer = 0
@@ -1687,7 +1731,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      end
      return
    end
-@@ -1907,11 +2062,18 @@
+@@ -1907,11 +2069,18 @@
      end
      self.pickPending = true
      self.pickTimer = 0
@@ -1709,7 +1753,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      end
      return
    end
-@@ -2059,6 +2221,8 @@
+@@ -2059,6 +2228,8 @@
  
  function RomImporter:update(dt)
    self.pulse = self.pulse + dt
@@ -1718,7 +1762,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    self:_updatePadCursor(dt)
    self:_stepBaseRomScan()
    -- Pump the FlexLove view (input polling + the queued click actions).  The
-@@ -2456,17 +2620,22 @@
+@@ -2456,17 +2627,22 @@
    -- of its own, so portable installs and POKEPORT_IDENTITY sandboxes keep it
    -- with the rest of the launcher's persisted state.  A failed write only
    -- costs the memory of the choice, so it must never block the boot.
@@ -1742,7 +1786,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  end
  
  -- "re-import" a column: drop it back to the choose/drop state so a fresh ROM
-@@ -2475,6 +2644,11 @@
+@@ -2475,6 +2651,11 @@
    if self.workState == "working" then return end
    if not self.ready[version] then return end
    self.ready[version] = false
@@ -1815,6 +1859,75 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/SaveFileIO.lua
    local ok, writeErr = fs.write(rel, bytes)
    if not ok then return false, "could not write the export: " .. tostring(writeErr) end
    -- Absolute path for the notice line, resolved against whichever root took
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/render/SafeImage.lua love_src/src/render/SafeImage.lua
+--- love_orig/src/render/SafeImage.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/src/render/SafeImage.lua	2026-08-15 08:56:37.795818513 +0000
+@@ -0,0 +1,65 @@
++-- Load an optional image without betting the process on it.
++--
++-- Every optional asset in the UI was loaded as
++--
++--     local ok, img = pcall(love.graphics.newImage, path)
++--     return ok and img or nil
++--
++-- which is correct on desktop and NOT correct on the Web build.  love.js is
++-- compiled without catchable C++ exceptions, so a LÖVE exception unwinds
++-- straight past pcall and kills the main loop -- the same hazard
++-- src/core/WebViewport.lua already documents for love.filesystem.read on a
++-- missing file:
++--
++--     "love.filesystem.read on a MISSING file aborts this runtime ... getInfo
++--      is the only safe probe, and it is always taken first."
++--
++-- The consequence was not theoretical.  Yellow's title copyright line draws
++-- one extra tile after the GAME FREAK logo: the international release has a
++-- single "9" (NineTile) there, the French one has a two-tile "zeros" block,
++-- and the extractor only recognised the one-tile shape -- so on a French
++-- Yellow import assets/generated/title/nine.png was never written.  On
++-- desktop TitleState shrugged and drew nothing.  On iPhone the same pcall let
++-- the exception through and the game died on Play with LÖVE's pre-window
++-- alert, with the launcher still saying GOOD TO GO.
++--
++-- So: probe with getInfo, which returns nil instead of throwing, and only
++-- then load.  The pcall stays as a second net for a file that exists but is
++-- not decodable.
++
++local SafeImage = {}
++
++-- The only safe existence probe on this runtime: getInfo returns nil for a
++-- missing file instead of throwing.
++function SafeImage.exists(path)
++  if type(path) ~= "string" or path == "" then return false end
++  if love.filesystem and love.filesystem.getInfo then
++    return love.filesystem.getInfo(path, "file") ~= nil
++  end
++  return true
++end
++
++-- Optional image, or nil.  `path` may be nil.  `resolver` is applied to the
++-- path first (Assets.resolve, for mod-derived art) when supplied.
++function SafeImage.load(path, resolver)
++  if type(path) ~= "string" or path == "" then return nil end
++  local resolved = path
++  if resolver then
++    local okResolve, out = pcall(resolver, path)
++    if okResolve and type(out) == "string" and out ~= "" then resolved = out end
++  end
++  if not SafeImage.exists(resolved) then return nil end
++  local ok, img = pcall(love.graphics.newImage, resolved)
++  return ok and img or nil
++end
++
++-- An image built from ImageData already in memory: no file to miss, so the
++-- pcall really is the whole net here.  It lives next to load() so that every
++-- optional-image path in the engine goes through one place.
++function SafeImage.fromData(imageData)
++  if not imageData then return nil end
++  local ok, img = pcall(love.graphics.newImage, imageData)
++  return ok and img or nil
++end
++
++return SafeImage
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/SaveConvert.lua love_src/src/save_convert/SaveConvert.lua
 --- love_orig/src/save_convert/SaveConvert.lua	2026-08-11 12:05:02.000000000 +0000
 +++ love_src/src/save_convert/SaveConvert.lua	2026-08-14 18:21:55.711211417 +0000
@@ -3192,6 +3305,50 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/cha
 +  },
 +  source = "pokered constants/charmap.asm",
 +}
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/Credits.lua love_src/src/ui/Credits.lua
+--- love_orig/src/ui/Credits.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/Credits.lua	2026-08-15 08:56:47.059818426 +0000
+@@ -75,9 +75,7 @@
+ local COPY_CREATURES = { 11, 12, 13, 14, 15, 16, 17, 18 } -- Creatures inc.
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ -- DisplayCreditsMon shows the mon as a black silhouette: BGP %11111100
+@@ -87,7 +85,11 @@
+ -- (headless stub) fall back to a black tint (second return value), which
+ -- also blackens interior color-0 pixels.
+ local function silhouette(path)
+-  if not path then return nil end
++  -- Probe before either loader touches the file: on love.js a LOVE exception
++  -- unwinds past pcall and kills the main loop, so "try it and catch" is not
++  -- a strategy there.  See src/render/SafeImage.lua.
++  local SafeImage = require("src.render.SafeImage")
++  if not SafeImage.exists(path) then return nil end
+   if love.image and love.image.newImageData then
+     local ok, imgData = pcall(love.image.newImageData, path)
+     if ok and imgData then
+@@ -95,12 +97,12 @@
+         if a > 0 and r + g + b < 2.9 then return 0, 0, 0, 1 end
+         return r, g, b, a
+       end)
+-      local ok2, img = pcall(love.graphics.newImage, imgData)
+-      if ok2 and img then return img, false end
++      local img = SafeImage.fromData(imgData)
++      if img then return img, false end
+     end
+   end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  if ok and img then return img, true end
++  local img = SafeImage.load(path)
++  if img then return img, true end
+   return nil
+ end
+ 
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/DexEntryMenu.lua love_src/src/ui/DexEntryMenu.lua
 --- love_orig/src/ui/DexEntryMenu.lua	2026-08-11 12:05:02.000000000 +0000
 +++ love_src/src/ui/DexEntryMenu.lua	2026-08-14 18:43:35.604881311 +0000
@@ -3206,3 +3363,116 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/DexEntryMenu.lua l
      -- feet/inches use the dex screen's ′/″ glyphs ("HT  ?′??″" in
      -- pokedex.asm; the tiles come from gfx/pokedex/pokedex.png via
      -- engine/gfx/load_pokedex_tiles.asm)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/HallOfFame.lua love_src/src/ui/HallOfFame.lua
+--- love_orig/src/ui/HallOfFame.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/HallOfFame.lua	2026-08-15 08:27:00.127476576 +0000
+@@ -73,9 +73,7 @@
+ -- through Assets.resolve so an enabled mod's overrides/ shadows these the
+ -- same way it shadows every other generated asset
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, Assets.resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path, Assets.resolve)
+ end
+ 
+ -- POKéDEX rating tiers (engine/events/pokedex_rating.asm DexRatingsTable)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/IntroMovie.lua love_src/src/ui/IntroMovie.lua
+--- love_orig/src/ui/IntroMovie.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/IntroMovie.lua	2026-08-15 08:27:00.125654672 +0000
+@@ -117,9 +117,7 @@
+ }
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ function IntroMovie.new(game, onDone)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/OakSpeech.lua love_src/src/ui/OakSpeech.lua
+--- love_orig/src/ui/OakSpeech.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/OakSpeech.lua	2026-08-15 08:27:00.126046730 +0000
+@@ -68,9 +68,7 @@
+ -- through Assets.resolve so an enabled mod's overrides/ shadows these the
+ -- same way it shadows every other generated asset
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, Assets.resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path, Assets.resolve)
+ end
+ 
+ -- Resolve a pic descriptor to (image, flip, trueColor).
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/TitleState.lua love_src/src/ui/TitleState.lua
+--- love_orig/src/ui/TitleState.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/TitleState.lua	2026-08-15 08:29:58.251833577 +0000
+@@ -130,14 +130,12 @@
+ local BALL_REST = 100
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+   -- resolve through Assets so a mod's derived art (save/mod-derived/)
+   -- wins here the way it does for every other generated sheet -- but
+   -- load uncached, because on NX the per-version overlay redirects the
+   -- open itself and a cached image would leak across Yellow/Blue boots
+-  local ok, img = pcall(love.graphics.newImage,
+-    require("src.render.Assets").resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path,
++    require("src.render.Assets").resolve)
+ end
+ 
+ -- the importer seeds field.title with {path,width,height} descriptors
+@@ -679,7 +677,8 @@
+     end
+     if self.nineImg then
+       love.graphics.draw(self.nineImg, x, y)
+-      x = x + 8
++      -- One tile on the international release, two on the French one.
++      x = x + self.nineImg:getWidth()
+     end
+     love.graphics.draw(self.gfInc, x, y)
+     return
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/TradeAnim.lua love_src/src/ui/TradeAnim.lua
+--- love_orig/src/ui/TradeAnim.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/TradeAnim.lua	2026-08-15 08:27:00.126464628 +0000
+@@ -36,9 +36,7 @@
+ }
+ 
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ local function nameOf(game, mon)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/TrainerCard.lua love_src/src/ui/TrainerCard.lua
+--- love_orig/src/ui/TrainerCard.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/TrainerCard.lua	2026-08-15 08:27:00.125371772 +0000
+@@ -21,9 +21,7 @@
+ -- through Assets.resolve so an enabled mod's overrides/ shadows these the
+ -- same way it shadows every other generated asset
+ local function tryImage(path)
+-  if not path then return nil end
+-  local ok, img = pcall(love.graphics.newImage, Assets.resolve(path))
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path, Assets.resolve)
+ end
+ 
+ local function quads16(img, count, stride, x0, y0)
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/YellowIntro.lua love_src/src/ui/YellowIntro.lua
+--- love_orig/src/ui/YellowIntro.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/YellowIntro.lua	2026-08-15 08:27:00.126788548 +0000
+@@ -220,8 +220,7 @@
+ end
+ 
+ local function tryImage(path)
+-  local ok, img = pcall(love.graphics.newImage, path)
+-  return ok and img or nil
++  return require("src.render.SafeImage").load(path)
+ end
+ 
+ -- ------- state --------------------------------------------------------

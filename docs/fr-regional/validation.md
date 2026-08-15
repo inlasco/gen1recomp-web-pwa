@@ -179,6 +179,89 @@ run — importing a French cart through the Web importer, the launcher's US|FR
 chip row under touch, the title/intro frames as rendered, and a session long
 enough to reach Bourg Palette on foot, a wild battle and a save.
 
+## Web boot, real import through the browser
+
+The desktop boots above pass a cache the harness built. The Web build was
+regressing anyway, so every variant is now also imported *through the page*,
+in headless Chromium at 844×390 touch, by handing the cartridge to the
+launcher's own file input and then tapping Play on the canvas.
+
+| | extraction | `title/nine.png` | dialogs on Play | result |
+| --- | --- | --- | --- | --- |
+| Rouge FR | 14 s | 8×8 | 0 | **runs** |
+| Bleue FR | 14 s | 8×8 | 0 | **runs** |
+| Jaune FR | 16 s | **16×8** | 0 | **runs** |
+| Red US | 14 s | absent (as always) | 0 | **runs** |
+| Yellow US | 16 s | 8×8 (unchanged) | 0 | **runs** |
+
+### The Yellow FR boot failure, and why it was fatal only on the Web
+
+Jaune FR reached `GOOD TO GO` in the launcher and then died on Play with
+LÖVE's pre-window alert:
+
+```
+[info] generated data loaded (223 maps, 151 species, 165 moves)
+Could not open file assets/generated/title/nine.png. Does not exist.
+An error occurred before the game window could be initialised.
+```
+
+Two independent defects had to line up.
+
+1. **The extractor only knew the international shape.** The Yellow title
+   copyright line is `©'95.'96.'98 <block> GAME FREAK inc.`, where `<block>`
+   is whatever the ROM stores between `GameFreakLogoGraphicsEnd` and
+   `TextBoxGraphics`. pokeyellow-us has a one-tile `NineTile` there;
+   pokeyellow-fr has a two-tile `ZerosTile`. The probe asserted
+   `TextBoxGraphics == GameFreakLogoGraphics + 9*16 + 16`, i.e. exactly one
+   tile, so the French import never wrote the file at all. Measured symbol
+   deltas: yellow-us 160 bytes, yellow-fr 176.
+
+2. **`pcall` does not catch a LÖVE exception on love.js.** Every optional
+   image in the UI was loaded as `pcall(love.graphics.newImage, path)`, which
+   is correct on desktop — the French Yellow title simply drew nothing there —
+   and wrong on the Web build, which is compiled without catchable C++
+   exceptions. The unwind goes straight past `pcall` and takes the main loop
+   with it. `src/core/WebViewport.lua` already documents the same hazard for
+   `love.filesystem.read`.
+
+Both are fixed, and separately:
+
+* `RomExtractor` now extracts the block whatever its tile count (1 → 8×8,
+  2 → 16×8, capped at four tiles, whole tiles only, same bank). Red US and
+  Blue US have nothing between the two symbols — delta 0 — so they still
+  produce no file, exactly as before.
+* `TitleState:drawCopyright` advances by `nineImg:getWidth()` instead of a
+  hardcoded 8, so the two-tile French block does not overlap `GAME FREAK inc.`
+* `src/render/SafeImage.lua` probes with `love.filesystem.getInfo` — the only
+  safe existence test on this runtime — before loading, and all eight
+  `tryImage` implementations plus `Credits.silhouette` go through it. A
+  missing optional asset can no longer kill a boot.
+* `RomImporter`'s `VERSION_REQUIRED_FILES.yellow` now lists
+  `assets/generated/title/nine.png`, so the French Yellow caches already
+  written without it re-import themselves. Yellow US caches always had the
+  file and are untouched; Red and Blue never ask for it. No `CACHE_FORMAT`
+  bump, so no US cache is invalidated.
+
+### Scope of the `pcall` hazard, measured rather than assumed
+
+Roughly two dozen other sites in the engine still load an asset with
+`pcall(love.graphics.newImage, …)`. Rewriting them all was not in scope, so
+the question was whether any of them can actually fire on a regional import.
+It was answered by importing each cartridge through the page and dumping the
+complete list of files the extractor produced under that variant's cache
+prefix:
+
+| | files produced | difference vs US |
+| --- | --- | --- |
+| Yellow US / Jaune FR | 625 / 625 | none |
+| Red US / Rouge FR | 528 / 529 | FR adds `title/nine.png` |
+| Blue US / Bleue FR | 528 / 529 | FR adds `title/nine.png` |
+
+No French import is missing any file its US counterpart produces, so no other
+optional-asset load can be reached by a regional divergence on these six
+cartridges. The remaining sites stay a latent hazard for a *future* manifest
+divergence, and are listed here rather than silently left.
+
 ## Test suite
 
 ```sh
@@ -186,7 +269,7 @@ tools/tests/run_fr_regional_tests.sh
 ```
 
 ```text
-passed 177  failed 0  skipped 0
+passed 208  failed 0  skipped 0
 ```
 
 Covers: the six SHA-1 → (game, variant) mappings and rejection of unknown /
@@ -198,8 +281,11 @@ fallbacks; the mod layer still seeing exactly three games (including that a
 mod profile rejects `red-fr` as a game id); the French catalog's format arity
 and `{TOKEN}` preservation on every entry, and that it is inert for US; one
 manifest per variant, each declaring its own ROM hash and measurement system;
-the per-variant save charmaps; and an artifact audit for ROMs, saves and
-extracted caches.
+the per-variant save charmaps; the size of the title copyright block in all
+six manifests, that both Yellow variants can produce `title/nine.png`, that
+the extractor no longer hardcodes the one-tile shape, and that every optional
+image in the UI is loaded through `SafeImage` rather than a bare `pcall`; and
+an artifact audit for ROMs, saves and extracted caches.
 
 Skipped, with reasons:
 
