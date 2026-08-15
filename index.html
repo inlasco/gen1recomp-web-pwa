@@ -42,5 +42,23 @@
        injecte player.js.  Sans lui, un .love téléversé de travers reste
        épinglé dans le navigateur et aucun retéléversement ne le remplace. -->
   <script src="boot-guard.js?v=13.4-fr-r5"></script>
+  <script>
+    // Enregistré après le chargement, pour ne pas concurrencer les propres
+    // requêtes du moteur (love.wasm, l'archive du jeu).
+    //
+    // updateViaCache:"none" est le point important : le script du worker
+    // lui-même doit toujours être revalidé. Sans ça, une livraison — et
+    // l'interrupteur KILL qu'elle contient — pourrait rester bloquée
+    // derrière une copie en cache, ce qui est exactement le problème que ce
+    // worker est là pour supprimer.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("sw.js", { scope: "./", updateViaCache: "none" })
+          .then(function (registration) { registration.update(); })
+          .catch(function (error) { console.warn("SW registration failed", error); });
+      }, { once: true });
+    }
+  </script>
 </body>
 </html>
