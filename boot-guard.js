@@ -44,7 +44,7 @@
 (function () {
   // uri (exactly as player.js requests it) -> exact byte length
   var EXPECT = {
-    "game-v13.4-fr.love": 3476413,
+    "game-v13.4-fr.love": 3476753,
     "11.5/love.wasm": 4720510,
     "lua/normalize1.lua": 2832,
     "lua/normalize2.lua": 4095

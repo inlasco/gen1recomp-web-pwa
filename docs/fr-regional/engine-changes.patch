@@ -1198,7 +1198,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomExtractor.l
  function RomExtractor:extractPokemon()
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lua love_src/src/import/RomImporter.lua
 --- a/src/import/RomImporter.lua	2026-08-13 21:15:14.000000000 +0000
-+++ b/src/import/RomImporter.lua	2026-08-14 18:28:34.385433837 +0000
++++ b/src/import/RomImporter.lua	2026-08-15 07:16:46.307275047 +0000
 @@ -41,8 +41,10 @@
  
  -- The marker a finished import writes for a version: the generation tag plus
@@ -1212,7 +1212,23 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  end
  local COMMUNITY_URL = "https://bois.icu"
  local TRUST_WARNING = "if you did not get this from bryanthaboi's github " ..
-@@ -153,10 +155,10 @@
+@@ -72,6 +74,15 @@
+ local WEB_MOD_REFRESH = "web-mod-refresh.flag"
+ local WEB_MOD_RESULT = "web-mod-result.txt"
+ local WEB_MOD_ERROR = "web-mod-error.txt"
++-- The shell cannot be called into: love.system.openURL is window.open() in
++-- love.js, and Safari refuses a javascript: URL there, so the historical
++-- openURL("javascript:...Gen1WebBridge.pickRom()") never reached the page on
++-- iOS.  A file picker also has to be opened from a real DOM gesture, which a
++-- canvas touch delivered to Lua a frame later no longer is.  So the request
++-- travels the same way every other Web request does -- as a small file in the
++-- save directory -- and the shell answers it with its own prompt, which IS a
++-- DOM gesture.  Contents: "rom" or "mod".
++local WEB_PICK_REQUEST = "web-pick-request.txt"
+ 
+ local function clearWebImportFiles()
+   if not Platform.isWeb() or not (love and love.filesystem) then return end
+@@ -153,10 +164,10 @@
  -- otherwise the save directory through love.filesystem.  It honors
  -- CacheFs.prefix, so we point it at the version's cache subtree (red/,
  -- blue/, yellow/).
@@ -1225,7 +1241,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    local ok = true
    for _, path in ipairs(REQUIRED_FILES) do
      if not CacheFs.exists(path) then ok = false; break end
-@@ -173,9 +175,13 @@
+@@ -173,9 +184,13 @@
  -- Imported Red caches still live under red/.  Check source paths directly so
  -- that cache prefix cannot hide Red's source tree, and keep save-dir caches
  -- from counting as current source data.
@@ -1241,7 +1257,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    for _, path in ipairs(REQUIRED_FILES) do
      if love.filesystem.getInfo(prefix .. path, "file") == nil then return false end
    end
-@@ -251,8 +257,12 @@
+@@ -251,8 +266,12 @@
  end
  
  -- Whether a given game version's ROM has already been imported and cached.
@@ -1255,7 +1271,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    local CacheFs = require("src.import.CacheFs")
    if CacheFs.root() then
      -- Portable: the cache lives in the game folder next to the executable
-@@ -261,23 +271,28 @@
+@@ -261,23 +280,28 @@
      purgeSaveDirCache()
    end
    -- Generated data in a developer checkout / Python build is always current.
@@ -1291,7 +1307,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      "ROM import metadata version mismatch")
    return manifest
  end
-@@ -456,6 +471,100 @@
+@@ -456,6 +480,100 @@
    }
  end
  
@@ -1392,7 +1408,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  function RomImporter:_resolveSaveVersion(version)
    version = version or self.panelVersion or self.tab
    if GameVersion.VERSIONS[version] then return version end
-@@ -1157,7 +1266,11 @@
+@@ -1157,7 +1275,11 @@
      end)(),
      logo = love.graphics.newImage("assets/logo/logo.png"),
      bcg = love.graphics.newImage("assets/logo/bcg.png"),
@@ -1405,7 +1421,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      importing = nil,      -- the version currently extracting, or nil
      workState = nil,      -- "working" / "complete" / "error" for that import
      errorVersion = nil,   -- which column shows the current error
-@@ -1215,10 +1328,27 @@
+@@ -1215,10 +1337,27 @@
    -- it under red/ before the readiness loop looks for red/ paths, or every
    -- such install would read as "never imported" and demand the ROM again.
    CacheFs.migrateLegacyRedCache()
@@ -1435,7 +1451,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      self.ready[version] = ready
      -- a marker present but for an older cache generation / different ROM means
      -- "update required" (re-import) rather than a clean first-run choose
-@@ -1227,11 +1357,12 @@
+@@ -1227,11 +1366,12 @@
      local marker = CacheFs.read(MARKER_PATH)
      CacheFs.prefix = saved
      self.returning[version] =
@@ -1449,7 +1465,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    self:_queueBaseRomScan()
  
    -- Android: import a save-dir .gb/.gbc that is not yet ready (USB drop or a
-@@ -1451,14 +1582,21 @@
+@@ -1451,14 +1591,21 @@
      return
    end
    local actualHash = sha1(data)
@@ -1476,7 +1492,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  
    -- Bring the launcher to this version's tab so its progress bar is on screen
    -- (a dropped cart is routed by SHA-1 regardless of which tab was showing).
-@@ -1493,7 +1631,7 @@
+@@ -1493,7 +1640,7 @@
      CacheFs.removeTree("assets/generated")
      CacheFs.remove(MARKER_PATH)
  
@@ -1485,7 +1501,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      local RomExtractor = require("src.import.RomExtractor")
      local extractor = RomExtractor.new(self.romData, manifest,
        function(progress, total, stage, current, stageTotal)
-@@ -1508,11 +1646,14 @@
+@@ -1508,11 +1655,14 @@
      collectgarbage("collect")
      -- Written last: the marker is what isReady() checks, so it must only
      -- appear once every required file is in place.
@@ -1502,7 +1518,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
      self.returning[version] = false
      self.romName[version] = (displayName
        and (displayName:match("[^/\\]+$") or displayName)) or self.romName[version]
-@@ -1542,7 +1683,7 @@
+@@ -1542,7 +1692,7 @@
      self._handedOff = true
      resetPointerCursor(self)
      if self._flex then require("src.import.LauncherView").detach(self) end
@@ -1511,7 +1527,50 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    end)
  end
  
-@@ -2059,6 +2200,8 @@
+@@ -1653,12 +1803,17 @@
+     end
+     self.pickPending = true
+     self.pickTimer = 0
+-    local ok = love.system and love.system.openURL and love.system.openURL(
+-      "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickMod()")
++    local ok = love.filesystem.write(WEB_PICK_REQUEST, "mod")
++    pcall(function()
++      if love.system and love.system.openURL then
++        love.system.openURL(
++          "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickMod()")
++      end
++    end)
+     if not ok then
+       self.pickPending = nil
+       self.modNotice = { ok = false,
+-        text = "Could not open the browser mod picker." }
++        text = "Could not ask the page for a mod picker." }
+     end
+     return
+   end
+@@ -1907,11 +2062,18 @@
+     end
+     self.pickPending = true
+     self.pickTimer = 0
+-    local ok = love.system and love.system.openURL and love.system.openURL(
+-      "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickRom()")
++    local ok = love.filesystem.write(WEB_PICK_REQUEST, "rom")
++    -- Kept as a second attempt for shells that can still take it; it is a
++    -- no-op on iOS and must never be the only path.
++    pcall(function()
++      if love.system and love.system.openURL then
++        love.system.openURL(
++          "javascript:window.Gen1WebBridge&&window.Gen1WebBridge.pickRom()")
++      end
++    end)
+     if not ok then
+       self.pickPending = nil
+-      self:setError("Could not open the browser file picker.")
++      self:setError("Could not ask the page for a file picker.")
+     end
+     return
+   end
+@@ -2059,6 +2221,8 @@
  
  function RomImporter:update(dt)
    self.pulse = self.pulse + dt
@@ -1520,7 +1579,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    self:_updatePadCursor(dt)
    self:_stepBaseRomScan()
    -- Pump the FlexLove view (input polling + the queued click actions).  The
-@@ -2456,17 +2599,22 @@
+@@ -2456,17 +2620,22 @@
    -- of its own, so portable installs and POKEPORT_IDENTITY sandboxes keep it
    -- with the rest of the launcher's persisted state.  A failed write only
    -- costs the memory of the choice, so it must never block the boot.
@@ -1544,7 +1603,7 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
  end
  
  -- "re-import" a column: drop it back to the choose/drop state so a fresh ROM
-@@ -2475,6 +2623,11 @@
+@@ -2475,6 +2644,11 @@
    if self.workState == "working" then return end
    if not self.ready[version] then return end
    self.ready[version] = false

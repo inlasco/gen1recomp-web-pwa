@@ -7,6 +7,11 @@
   var PICKED_MOD = "picked_mod.zip";
   var IMPORT_FLAG = "web-import-active.flag";
   var WIDE_REQUEST = "web-adaptive-wide-request.txt";
+  // The engine asks the page for a file picker by writing this file.  It
+  // cannot call in: love.system.openURL is window.open() in love.js and
+  // Safari refuses a javascript: URL there, so the historical call never
+  // reached this script on iOS.  Contents: "rom" or "mod".
+  var PICK_REQUEST = "web-pick-request.txt";
   var SAVE_ROOT = "/home/web_user/love";
   var saveDirectory = null;
   var syncing = false;
@@ -687,6 +692,86 @@
     persist: persistFilesystem,
     getSaveDirectory: function () { return saveDirectory; }
   };
+
+  // ------- the pick prompt
+  //
+  // A file picker only opens from a real DOM user gesture.  A touch on the
+  // canvas is consumed by SDL and handed to Lua a frame later, so the request
+  // that comes back is no longer inside that gesture and Safari refuses it,
+  // silently.  This prompt is the gesture: the engine asks, the page shows a
+  // full-screen button, and the player's tap on THAT is what opens the
+  // picker.  No permanent toolbar, and nothing that can be refused.
+  var promptEl = null;
+  var promptKind = null;
+
+  function buildPrompt() {
+    if (promptEl) return promptEl;
+    promptEl = document.createElement("button");
+    promptEl.type = "button";
+    promptEl.id = "pick-prompt";
+    promptEl.setAttribute("aria-live", "polite");
+    promptEl.hidden = true;
+    promptEl.addEventListener("click", function () {
+      // Synchronous, inside the click: this is the whole point.
+      var kind = promptKind;
+      hidePrompt();
+      if (kind === "mod") {
+        modPicker.value = "";
+        modPicker.click();
+      } else {
+        picker.value = "";
+        picker.click();
+      }
+    });
+    document.body.appendChild(promptEl);
+    return promptEl;
+  }
+
+  function showPrompt(kind) {
+    var node = buildPrompt();
+    promptKind = kind;
+    node.textContent = kind === "mod"
+      ? "Touchez ici pour choisir votre mod (.zip)"
+      : "Touchez ici pour choisir votre ROM (.gb / .gbc)";
+    node.hidden = false;
+    document.body.classList.add("web-pick-prompt");
+    setStatus(kind === "mod"
+      ? "Choisissez votre mod : le fichier est lu sur l’appareil, rien n’est envoyé."
+      : "Choisissez votre ROM : le fichier est lu sur l’appareil, rien n’est envoyé.");
+  }
+
+  function hidePrompt() {
+    if (!promptEl) return;
+    promptEl.hidden = true;
+    promptKind = null;
+    document.body.classList.remove("web-pick-prompt");
+  }
+
+  // Cancelling the picker leaves the engine waiting; it polls for the file
+  // and gives up on its own, and the prompt is already gone by then.
+  function pollPickRequest() {
+    var fs = getFS();
+    if (!fs || !saveDirectory) return;
+    var path = saveDirectory + "/" + PICK_REQUEST;
+    if (!pathExists(fs, path)) return;
+    var kind = "rom";
+    try {
+      var raw = fs.readFile(path, { encoding: "utf8" });
+      if (typeof raw === "string" && raw.indexOf("mod") === 0) kind = "mod";
+    } catch (_) {
+      kind = "rom";
+    }
+    // Consume it first: a request that survives its own handling would
+    // re-open the prompt on every tick.
+    try { fs.unlink(path); } catch (_) {}
+    showPrompt(kind);
+  }
+
+  window.setInterval(pollPickRequest, 200);
+
+  // Both pickers close the prompt when they answer, whichever way.
+  picker.addEventListener("change", hidePrompt);
+  modPicker.addEventListener("change", hidePrompt);
 
   var readyPoll = window.setInterval(function () {
     var fs = getFS();

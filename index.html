@@ -10,7 +10,7 @@
   <title>Gen1Recomp PWA v13.3 Viewport Final</title>
   <link rel="manifest" href="manifest.webmanifest?v=13.3-pwa-final">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="app-v13.css?v=13.3-pwa-final">
+  <link rel="stylesheet" href="app-v13.css?v=13.4-fr-r3">
 </head>
 <body>
   <main id="app" aria-label="Gen1Recomp Web">
@@ -21,51 +21,26 @@
         <span>Chargement de Gen1Recomp…</span>
       </div>
     </div>
-    <!-- The preparation rack is NOT decoration and must not be removed.
-         Two reasons, both measured:
+    <!-- Pas de barre de boutons : le launcher est l'interface.  Quand il
+         demande une ROM ou un mod, le moteur écrit web-pick-request.txt et
+         web-bridge-v13.js affiche un bandeau plein écran ; le toucher sur ce
+         bandeau est le geste DOM réel dont iOS a besoin pour ouvrir le
+         sélecteur de fichiers.  Rien de permanent à l'écran.
 
-         1. iOS only opens a file picker from a real DOM user gesture.  The
-            launcher's own Choose ROM button lives inside the canvas: SDL
-            hands the touch to Lua a frame later, and the resulting
-            Gen1WebBridge.pickRom() call is no longer inside that gesture, so
-            Safari refuses it and nothing happens.  These buttons are the only
-            import path the platform actually allows.
-
-         2. #app is a two-row grid (minmax(0,1fr) auto) and this div is the
-            second row.  Dropping it changes #game-frame's height and the
-            presentation scale with it -- 844x337 and 0.9362 with the rack,
-            844x390 and 1.0000 without, on a 390x844 device.  The validated
-            viewport work assumes the first shape. -->
-    <div id="web-tools">
-      <button id="rom-button" type="button">Importer une ROM</button>
-      <button id="mod-button" type="button" disabled>Importer un mod</button>
-      <button id="fullscreen-button" type="button">Plein écran</button>
-      <span id="web-status" role="status" aria-live="polite">Initialisation…</span>
-    </div>
+         #web-status reste dans le DOM, visuellement masqué : c'est la seule
+         destination des messages du pont, y compris « lu sur l'appareil,
+         rien n'est envoyé ». -->
+    <span id="web-status" role="status" aria-live="polite"
+          style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0"
+          >Initialisation…</span>
     <input id="rom-picker" type="file" accept=".gb,.gbc,application/octet-stream" hidden>
   </main>
   <noscript>JavaScript est indispensable pour exécuter la version WebAssembly.</noscript>
   <script src="web-mod-import.js?v=13.3-pwa-final"></script>
-  <script src="web-bridge-v13.js?v=13.4-fr-r2"></script>
-  <!-- boot-guard.js verifies player.js's IndexedDB package cache and then
-       injects player.js itself.  It has to run BEFORE player.js, which is why
-       the player is not a static tag here: a truncated download that reached
-       that cache would otherwise be replayed on every visit and no amount of
-       re-uploading would fix it.  See boot-guard.js. -->
+  <script src="web-bridge-v13.js?v=13.4-fr-r3"></script>
+  <!-- boot-guard.js vérifie le cache de paquets IndexedDB de player.js puis
+       injecte player.js.  Sans lui, un .love téléversé de travers reste
+       épinglé dans le navigateur et aucun retéléversement ne le remplace. -->
   <script src="boot-guard.js?v=13.4-fr"></script>
-  <script>
-    // Registered after load so it never competes with the engine's own
-    // fetches for the wasm and the game archive.  updateViaCache:"none" is
-    // explicit: the worker script itself must always be revalidated, or a
-    // deploy -- and the kill switch inside it -- could be cached out.
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker
-          .register("sw.js", { scope: "./", updateViaCache: "none" })
-          .then(function (registration) { registration.update(); })
-          .catch(function (error) { console.warn("SW registration failed", error); });
-      }, { once: true });
-    }
-  </script>
 </body>
 </html>
