@@ -17,15 +17,17 @@ Upstream: https://github.com/DramaticShape/DramaticShapeVoxelMod
 Bundled artifact:
 
 ```text
-mods/DramaticShape-v1.0-widescreen-test.zip
+mods/DramaticShape-Mobile-Web-by-inlasco.zip
 ```
+
+The upstream author of the mod is **DramaticShape**. This repository is not the author of Dramatic Shape Voxel Mod.
 
 The archive contains the upstream MIT license, including:
 
 - Copyright (c) 2026 DramaticShape
 - modification attribution to UNDERdecodedHD for Generation II support
 
-The Web/iPhone build in this repository contains additional adaptation work for this deployment baseline while retaining the MIT license inside the archive.
+The Web/iPhone build in this repository contains additional Web/mobile adaptation work by **inlasco** for this deployment baseline, while retaining the MIT license, the internal mod name, id, manifest and upstream attribution inside the archive. The repository file name identifies which build is published here; it does not change the mod's identity or its authorship.
 
 ## LÖVE / love.js
 

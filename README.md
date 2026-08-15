@@ -4,7 +4,10 @@
 
 Play Gen1Recomp in your phone's browser, with your own ROM. No emulator, no sideloading, no App Store.
 
+**Current release: v2.0** — see [`docs/BASELINE-v2.0.md`](docs/BASELINE-v2.0.md).
+
 <p align="center">
+  <img src="https://img.shields.io/badge/release-v2.0-0b7285?style=flat-square" alt="Current release: v2.0">
   <img src="https://img.shields.io/badge/Web-PWA-111827?style=flat-square" alt="Web / PWA">
   <img src="https://img.shields.io/badge/ROMs-US%20%2B%20FR-2f9e44?style=flat-square" alt="Original US and French ROMs supported">
   <img src="https://img.shields.io/badge/iPhone%20%2F%20Safari-hardware%20validated-0b7285?style=flat-square" alt="iPhone / Safari: hardware validated">
@@ -24,6 +27,17 @@ Play Gen1Recomp in your phone's browser, with your own ROM. No emulator, no side
   <a href="https://gen1recomp.inlasco.fr/"><img src="https://img.shields.io/badge/%E2%96%B6%20Launch%20Web%20App-gen1recomp.inlasco.fr-0b7285?style=for-the-badge" alt="Launch Web App at gen1recomp.inlasco.fr"></a><br>
   <sub>Opens straight in your mobile browser. No download, no App Store, no GitHub account.</sub>
 </p>
+
+> [!WARNING]
+> ## ⚠️ Use the Dramatic Shape build included in this repository
+>
+> The standard, upstream Dramatic Shape release is **not** the Web/mobile build this project runs on. For the supported Web/PWA experience, download and import exactly this file:
+>
+> ### 👉 [`mods/DramaticShape-Mobile-Web-by-inlasco.zip`](mods/DramaticShape-Mobile-Web-by-inlasco.zip)
+>
+> Using a Dramatic Shape ZIP obtained anywhere else may cause missing features, rendering problems, incorrect widescreen behaviour, `G-SHADOW` issues and other incompatibilities. Most "it doesn't work" reports turn out to be a different build of the mod rather than a bug in this port.
+>
+> **Please reproduce the problem with the bundled Mobile/Web adaptation before reporting a Web/PWA bug.**
 
 <p align="center">
   <strong>Support the project</strong><br>
@@ -50,6 +64,16 @@ Play Gen1Recomp in your phone's browser, with your own ROM. No emulator, no side
 
 ---
 
+## 🎥 Video tutorial
+
+Need a quick walkthrough? The video tutorial shows how to launch the game and enable the recommended 3D options, start to finish.
+
+<p align="center">
+  <a href="https://streamable.com/jl08os"><img src="https://img.shields.io/badge/%E2%96%B6%20Watch%20the%20setup%20video-Streamable-c92a2a?style=for-the-badge" alt="Watch the Gen1Recomp Web/PWA setup video on Streamable"></a>
+</p>
+
+**▶ [Watch the Gen1Recomp Web/PWA setup video](https://streamable.com/jl08os)** — <https://streamable.com/jl08os>
+
 ## Play in 4 steps
 
 No GitHub account is required. You do not need to download or build this repository.
@@ -61,7 +85,8 @@ No GitHub account is required. You do not need to download or build this reposit
    Tap `Import ROM`. A full-screen banner appears — tap it, and your device's file picker opens. Pick your own legally obtained original Red / Blue / Yellow ROM, US or French. Extraction takes about 15–20 seconds. **The ROM stays on your device.**
 
 3. **Enable Dramatic Shape for the 3D look**  
-   Download [`mods/DramaticShape-v1.0-widescreen-test.zip`](mods/DramaticShape-v1.0-widescreen-test.zip) from this repository. In the Web App, open the `MODS` tab, tap `Import mod .zip`, select the ZIP, then switch **Dramatic Shape Voxel Mod** on.
+   Download [`mods/DramaticShape-Mobile-Web-by-inlasco.zip`](mods/DramaticShape-Mobile-Web-by-inlasco.zip) from this repository. In the Web App, open the `MODS` tab, tap `Import mod .zip`, select the ZIP, then switch **Dramatic Shape Voxel Mod** on.  
+   **Do not use another Dramatic Shape ZIP — this Web/mobile adaptation is the supported build for this project.**
 
 4. **Apply the recommended 3D settings and play**  
    In game, press `START` → `OPTION`, apply the settings below, then play with the touch controls or a connected controller.
@@ -171,7 +196,7 @@ Once installed it also runs offline, and it updates itself: a new version publis
 | Dramatic Shape voxel 3D | ✅ |
 | WebGL1 | ✅ |
 
-**iPhone / Safari** is the platform that went through the in-depth hardware campaign behind the v1.0 baseline. **Android** has been tested successfully — that is not a guarantee for every Android device or browser.
+**iPhone / Safari** is the platform that went through the in-depth hardware campaign behind this baseline, from the original v1.0 campaign through the v2.0 `G-SHADOW` validation. **Android** has been tested successfully — that is not a guarantee for every Android device or browser.
 
 The three French releases were each imported through the Web App and played, on top of the automated regional test suite.
 
@@ -200,15 +225,18 @@ The three French releases were each imported through the Web App and played, on 
 
 ## Dramatic Shape
 
-The repository includes:
+The repository includes the current Web/mobile adaptation:
 
 ```text
-mods/DramaticShape-v1.0-widescreen-test.zip
+mods/DramaticShape-Mobile-Web-by-inlasco.zip
 ```
 
-This is the exact Web/mobile build used for the v1.0 hardware validation; its SHA-256 is documented in [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md).
+It is based on **Dramatic Shape Voxel Mod** by **DramaticShape** — upstream: <https://github.com/DramaticShape/DramaticShapeVoxelMod> — and includes additional Web/iPhone adaptation work by **inlasco**. This project is **not** the author of the original mod: the upstream attribution and the MIT license are preserved inside the archive, and the mod's internal name, id, manifest and authorship are unchanged. Only the published file name in this repository says which build it is.
 
-The mod is **Dramatic Shape Voxel Mod** by DramaticShape — upstream: <https://github.com/DramaticShape/DramaticShapeVoxelMod>. This project is not its author; the archive retains its upstream license and attribution.
+This is the exact archive used for the v2.0 hardware validation; its SHA-256 is documented in [`docs/BASELINE-v2.0.md`](docs/BASELINE-v2.0.md).
+
+> [!WARNING]
+> This is the build this port is tested against. A Dramatic Shape ZIP downloaded from anywhere else is not the Web/mobile adaptation and is not supported here.
 
 ---
 
@@ -235,8 +263,10 @@ Two small files handle publishing:
 
 Per-file hashes for the published tree are listed in [`SHA256SUMS`](SHA256SUMS).
 
+The current public baseline is **v2.0** and is described in [`docs/BASELINE-v2.0.md`](docs/BASELINE-v2.0.md).
+
 > [!NOTE]
-> [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md) records the **v1.0 hardware campaign** and the artifact hashes of that baseline, including `game-v13.3-viewport-final.love`. That archive is still published here and still runs, but it is no longer the one the shell loads by default. Read that document as the history of v1.0, not as a description of the current build.
+> [`docs/BASELINE-v1.0.md`](docs/BASELINE-v1.0.md) is a **historical document**. It records the original v1.0 hardware campaign and the artifact hashes of that baseline, including `game-v13.3-viewport-final.love` and the mod under its former file name. That archive is still published here and still runs, but it is no longer the one the shell loads by default. Read that document as the history of v1.0, not as a description of the current build.
 
 ### Regional implementation
 
@@ -246,9 +276,16 @@ Regional support is documented in [`docs/fr-regional/`](docs/fr-regional/): the 
 tools/tests/run_fr_regional_tests.sh
 ```
 
-### Known limitation
+### G-SHADOW in v2.0
 
-Some voxel auxiliary geometry, notably `G-SHADOW` and `VOID FILL = TREES`, can take extra time to appear after certain indoor-to-outdoor transitions. The validated baseline is intentionally preserved rather than shipping unvalidated optimization experiments.
+Up to v1.x, `G-SHADOW` could take several seconds to appear after an indoor-to-outdoor transition, and turning the option on outdoors did not take effect immediately. v2.0 fixes both, and the fix is what this release is built around:
+
+- turning `G-SHADOW` on while already outdoors now takes effect immediately, because the map the scene is actually drawn from is treated as urgent work instead of waiting in the background queue;
+- walking out of a building arrives with the shadows already there, because the anticipated outdoor destination is prewarmed from inside the interior the player is still crossing, on the same bounded budget the terrain mesher already uses.
+
+Both scenarios were validated on real hardware (iPhone / Safari / PWA) before this release. The rendering approach is unchanged: still geometric world-space shadows on WebGL1 — no shadow map, no depth texture, no PCF, no GPU readback, no WebGL2.
+
+`VOID FILL = TREES` keeps its existing behaviour and can still take a moment to fill in after some transitions.
 
 ## Project provenance
 
