@@ -47,6 +47,7 @@ var SHELL = [
   "./",
   "index.html",
   "app-v13.css?v=13.3-pwa-final",
+  "boot-guard.js?v=13.4-fr",
   "player.js?v=11.5&n=2&g=game-v13.4-fr.love&arg=%5B%22--web%22%5D",
   "web-bridge-v13.js?v=13.4-optional-rack",
   "web-mod-import.js?v=13.3-pwa-final",
@@ -106,6 +107,18 @@ self.addEventListener("activate", function (event) {
   );
 });
 
+// player.js keeps its OWN cache of these in IndexedDB, with an integrity
+// check in front of it (boot-guard.js).  Caching them here as well would
+// store 8 MB twice AND put a second, unguarded copy in the way: a damaged
+// download that reached the Cache Storage would be replayed cache-first
+// forever, exactly the failure boot-guard.js exists to end.  They are left
+// to the network and to the layer that verifies them.
+function isEnginePackage(pathname) {
+  return /\.love$/.test(pathname)
+    || /\/love\.wasm$/.test(pathname)
+    || /\/normalize\d*\.lua$/.test(pathname);
+}
+
 function isEntryDocument(request) {
   if (request.mode === "navigate") return true;
   var accept = request.headers.get("accept") || "";
@@ -128,6 +141,7 @@ self.addEventListener("fetch", function (event) {
   // Never let the worker serve itself from a cache: that is how a kill
   // switch gets locked out.
   if (url.pathname === self.location.pathname) return;
+  if (isEnginePackage(url.pathname)) return;
 
   // Rule 1: the entry document, network-first.
   if (isEntryDocument(request)) {

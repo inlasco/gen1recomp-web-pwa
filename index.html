@@ -43,7 +43,12 @@
   <noscript>JavaScript est indispensable pour exécuter la version WebAssembly.</noscript>
   <script src="web-mod-import.js?v=13.3-pwa-final"></script>
   <script src="web-bridge-v13.js?v=13.4-optional-rack"></script>
-  <script src="player.js?v=11.5&amp;n=2&amp;g=game-v13.4-fr.love&amp;arg=%5B%22--web%22%5D"></script>
+  <!-- boot-guard.js verifies player.js's IndexedDB package cache and then
+       injects player.js itself.  It has to run BEFORE player.js, which is why
+       the player is no longer a static tag here: a truncated download that
+       reached the cache would otherwise be replayed on every visit and no
+       amount of re-uploading would fix it.  See boot-guard.js. -->
+  <script src="boot-guard.js?v=13.4-fr"></script>
   <script>
     // Registered after load so it never competes with the engine's own
     // fetches for the wasm and the game archive.  updateViaCache:"none" is

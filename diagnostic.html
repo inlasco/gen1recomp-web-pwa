@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Gen1Recomp — diagnostic de déploiement</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1rem max(1rem, env(safe-area-inset-right)) 3rem
+      max(1rem, env(safe-area-inset-left));
+    background: #05070b; color: #e5e7eb;
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  h1 { font-size: 1.15rem; margin: .2rem 0 .1rem; }
+  h2 { font-size: .95rem; margin: 1.6rem 0 .5rem; color: #93c5fd; }
+  p.sub { margin: 0 0 1rem; color: #94a3b8; font-size: .82rem; }
+  .row {
+    display: grid; grid-template-columns: 1.2rem 1fr; gap: .55rem;
+    padding: .55rem .7rem; border: 1px solid #1f2937; border-radius: .55rem;
+    background: #0b1220; margin-bottom: .45rem;
+  }
+  .row b { font-weight: 600; word-break: break-all; }
+  .row .d { color: #94a3b8; font-size: .78rem; word-break: break-all;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .ok    { color: #34d399; }
+  .bad   { color: #f87171; }
+  .warn  { color: #fbbf24; }
+  .muted { color: #64748b; }
+  button {
+    width: 100%; margin-top: .5rem; padding: .8rem;
+    border: 1px solid #60a5fa; border-radius: .6rem;
+    background: #1d4ed8; color: #eff6ff; font: inherit; font-weight: 700;
+  }
+  button.danger { background: #7f1d1d; border-color: #f87171; }
+  #verdict { padding: .8rem; border-radius: .6rem; margin: .8rem 0;
+             border: 1px solid #1f2937; background: #0b1220; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Diagnostic de déploiement</h1>
+<p class="sub">Vérifie ce que ce serveur renvoie réellement, et ce que ce
+navigateur a mis en cache. Aucune donnée ne quitte l'appareil.</p>
+
+<div id="verdict" class="muted">Analyse en cours…</div>
+
+<h2>Fichiers servis par le serveur</h2>
+<div id="net"></div>
+
+<h2>Cache de paquets du moteur (IndexedDB)</h2>
+<div id="idb"></div>
+
+<h2>Service worker et Cache Storage</h2>
+<div id="sw"></div>
+
+<button id="purge" class="danger">Tout purger et revenir au jeu</button>
+<button id="again">Relancer le diagnostic</button>
+
+<script>
+"use strict";
+
+// Ce que ce build attend. Doit rester aligné sur boot-guard.js.
+var EXPECT = {
+  "index.html":        { bytes: null,    label: "page d'entrée" },
+  "boot-guard.js":     { bytes: null,    label: "garde-fou de cache" },
+  "player.js":         { bytes: null,    label: "chargeur love.js" },
+  "web-bridge-v13.js": { bytes: null,    label: "pont Web" },
+  "web-mod-import.js": { bytes: null,    label: "import de mods" },
+  "app-v13.css":       { bytes: null,    label: "feuille de style" },
+  "sw.js":             { bytes: null,    label: "service worker" },
+  "manifest.webmanifest": { bytes: null, label: "manifeste PWA" },
+  "lua/normalize1.lua":{ bytes: 2832,    label: "normalisation Lua 1" },
+  "lua/normalize2.lua":{ bytes: 4095,    label: "normalisation Lua 2" },
+  "11.5/love.js":      { bytes: null,    label: "runtime LÖVE (js)" },
+  "11.5/love.wasm":    { bytes: 4720510, label: "runtime LÖVE (wasm)" },
+  "game-v13.4-fr.love":{ bytes: 3476413, label: "JEU — build FR",
+                         sha: "174569aeffdb74a0fe972b03b17a8c4749abba12b2f28c2d6ffa57935b5e8030" }
+};
+
+// Les paquets que player.js met en cache dans IndexedDB.
+var PACKAGES = ["game-v13.4-fr.love", "11.5/love.wasm",
+                "lua/normalize1.lua", "lua/normalize2.lua"];
+
+var problems = [];
+
+function el(tag, cls, text) {
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function addRow(host, state, title, detail) {
+  var row = el("div", "row");
+  var mark = el("div", state === "ok" ? "ok" : state === "bad" ? "bad"
+    : state === "warn" ? "warn" : "muted",
+    state === "ok" ? "✓" : state === "bad" ? "✗" : state === "warn" ? "!" : "·");
+  var body = el("div");
+  body.appendChild(el("b", null, title));
+  if (detail) body.appendChild(el("div", "d", detail));
+  row.appendChild(mark); row.appendChild(body);
+  host.appendChild(row);
+}
+
+function sha256(buffer) {
+  if (!(window.crypto && crypto.subtle && crypto.subtle.digest)) {
+    return Promise.resolve(null);
+  }
+  return crypto.subtle.digest("SHA-256", buffer).then(function (digest) {
+    var out = [], view = new Uint8Array(digest);
+    for (var i = 0; i < view.length; i += 1) {
+      out.push(("0" + view[i].toString(16)).slice(-2));
+    }
+    return out.join("");
+  }).catch(function () { return null; });
+}
+
+function checkNetwork() {
+  var host = document.getElementById("net");
+  host.textContent = "";
+  var names = Object.keys(EXPECT);
+  var chain = Promise.resolve();
+  names.forEach(function (name) {
+    chain = chain.then(function () {
+      // cache:"no-store" : on veut ce que le SERVEUR renvoie, pas une copie.
+      return fetch(name + "?diag=" + Date.now(), { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) {
+            problems.push(name + " : HTTP " + response.status);
+            addRow(host, "bad", name,
+              "HTTP " + response.status + " — le fichier manque sur le serveur");
+            return null;
+          }
+          var type = response.headers.get("content-type") || "(aucun)";
+          return response.arrayBuffer().then(function (buffer) {
+            var length = buffer.byteLength;
+            var spec = EXPECT[name];
+            var detail = length.toLocaleString("fr-FR") + " octets · " + type;
+
+            // Un serveur qui renvoie sa page d'erreur en HTTP 200 est le
+            // piège classique : le fichier « existe » et contient du HTML.
+            var head = new Uint8Array(buffer.slice(0, 4));
+            var looksHtml = head[0] === 0x3C; // '<'
+            if (/\.(love|wasm)$/.test(name) && looksHtml) {
+              problems.push(name + " : le serveur renvoie du HTML");
+              addRow(host, "bad", name,
+                detail + " — CE N'EST PAS LE FICHIER : le serveur renvoie une page HTML");
+              return null;
+            }
+            if (/\.love$/.test(name)) {
+              var zip = head[0] === 0x50 && head[1] === 0x4B
+                && head[2] === 0x03 && head[3] === 0x04;
+              if (!zip) {
+                problems.push(name + " : en-tête ZIP absent");
+                addRow(host, "bad", name,
+                  detail + " — en-tête ZIP absent, archive invalide");
+                return null;
+              }
+            }
+            if (spec && spec.bytes != null && length !== spec.bytes) {
+              problems.push(name + " : " + length + " octets au lieu de " + spec.bytes);
+              addRow(host, "bad", name, detail
+                + " — ATTENDU " + spec.bytes.toLocaleString("fr-FR")
+                + " octets. Transfert incomplet ou en mode texte.");
+              return null;
+            }
+            if (spec && spec.sha) {
+              return sha256(buffer).then(function (digest) {
+                if (digest && digest !== spec.sha) {
+                  problems.push(name + " : empreinte differente");
+                  addRow(host, "bad", name, detail + " — empreinte " + digest.slice(0, 16)
+                    + "…, attendue " + spec.sha.slice(0, 16) + "…");
+                } else {
+                  addRow(host, "ok", name, detail
+                    + (digest ? " · SHA-256 conforme" : " · taille conforme"));
+                }
+              });
+            }
+            addRow(host, "ok", name, detail);
+            return null;
+          });
+        })
+        .catch(function (error) {
+          problems.push(name + " : " + error);
+          addRow(host, "bad", name, String(error));
+        });
+    });
+  });
+  return chain;
+}
+
+function checkIndexedDb() {
+  var host = document.getElementById("idb");
+  host.textContent = "";
+  return new Promise(function (resolve) {
+    var idb = window.indexedDB;
+    if (!idb) { addRow(host, "muted", "IndexedDB indisponible", null); return resolve(); }
+    var open = idb.open("EM_PRELOAD_CACHE", 1);
+    open.onerror = function () {
+      addRow(host, "warn", "cache de paquets illisible", null); resolve();
+    };
+    open.onupgradeneeded = function (e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains("PACKAGES")) db.createObjectStore("PACKAGES");
+    };
+    open.onsuccess = function (e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains("PACKAGES")) {
+        addRow(host, "ok", "cache de paquets vide", "rien à vérifier");
+        db.close(); return resolve();
+      }
+      var store = db.transaction(["PACKAGES"], "readonly").objectStore("PACKAGES");
+      var request = store.getAllKeys();
+      request.onsuccess = function () {
+        var keys = request.result || [];
+        if (!keys.length) {
+          addRow(host, "ok", "cache de paquets vide",
+            "le prochain lancement téléchargera tout");
+          db.close(); return resolve();
+        }
+        var remaining = keys.length;
+        keys.forEach(function (key) {
+          var name = String(key);
+          var get = db.transaction(["PACKAGES"], "readonly")
+            .objectStore("PACKAGES").get(key);
+          get.onsuccess = function () {
+            var value = get.result;
+            var length = value ? (value.byteLength || value.length || 0) : 0;
+            var spec = EXPECT[name];
+            if (PACKAGES.indexOf(name) === -1) {
+              addRow(host, "warn", name,
+                length.toLocaleString("fr-FR") + " octets — paquet d'un ancien build");
+            } else if (spec && spec.bytes != null && length !== spec.bytes) {
+              problems.push("cache local : " + name + " est corrompu");
+              addRow(host, "bad", name, length.toLocaleString("fr-FR")
+                + " octets — ATTENDU " + spec.bytes.toLocaleString("fr-FR")
+                + ". Copie locale endommagée : purge nécessaire.");
+            } else {
+              addRow(host, "ok", name,
+                length.toLocaleString("fr-FR") + " octets — conforme");
+            }
+            if (--remaining === 0) { db.close(); resolve(); }
+          };
+          get.onerror = function () { if (--remaining === 0) { db.close(); resolve(); } };
+        });
+      };
+      request.onerror = function () { db.close(); resolve(); };
+    };
+  });
+}
+
+function checkServiceWorker() {
+  var host = document.getElementById("sw");
+  host.textContent = "";
+  var jobs = [];
+  if ("serviceWorker" in navigator) {
+    jobs.push(navigator.serviceWorker.getRegistrations().then(function (list) {
+      if (!list.length) {
+        addRow(host, "muted", "aucun service worker enregistré",
+          "normal avant la première visite de la page de jeu");
+      }
+      list.forEach(function (registration) {
+        addRow(host, "ok", "service worker actif", registration.scope);
+      });
+    }));
+  }
+  if (window.caches) {
+    jobs.push(caches.keys().then(function (names) {
+      if (!names.length) { addRow(host, "muted", "aucun cache", null); return; }
+      names.forEach(function (name) {
+        addRow(host, "ok", "cache « " + name + " »", null);
+      });
+    }));
+  }
+  return Promise.all(jobs);
+}
+
+function verdict() {
+  var box = document.getElementById("verdict");
+  box.className = problems.length ? "bad" : "ok";
+  if (!problems.length) {
+    box.textContent = "✓ Tout est conforme. Si le jeu ne démarre toujours pas, "
+      + "purge ci-dessous puis relance.";
+    return;
+  }
+  box.textContent = "✗ " + problems.length + " problème(s) : " + problems.join(" · ");
+}
+
+function run() {
+  problems = [];
+  document.getElementById("verdict").className = "muted";
+  document.getElementById("verdict").textContent = "Analyse en cours…";
+  checkNetwork()
+    .then(checkIndexedDb)
+    .then(checkServiceWorker)
+    .then(verdict);
+}
+
+document.getElementById("again").addEventListener("click", run);
+
+document.getElementById("purge").addEventListener("click", function () {
+  var jobs = [];
+  if (window.indexedDB) {
+    jobs.push(new Promise(function (resolve) {
+      var request = indexedDB.deleteDatabase("EM_PRELOAD_CACHE");
+      request.onsuccess = request.onerror = request.onblocked = function () { resolve(); };
+    }));
+  }
+  if (window.caches) {
+    jobs.push(caches.keys().then(function (names) {
+      return Promise.all(names.map(function (name) { return caches.delete(name); }));
+    }));
+  }
+  if ("serviceWorker" in navigator) {
+    jobs.push(navigator.serviceWorker.getRegistrations().then(function (list) {
+      return Promise.all(list.map(function (r) { return r.unregister(); }));
+    }));
+  }
+  Promise.all(jobs).then(function () {
+    location.href = "index.html?purged=" + Date.now();
+  });
+});
+
+run();
+</script>
+</body>
+</html>
