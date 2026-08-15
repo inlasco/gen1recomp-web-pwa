@@ -12,6 +12,13 @@
   // Safari refuses a javascript: URL there, so the historical call never
   // reached this script on iOS.  Contents: "rom" or "mod".
   var PICK_REQUEST = "web-pick-request.txt";
+  // Which rectangle rule to apply, written by src/core/WebViewport.lua:
+  // "launcher" (take the whole frame) or "game" (widen only, height is the
+  // framing invariant).  It arrives as a file because the calls Lua makes
+  // into this script go through love.system.openURL, which love.js
+  // implements as window.open() -- and Safari refuses a javascript: URL
+  // there, so enterGameViewport never reaches iOS at all.
+  var VIEWPORT_MODE = "web-viewport-mode.txt";
   var SAVE_ROOT = "/home/web_user/love";
   var saveDirectory = null;
   var syncing = false;
@@ -55,6 +62,17 @@
   var ASPECT_DEADBAND = 0.02;
   var baseWidth = 0;
   var baseHeight = 0;
+  // The launcher gets the adaptive viewport too.  It used to be gameplay-only
+  // ("preparation stays on its proven rectangle"), which on a landscape phone
+  // left the preparation screen at its portrait rectangle -- letterboxed, and
+  // too short for its own content, so the player had to scroll it.  The
+  // launcher already has a two-column layout; it only ever needed the width.
+  //
+  // The baseline is not invented: it is the engine's OWN window, read off the
+  // canvas backing store once SDL has created it.  Same invariant as the game
+  // handoff, just taken from the canvas instead of from a call Lua makes.
+  var launcherLive = false;
+  var viewportMode = "launcher";
   var gameLive = false;
   var engineResizing = false;
   var geometrySequence = 0;
@@ -111,7 +129,19 @@
     var box = gameBoxSize();
     if (!(box.width > 0 && box.height > 0)) return null;
     if (box.width <= box.height) {
+      // Portrait keeps the design rectangle in both modes: it is what the
+      // launcher was laid out for and what the player already knows.
       return { width: baseWidth, height: baseHeight };
+    }
+    if (viewportMode === "launcher" && !gameLive) {
+      // The preparation screen is a UI, not the 160x144 world, so its height
+      // is free.  Taking the whole frame on both axes puts it at scale 1.0
+      // and gives it the room its two-column layout needs -- which is what
+      // stops the player having to scroll it in landscape.
+      return {
+        width: Math.max(baseWidth, Math.min(MAX_ENGINE_WIDTH, Math.round(box.width))),
+        height: Math.max(baseHeight, Math.round(box.height))
+      };
     }
     var width = Math.round(baseHeight * (box.width / box.height));
     width = Math.max(baseWidth, Math.min(MAX_ENGINE_WIDTH, width));
@@ -183,7 +213,7 @@
   // channel the ROM/mod pick already uses. Lua owns setMode; this only says
   // which rectangle the device can actually show.
   function publishTarget(force) {
-    if (!gameLive) return 0;
+    if (!gameLive && !launcherLive) return 0;
     var directory = resolveSaveDirectory();
     var fs = getFS();
     if (!directory || !fs) return 0;
@@ -257,7 +287,7 @@
   // debounced and deadbanded, so a viewport wobble cannot feed itself.
   function queueGeometrySync() {
     window.requestAnimationFrame(presentEngineRectangle);
-    if (!gameLive) return;
+    if (!gameLive && !launcherLive) return;
     if (resizeTimer !== null) window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
       resizeTimer = null;
@@ -769,9 +799,74 @@
 
   window.setInterval(pollPickRequest, 200);
 
+  // Follow the engine's declared mode.  A change re-publishes immediately:
+  // the game handoff has to leave the launcher's full-frame rectangle behind
+  // in the same breath it takes over.
+  function pollViewportMode() {
+    var fs = getFS();
+    if (!fs || !saveDirectory) return;
+    var path = saveDirectory + "/" + VIEWPORT_MODE;
+    if (!pathExists(fs, path)) return;
+    var mode = "launcher";
+    try {
+      var raw = fs.readFile(path, { encoding: "utf8" });
+      if (typeof raw === "string" && raw.indexOf("game") === 0) mode = "game";
+    } catch (_) {
+      return;
+    }
+    if (mode === viewportMode) return;
+    viewportMode = mode;
+    setGeometryState("VIEWPORT_MODE_" + mode.toUpperCase());
+    if (mode === "game") {
+      // The engine has just put itself back on the design rectangle; re-adopt
+      // it as the baseline instead of keeping the launcher's device-sized
+      // one.  enterGameViewport would normally do this, but it arrives
+      // through love.system.openURL, which never reaches iOS.
+      launcherLive = false;
+      baseWidth = 0;
+      baseHeight = 0;
+      lastCanvasSample = "";
+      requestedGeometry = null;
+      return;
+    }
+    publishTarget(true);
+  }
+
+  window.setInterval(pollViewportMode, 250);
+
   // Both pickers close the prompt when they answer, whichever way.
   picker.addEventListener("change", hidePrompt);
   modPicker.addEventListener("change", hidePrompt);
+
+  // Adopt the engine's own rectangle as the baseline as soon as SDL has made
+  // one, so the launcher can be widened before any game exists.  A later
+  // enterGameViewport re-bases on the game's geometry and takes over.
+  var lastCanvasSample = "";
+  function adoptLauncherViewport() {
+    if (gameLive || launcherLive) return;
+    if (!canvas) return;
+    var w = Number(canvas.width) || 0;
+    var h = Number(canvas.height) || 0;
+    // 0x0 and 1x1 are SDL mid-probe; 300x150 is the HTML default a <canvas>
+    // carries until SDL first sizes it.  Adopting either would make the
+    // baseline a fiction and every derived target nonsense.
+    if (!(w > 1 && h > 1)) return;
+    if (w === 300 && h === 150) return;
+    // And it has to hold still: window creation walks through sizes, so one
+    // sample proves nothing.
+    var sample = w + "x" + h;
+    if (sample !== lastCanvasSample) { lastCanvasSample = sample; return; }
+    baseWidth = w;
+    baseHeight = h;
+    launcherLive = true;
+    setGeometryState("LAUNCHER_VIEWPORT_" + sample);
+    publishTarget(true);
+  }
+
+  window.setInterval(function () {
+    if (gameLive) return;
+    adoptLauncherViewport();
+  }, 300);
 
   var readyPoll = window.setInterval(function () {
     var fs = getFS();

@@ -1,6 +1,6 @@
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/data/strings/fr.lua love_src/data/strings/fr.lua
---- a/data/strings/fr.lua	1970-01-01 00:00:00.000000000 +0000
-+++ b/data/strings/fr.lua	2026-08-14 18:27:39.046034991 +0000
+--- love_orig/data/strings/fr.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/data/strings/fr.lua	2026-08-14 18:27:39.046034991 +0000
 @@ -0,0 +1,213 @@
 +-- French catalog for Gen1Recomp's OWN player-facing text.
 +--
@@ -216,8 +216,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/data/strings/fr.lua love_
 +  ["{RAM:wNameBuffer} used\nSTRENGTH."] = "{RAM:wNameBuffer} utilise\nFORCE.",
 +}
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/main.lua love_src/main.lua
---- a/main.lua	2026-08-13 18:11:50.000000000 +0000
-+++ b/main.lua	2026-08-14 18:27:55.038251127 +0000
+--- love_orig/main.lua	2026-08-13 18:11:50.000000000 +0000
++++ love_src/main.lua	2026-08-15 07:44:31.086217003 +0000
 @@ -81,7 +81,7 @@
  -- ------------------------------------------------------------ save editor
  -- The launcher instance parked while the editor is up, plus the version whose
@@ -349,11 +349,14 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/main.lua love_src/main.lu
        return
      end
      -- Not importable yet: open the launcher already showing that game, so the
-@@ -398,9 +416,9 @@
+@@ -398,9 +416,12 @@
    -- Choose ROM / drag-drop when it is not.  Any dropped .gb is routed by its
    -- SHA-1 (GameVersion.forSha1); pressing Play boots that game.  Edit on a
    -- save row opens the bundled editor on that slot (openEditor).
 -  Importer = RomImporter.new(function(version)
++  -- Let the shell widen the launcher to the device before the player has to
++  -- read it.  No-op off the Web.
++  WebViewport.activateLauncher()
 +  Importer = RomImporter.new(function(version, variant)
      Importer = nil
 -    bootGame(version)
@@ -361,9 +364,23 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/main.lua love_src/main.lu
    end, {
      launcher = true,
      forceImport = forceImport,
+@@ -415,8 +436,12 @@
+   NxDisplay.sync()
+   if editorMode then return EditorApp.update(dt) end
+   if TouchEditor then return TouchEditor.update(dt) end
+-  if Importer then return Importer:update(dt) end
++  -- The adaptive viewport follows the device in the launcher too, so this
++  -- runs BEFORE the importer's early return.  Without it the preparation
++  -- screen is stuck at its portrait rectangle on a landscape phone and the
++  -- player has to scroll it to reach Play.
+   WebViewport.update(dt, Game)
++  if Importer then return Importer:update(dt) end
+ 
+   -- Scripted runs (autopilot / POKEPORT_DRIVER) observe and act exactly
+   -- once per Game:update, so they must keep a 1:1 relationship with the
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/Game.lua love_src/src/core/Game.lua
---- a/src/core/Game.lua	2026-08-11 23:06:16.000000000 +0000
-+++ b/src/core/Game.lua	2026-08-14 18:27:55.024990324 +0000
+--- love_orig/src/core/Game.lua	2026-08-11 23:06:16.000000000 +0000
++++ love_src/src/core/Game.lua	2026-08-14 18:27:55.024990324 +0000
 @@ -67,7 +67,12 @@
    require("src.ui.Theme").load(Data)
    -- the engine's own text, after the merge so a translation mod's catalog
@@ -379,8 +396,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/Game.lua love_sr
    self.stack = StateStack
    StateStack:init()
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/GameVersion.lua love_src/src/core/GameVersion.lua
---- a/src/core/GameVersion.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/core/GameVersion.lua	2026-08-14 18:14:14.569152082 +0000
+--- love_orig/src/core/GameVersion.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/core/GameVersion.lua	2026-08-14 18:14:14.569152082 +0000
 @@ -1,68 +1,218 @@
 --- Which Gen-1 game this process is running: Red (the historical default),
 --- Blue, or Yellow.  One source of truth for everything that differs by
@@ -768,8 +785,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/GameVersion.lua 
 +
  return GameVersion
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/SaveData.lua love_src/src/core/SaveData.lua
---- a/src/core/SaveData.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/core/SaveData.lua	2026-08-14 18:19:06.910946749 +0000
+--- love_orig/src/core/SaveData.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/core/SaveData.lua	2026-08-14 18:19:06.910946749 +0000
 @@ -552,14 +552,26 @@
  -- use" and the flat legacy path (save.lua / save_blue.lua / save_yellow.lua)
  -- is used, which keeps a brand-new install and every pre-slots caller
@@ -953,8 +970,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/SaveData.lua lov
  
  local function rememberPlaythroughId(save, opts, injectedFs)
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/Strings.lua love_src/src/core/Strings.lua
---- a/src/core/Strings.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/core/Strings.lua	2026-08-14 18:25:08.317190943 +0000
+--- love_orig/src/core/Strings.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/core/Strings.lua	2026-08-14 18:25:08.317190943 +0000
 @@ -37,6 +37,9 @@
  local Strings = {}
  
@@ -1047,9 +1064,131 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/Strings.lua love
  end
  
  -- Count `%`-directives so a translation that drops or adds one is caught
+diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/core/WebViewport.lua love_src/src/core/WebViewport.lua
+--- love_orig/src/core/WebViewport.lua	2026-08-13 23:34:06.000000000 +0000
++++ love_src/src/core/WebViewport.lua	2026-08-15 07:51:50.969844518 +0000
+@@ -29,11 +29,23 @@
+ 
+ local WebViewport = {}
+ local REQUEST = "web-adaptive-wide-request.txt"
++-- Which rectangle rule the shell should apply.  It cannot be inferred from
++-- the page: the calls Lua makes into the shell go through
++-- love.system.openURL, which love.js implements as window.open(), and Safari
++-- refuses a javascript: URL there -- so enterGameViewport never arrives on
++-- iOS.  The mode therefore travels as a file, like every other Web request.
++--   "launcher" : take the whole frame, both axes.  The preparation screen is
++--                a UI, not the 160x144 world, so height is free and using it
++--                is what removes the scrolling in landscape.
++--   "game"     : widen only.  Renderer:fitScale is an integer fit against
++--                160x144, so the drawable HEIGHT is the framing invariant.
++local MODE = "web-viewport-mode.txt"
+ local state = {
+   active = false,
+   baseW = nil,
+   baseH = nil,
+   lastSequence = -1,
++  mode = "game",
+   elapsed = 0,
+   interval = 0.25,
+   reportTicks = 0,
+@@ -89,9 +101,21 @@
+   state.lastSequence = sequence
+   targetW = math.floor(targetW + 0.5)
+   targetH = math.floor(targetH + 0.5)
+-  -- Bounds reject stale or corrupt save data.  The height is the framing
+-  -- invariant, so a request that moves it is refused outright.
+-  if targetH ~= state.baseH or targetW < state.baseW or targetW > 4096 then
++  -- Bounds reject stale or corrupt save data.
++  --
++  -- In GAME mode the height is the framing invariant -- Renderer:fitScale is
++  -- an integer fit of the drawable against 160x144, so moving it changes the
++  -- vertical world span and the apparent size of everything -- and a request
++  -- that moves it is refused outright.
++  --
++  -- In LAUNCHER mode there is no world: the preparation screen is a Kit UI
++  -- that lays itself out to whatever rectangle it is given, and taking the
++  -- device's full height is exactly what lets it stop scrolling in
++  -- landscape.  It may still only grow, never shrink below its design size.
++  if targetW < state.baseW or targetW > 4096 then return false end
++  if state.mode == "launcher" then
++    if targetH < state.baseH or targetH > 4096 then return false end
++  elseif targetH ~= state.baseH then
+     return false
+   end
+   local windowW, windowH = love.window.getMode()
+@@ -115,21 +139,66 @@
+   return newW == targetW and newH == targetH
+ end
+ 
+--- Called from bootGame, at the actual Red/Blue/Yellow handoff.  The
+--- preparation module never reaches this, so it keeps its validated rectangle
+--- and its touch coordinate space.
++-- Called once the launcher is on screen.  The preparation module used to be
++-- deliberately excluded from the adaptive viewport, which is right for a
++-- desktop window but wrong for a phone: held in landscape it kept the
++-- portrait rectangle, letterboxed, and its own content did not fit -- the
++-- player had to scroll the launcher to reach Play.  The launcher already
++-- lays out in two columns when it is wide enough; it only needed the width.
++--
++-- Height is still never touched, so the framing invariant above holds, and
++-- the shell derives the target from the engine's own rectangle exactly as it
++-- does at the game handoff.
++function WebViewport.activateLauncher()
++  if state.active then return false end
++  if not Platform.isWeb()
++     or not (love.window and love.window.getMode and love.window.setMode)
++     or not (love.graphics and love.graphics.getDimensions) then
++    return false
++  end
++  local baseW, baseH = love.window.getMode()
++  if not (baseW and baseH and baseW > 0 and baseH > 0) then return false end
++  state.active = true
++  state.baseW, state.baseH = baseW, baseH
++  -- Remembered separately: the launcher is allowed to grow to the device,
++  -- and the game must not inherit whatever rectangle that left behind.
++  state.designW, state.designH = baseW, baseH
++  state.elapsed = 0
++  state.reportTicks = REPORT_TICKS
++  state.mode = "launcher"
++  pcall(love.filesystem.write, MODE, "launcher")
++  report()
++  return true
++end
++
++-- Called from bootGame, at the actual Red/Blue/Yellow handoff.  Re-bases on
++-- the game's own geometry, which is what the shell then adapts.
+ function WebViewport.configure()
++  state.active = false
+   if not Platform.isWeb()
+      or not (love.window and love.window.getMode and love.window.setMode)
+      or not (love.graphics and love.graphics.getDimensions) then
+     return false
+   end
++  -- Coming out of the launcher the window may be the device-sized rectangle
++  -- the preparation screen grew into.  The game has to start from the
++  -- validated design rectangle instead, because from here on the height is
++  -- the framing invariant and everything is measured against it.
++  if state.designW and state.designH then
++    local w, h, flags = love.window.getMode()
++    if w ~= state.designW or h ~= state.designH then
++      pcall(love.window.setMode, state.designW, state.designH, flags)
++    end
++  end
+   local baseW, baseH = love.window.getMode()
+   if not (baseW and baseH and baseW > 0 and baseH > 0) then return false end
+   state.active = true
+   state.baseW, state.baseH = baseW, baseH
++  state.lastSequence = -1
+   state.elapsed = 0
+   state.reportTicks = REPORT_TICKS
++  state.mode = "game"
++  pcall(love.filesystem.write, MODE, "game")
+   -- The engine's own geometry is the baseline: the shell derives the target
+   -- from it and never invents a resolution.
+   bridgeCall(string.format(
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/CacheFs.lua love_src/src/import/CacheFs.lua
---- a/src/import/CacheFs.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/import/CacheFs.lua	2026-08-14 18:17:30.649420569 +0000
+--- love_orig/src/import/CacheFs.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/import/CacheFs.lua	2026-08-14 18:17:30.649420569 +0000
 @@ -518,11 +518,20 @@
    return mounted
  end
@@ -1087,8 +1226,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/CacheFs.lua lo
    local sub = prefix:gsub("/+$", "")
    local base = CacheFs.root()
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/LauncherView.lua love_src/src/import/LauncherView.lua
---- a/src/import/LauncherView.lua	2026-08-11 12:17:22.000000000 +0000
-+++ b/src/import/LauncherView.lua	2026-08-14 18:23:59.697186864 +0000
+--- love_orig/src/import/LauncherView.lua	2026-08-11 12:17:22.000000000 +0000
++++ love_src/src/import/LauncherView.lua	2026-08-14 18:23:59.697186864 +0000
 @@ -311,6 +311,43 @@
    return CART_COLOR[version] or PAL.green
  end
@@ -1146,8 +1285,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/LauncherView.l
    local lx, lw, rx2, rw
    if m.twoCol then
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomExtractor.lua love_src/src/import/RomExtractor.lua
---- a/src/import/RomExtractor.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/import/RomExtractor.lua	2026-08-14 18:43:35.604652982 +0000
+--- love_orig/src/import/RomExtractor.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/import/RomExtractor.lua	2026-08-14 18:43:35.604652982 +0000
 @@ -1094,20 +1094,42 @@
    local kind, consumed = self.rom:readString(
      pointerTable.bank, address, self.manifest.charmap, 0x50, 32)
@@ -1197,8 +1336,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomExtractor.l
  
  function RomExtractor:extractPokemon()
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lua love_src/src/import/RomImporter.lua
---- a/src/import/RomImporter.lua	2026-08-13 21:15:14.000000000 +0000
-+++ b/src/import/RomImporter.lua	2026-08-15 07:16:46.307275047 +0000
+--- love_orig/src/import/RomImporter.lua	2026-08-13 21:15:14.000000000 +0000
++++ love_src/src/import/RomImporter.lua	2026-08-15 07:16:46.307275047 +0000
 @@ -41,8 +41,10 @@
  
  -- The marker a finished import writes for a version: the generation tag plus
@@ -1616,8 +1755,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/RomImporter.lu
    self.chooseVersion = version
    if self.baseRomDiscovery then
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/SaveFileIO.lua love_src/src/import/SaveFileIO.lua
---- a/src/import/SaveFileIO.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/import/SaveFileIO.lua	2026-08-14 18:23:10.929921291 +0000
+--- love_orig/src/import/SaveFileIO.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/import/SaveFileIO.lua	2026-08-14 18:23:10.929921291 +0000
 @@ -74,8 +74,9 @@
  -- this returns false, nil, { needsConfirm = true, size = #bytes } so the
  -- launcher can ask the player before truncating; with force the extra bytes
@@ -1677,8 +1816,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/import/SaveFileIO.lua
    if not ok then return false, "could not write the export: " .. tostring(writeErr) end
    -- Absolute path for the notice line, resolved against whichever root took
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/SaveConvert.lua love_src/src/save_convert/SaveConvert.lua
---- a/src/save_convert/SaveConvert.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/save_convert/SaveConvert.lua	2026-08-14 18:21:55.711211417 +0000
+--- love_orig/src/save_convert/SaveConvert.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/save_convert/SaveConvert.lua	2026-08-14 18:21:55.711211417 +0000
 @@ -65,6 +65,50 @@
    "src/save_convert/data/event_flags_yellow.lua",
  }
@@ -1837,8 +1976,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/SaveConv
    local ok, bytes = pcall(GenSave.encode, saveTable, data, nil)
    if not ok then return nil, "encode failed: " .. tostring(bytes) end
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/charmap_fr.lua love_src/src/save_convert/data/charmap_fr.lua
---- a/src/save_convert/data/charmap_fr.lua	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/save_convert/data/charmap_fr.lua	2026-08-14 18:20:40.746373773 +0000
+--- love_orig/src/save_convert/data/charmap_fr.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/src/save_convert/data/charmap_fr.lua	2026-08-14 18:20:40.746373773 +0000
 @@ -0,0 +1,604 @@
 +-- Generated by tools/build_data.py. DO NOT EDIT.
 +-- Gen1 text byte <-> glyph/token charmap (fixed-length name
@@ -2445,8 +2584,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/cha
 +  source = "pokered constants/charmap.asm",
 +}
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/charmap_fr_yellow.lua love_src/src/save_convert/data/charmap_fr_yellow.lua
---- a/src/save_convert/data/charmap_fr_yellow.lua	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/save_convert/data/charmap_fr_yellow.lua	2026-08-14 18:21:12.427824014 +0000
+--- love_orig/src/save_convert/data/charmap_fr_yellow.lua	1970-01-01 00:00:00.000000000 +0000
++++ love_src/src/save_convert/data/charmap_fr_yellow.lua	2026-08-14 18:21:12.427824014 +0000
 @@ -0,0 +1,605 @@
 +-- Generated by tools/build_data.py. DO NOT EDIT.
 +-- Gen1 text byte <-> glyph/token charmap (fixed-length name
@@ -3054,8 +3193,8 @@ diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/save_convert/data/cha
 +  source = "pokered constants/charmap.asm",
 +}
 diff -ruN '--exclude=rom_manifest_*_fr.json' love_orig/src/ui/DexEntryMenu.lua love_src/src/ui/DexEntryMenu.lua
---- a/src/ui/DexEntryMenu.lua	2026-08-11 12:05:02.000000000 +0000
-+++ b/src/ui/DexEntryMenu.lua	2026-08-14 18:43:35.604881311 +0000
+--- love_orig/src/ui/DexEntryMenu.lua	2026-08-11 12:05:02.000000000 +0000
++++ love_src/src/ui/DexEntryMenu.lua	2026-08-14 18:43:35.604881311 +0000
 @@ -100,7 +100,9 @@
    -- height/weight print only once owned, like the description
    -- (pokedex.asm: "if the pokemon has not been owned, don't print the
