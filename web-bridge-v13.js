@@ -511,16 +511,58 @@
     return true;
   }
 
-  function pickRom() {
-    picker.value = "";
-    picker.click();
+  // Opening a file picker is a privileged action: iOS only allows it inside a
+  // real DOM user gesture.  A click on the rack button below IS one.  A call
+  // arriving from Lua (love.system.openURL -> Gen1WebBridge.pickRom) is NOT:
+  // SDL hands the touch to the engine a frame later, so by the time this runs
+  // Safari has already closed the activation window and click() is a no-op
+  // that throws nothing and reports nothing.
+  //
+  // We cannot make that call legal, so we make the dead end visible: when the
+  // picker does not open, the status line says which button to press instead
+  // of leaving the player tapping a launcher button that never answers.
+  function openPicker(input, hint) {
+    input.value = "";
+    var opened = false;
+    try {
+      input.click();
+      opened = true;
+    } catch (_) {
+      opened = false;
+    }
+    if (!opened || !userGestureLikely()) {
+      setStatus(hint);
+    }
     return true;
   }
 
+  // navigator.userActivation is the direct answer where it exists (Chromium);
+  // elsewhere fall back to "was there a real pointer event in the last
+  // second", which is what a genuine button press looks like.
+  var lastGesture = 0;
+  ["pointerdown", "pointerup", "touchend", "click", "keydown"].forEach(
+    function (type) {
+      window.addEventListener(type, function () {
+        lastGesture = Date.now();
+      }, true);
+    });
+
+  function userGestureLikely() {
+    var activation = navigator.userActivation;
+    if (activation && typeof activation.isActive === "boolean") {
+      return activation.isActive;
+    }
+    return (Date.now() - lastGesture) < 1000;
+  }
+
+  function pickRom() {
+    return openPicker(picker,
+      "Touchez « Importer une ROM » en bas de l’écran pour choisir la cartouche.");
+  }
+
   function pickMod() {
-    modPicker.value = "";
-    modPicker.click();
-    return true;
+    return openPicker(modPicker,
+      "Touchez « Importer un mod » en bas de l’écran pour choisir le .zip.");
   }
 
   async function importSelectedMod(file) {

@@ -33,7 +33,7 @@
  *   - want the worker gone?  KILL = true, upload sw.js, load the site once
  */
 
-var VERSION = "13.4-fr";
+var VERSION = "13.4-fr-r2";
 var KILL = false;
 
 var CACHE = "gen1recomp-" + VERSION;
@@ -49,7 +49,7 @@ var SHELL = [
   "app-v13.css?v=13.3-pwa-final",
   "boot-guard.js?v=13.4-fr",
   "player.js?v=11.5&n=2&g=game-v13.4-fr.love&arg=%5B%22--web%22%5D",
-  "web-bridge-v13.js?v=13.4-optional-rack",
+  "web-bridge-v13.js?v=13.4-fr-r2",
   "web-mod-import.js?v=13.3-pwa-final",
   "manifest.webmanifest?v=13.3-pwa-final",
   "icons/icon-192.png",
