@@ -47,7 +47,7 @@
  *   - want the worker gone?  KILL = true, upload sw.js, load the site once
  */
 
-var VERSION = "13.4-fr-r5";
+var VERSION = "13.4-fr-inlascomp-v1";
 var KILL = false;
 
 var CACHE = "gen1recomp-" + VERSION;
@@ -65,9 +65,11 @@ var SHELL = [
   "./",
   "index.html",
   "app-v13.css?v=13.4-fr-r3",
+  "inlascomp-launcher.css?v=1",
   "web-mod-import.js?v=13.3-pwa-final",
   "web-bridge-v13.js?v=13.4-fr-r4",
-  "boot-guard.js?v=13.4-fr-r5",
+  "inlascomp-launcher.js?v=1",
+  "boot-guard.js?v=13.4-fr-inlascomp-v1",
   "player.js?v=11.5&n=2&g=game-v13.4-fr.love&arg=%5B%22--web%22%5D",
   "manifest.webmanifest?v=13.3-pwa-final",
   "icons/icon-192.png",
