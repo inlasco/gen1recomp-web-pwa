@@ -1,13 +1,13 @@
 {
   "id": "./",
-  "name": "Gen1Recomp",
-  "short_name": "Gen1Recomp",
-  "description": "Gen1Recomp Web sur iPhone",
-  "start_url": "./?v=13.3-pwa-final",
+  "name": "inlasComp",
+  "short_name": "inlasComp",
+  "description": "inlasComp — launcher Web/PWA pour Gen1Recomp",
+  "start_url": "./?v=13.4-inlascomp-v1",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#05070b",
-  "theme_color": "#111827",
+  "background_color": "#050611",
+  "theme_color": "#050611",
   "icons": [
     {
       "src": "icons/icon-192.png",
