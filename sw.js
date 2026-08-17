@@ -71,7 +71,7 @@ var SHELL = [
   "inlascomp-launcher.js?v=1",
   "boot-guard.js?v=13.4-fr-inlascomp-v1",
   "player.js?v=11.5&n=2&g=game-v13.4-fr.love&arg=%5B%22--web%22%5D",
-  "manifest.webmanifest?v=13.3-pwa-final",
+  "manifest.webmanifest?v=13.4-inlascomp-v1",
   "icons/icon-192.png",
   "icons/icon-512.png"
 ];
