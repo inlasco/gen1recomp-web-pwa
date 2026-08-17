@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#050611">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Gen1Recomp">
-  <title>Gen1Recomp PWA v13.3 Viewport Final</title>
+  <meta name="apple-mobile-web-app-title" content="inlasComp">
+  <title>inlasComp — Gen1Recomp</title>
   <link rel="manifest" href="manifest.webmanifest?v=13.3-pwa-final">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="app-v13.css?v=13.4-fr-r3">
+  <link rel="stylesheet" href="inlascomp-launcher.css?v=1">
 </head>
 <body>
   <main id="app" aria-label="Gen1Recomp Web">
@@ -21,15 +22,12 @@
         <span>Chargement de Gen1Recomp…</span>
       </div>
     </div>
-    <!-- Pas de barre de boutons : le launcher est l'interface.  Quand il
-         demande une ROM ou un mod, le moteur écrit web-pick-request.txt et
-         web-bridge-v13.js affiche un bandeau plein écran ; le toucher sur ce
-         bandeau est le geste DOM réel dont iOS a besoin pour ouvrir le
-         sélecteur de fichiers.  Rien de permanent à l'écran.
-
-         #web-status reste dans le DOM, visuellement masqué : c'est la seule
-         destination des messages du pont, y compris « lu sur l'appareil,
-         rien n'est envoyé ». -->
+    <!-- Pas de barre de boutons : le launcher est l'interface. Quand il
+         demande une ROM, le moteur écrit web-pick-request.txt et
+         web-bridge-v13.js garde le flux historique comme fallback. Le nouveau
+         shell inlasComp ouvre le même picker depuis un vrai geste DOM, ce qui
+         reste compatible iOS tout en laissant RomImporter propriétaire de la
+         validation, du SHA-1, des caches et du lancement. -->
     <span id="web-status" role="status" aria-live="polite"
           style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0"
           >Initialisation…</span>
@@ -38,10 +36,11 @@
   <noscript>JavaScript est indispensable pour exécuter la version WebAssembly.</noscript>
   <script src="web-mod-import.js?v=13.3-pwa-final"></script>
   <script src="web-bridge-v13.js?v=13.4-fr-r4"></script>
+  <script src="inlascomp-launcher.js?v=1"></script>
   <!-- boot-guard.js vérifie le cache de paquets IndexedDB de player.js puis
-       injecte player.js.  Sans lui, un .love téléversé de travers reste
+       injecte player.js. Sans lui, un .love téléversé de travers reste
        épinglé dans le navigateur et aucun retéléversement ne le remplace. -->
-  <script src="boot-guard.js?v=13.4-fr-r5"></script>
+  <script src="boot-guard.js?v=13.4-fr-inlascomp-v1"></script>
   <script>
     // Enregistré après le chargement, pour ne pas concurrencer les propres
     // requêtes du moteur (love.wasm, l'archive du jeu).
