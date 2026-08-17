@@ -47,7 +47,7 @@
     "game-v13.4-fr.love": 3479845,
     "11.5/love.wasm": 4720510,
     "lua/normalize1.lua": 2832,
-    "lua/normalize2.lua": 4095
+    "lua/normalize2.lua": 14528
   };
 
   var PLAYER_SRC =
