@@ -248,6 +248,11 @@ local function text(v)
   return tostring(v)
 end
 
+local function clearBridgeFiles()
+  pcall(love.filesystem.remove, STATE_FILE)
+  pcall(love.filesystem.remove, COMMAND_FILE)
+end
+
 local function buildState(imp)
   local GameVersion = require("src.core.GameVersion")
   local state = {
@@ -327,6 +332,10 @@ local function buildState(imp)
 end
 
 local function writeState(imp, force)
+  if imp._handedOff then
+    clearBridgeFiles()
+    return
+  end
   imp._inlascompStateClock = (imp._inlascompStateClock or 0)
   if not force and imp._inlascompStateClock < STATE_INTERVAL then return end
   imp._inlascompStateClock = 0
@@ -410,6 +419,10 @@ local function processCommand(imp)
     if imp._ensureMods then pcall(imp._ensureMods, imp) end
   end
 
+  if imp._handedOff then
+    clearBridgeFiles()
+    return
+  end
   writeState(imp, true)
 end
 
@@ -423,12 +436,24 @@ function M.wrapOriginal()
 
   wrapped.update = function(imp, dt)
     if original.update then original.update(imp, dt) end
+    if imp._handedOff then
+      clearBridgeFiles()
+      return
+    end
     imp._inlascompStateClock = (imp._inlascompStateClock or 0) + (dt or 0)
     processCommand(imp)
+    if imp._handedOff then
+      clearBridgeFiles()
+      return
+    end
     writeState(imp, false)
   end
 
   wrapped.draw = function(imp)
+    if imp._handedOff then
+      clearBridgeFiles()
+      return
+    end
     -- Keep the battle-tested engine launcher alive underneath the DOM shell.
     -- This preserves all importer-side setup/modals and is an instant fallback
     -- if the Web UI fails to load.
@@ -437,8 +462,7 @@ function M.wrapOriginal()
   end
 
   wrapped.detach = function(imp)
-    pcall(love.filesystem.remove, STATE_FILE)
-    pcall(love.filesystem.remove, COMMAND_FILE)
+    clearBridgeFiles()
     if original.detach then return original.detach(imp) end
   end
 
