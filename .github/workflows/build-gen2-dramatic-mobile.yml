@@ -1,0 +1,243 @@
+name: Build Gen2 Dramatic Mobile Candidate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-gen2-dramatic-mobile.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout integration branch
+        uses: actions/checkout@v4
+
+      - name: Install validation tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lua5.4 zip unzip
+
+      - name: Fetch public upstream work
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/gen2-fusion
+          mkdir -p /tmp/gen2-fusion/src
+
+          git clone --depth 1 --branch v0.2.81 \
+            https://github.com/randyadr/Gen2-3D-Sprites.git \
+            /tmp/gen2-fusion/src/gen2-3d-sprites
+
+          git clone --depth 1 \
+            https://github.com/UNDERdecoded/Gen2Recomped-DramaticShapes.git \
+            /tmp/gen2-fusion/src/gen2-dramatic-shapes
+
+          git clone --depth 1 \
+            https://github.com/DramaticShape/DramaticShapeVoxelMod.git \
+            /tmp/gen2-fusion/src/dramatic-shape-upstream
+
+          # BattleArt is a Gen1 fork. It is audited as an inspiration/source,
+          # not copied wholesale into the Gen2 deliverable.
+          git clone --depth 1 \
+            https://github.com/absol89/DramaticShapeVoxelMod.git \
+            /tmp/gen2-fusion/src/battleart || true
+
+      - name: Assemble inlasComp Gen2 mobile mod
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/tmp/gen2-fusion
+          SRC="$ROOT/src/gen2-3d-sprites"
+          MOD="$ROOT/mod"
+          rm -rf "$MOD"
+          mkdir -p "$MOD"
+
+          # v0.2.81 is the most current public Gen2/mobile integration found.
+          # Keep its complete runtime tree to avoid hidden module omissions.
+          cp -a "$SRC"/. "$MOD"/
+          rm -rf "$MOD/.git" "$MOD/.github"
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re, subprocess
+
+          root = Path('/tmp/gen2-fusion')
+          mod = root / 'mod'
+
+          # Rebrand only the distributable identity. Preserve upstream authorship
+          # in the included original licences/readmes and in SOURCES.md.
+          mf = mod / 'manifest.json'
+          data = json.loads(mf.read_text(encoding='utf-8'))
+          upstream_name = data.get('name')
+          upstream_version = data.get('version')
+          data.update({
+              'id': 'INLASCOMP_GEN2_DRAMATIC_MOBILE',
+              'name': 'inlasComp Gen2 Dramatic Mobile',
+              'version': '0.1.0',
+              'api': 2,
+              'profile': 'content',
+              'category': 'GRAPHICS',
+              'games': ['gen2'],
+              'gen2compat': True,
+              'update_check': False,
+              'description': (
+                  'Mobile/Web/PWA Gen2 visual mod for Gold, Silver and Crystal: '
+                  'voxel diorama overworld, touch camera and live 3D battle world. '
+                  'Built from the Gen2 Dramatic Shape/mobile work; optional Stadium, '
+                  'Wilds, follower, alternate UI and heavy weather features are off by default.'
+              ),
+          })
+          # Avoid claiming the upstream repository as an auto-update channel for
+          # this adapted package.
+          data.pop('github', None)
+          mf.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          # Mobile/Web defaults: preserve the proven voxel path and live 3D battle,
+          # disable unrelated/heavier presentation/gameplay features by default.
+          options = mod / 'options.lua'
+          text = options.read_text(encoding='utf-8')
+          defaults = {
+              'voxel3d': 'true',
+              'customUI': 'false',
+              'stadium3dSprites': 'false',
+              'player3dModel': 'false',
+              'openWorld': 'false',
+              'voxelDiskCache': 'false',
+              'cameraMode': '"diorama"',
+              'cameraSlider': 'true',
+              'screenFlip': 'false',
+              'partyFollower': 'false',
+              'battle3dWorld': 'true',
+              'battleSmartCamera': 'true',
+              'battleCommands': 'false',
+              'weatherMode': '"clear"',
+              'weatherClouds': 'false',
+              'enabled': 'false',  # Wilds visible-spawn feature
+          }
+          lines = text.splitlines()
+          active_key = None
+          changed = set()
+          key_re = re.compile(r'\bkey\s*=\s*["\']([^"\']+)["\']')
+          def_re = re.compile(r'^(\s*default\s*=\s*)([^,]+)(,?.*)$')
+          out = []
+          for line in lines:
+              km = key_re.search(line)
+              if km:
+                  active_key = km.group(1)
+              dm = def_re.match(line)
+              if dm and active_key in defaults:
+                  line = dm.group(1) + defaults[active_key] + dm.group(3)
+                  changed.add(active_key)
+              out.append(line)
+          options.write_text('\n'.join(out) + '\n', encoding='utf-8')
+
+          # Append adaptation metadata without changing upstream runtime behavior.
+          main = mod / 'main.lua'
+          m = main.read_text(encoding='utf-8')
+          footer = '''\n\n-- inlasComp Gen2 Dramatic Mobile adaptation metadata.\n-- Runtime stays Gen2-gated by the upstream GameVersion.isGen2()/generation path.\nmod.exports.inlascompBuild = "0.1.0"\nmod.exports.inlascompTarget = "mobile-web-pwa"\nmod.exports.inlascompGames = { "gold", "silver", "crystal" }\n'''
+          if 'mod.exports.inlascompBuild' not in m:
+              main.write_text(m.rstrip() + footer, encoding='utf-8')
+
+          def sha(repo):
+              try:
+                  return subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'], text=True).strip()
+              except Exception:
+                  return 'unavailable'
+
+          sources = f'''# inlasComp Gen2 Dramatic Mobile — source record\n\nBuild: 0.1.0 candidate\n\n## Runtime base\n- randyadr/Gen2-3D-Sprites tag v0.2.81 — {sha(root/'src/gen2-3d-sprites')}\n- This is the current Gen2/mobile integration layer used as the executable base.\n\n## Dramatic Shape / Gen2 references\n- UNDERdecoded/Gen2Recomped-DramaticShapes — {sha(root/'src/gen2-dramatic-shapes')}\n- DramaticShape/DramaticShapeVoxelMod — {sha(root/'src/dramatic-shape-upstream')}\n\n## Battle presentation reference\n- absol89/DramaticShapeVoxelMod (BattleArt fork) — {sha(root/'src/battleart') if (root/'src/battleart/.git').exists() else 'clone unavailable'}\n- BattleArt is Gen1-oriented; no BattleArt sprite pack or ROM-derived art is copied into this package.\n- Its useful principles (grounded integer sprite framing, readable battle camera/HUD separation) are represented through the Gen2 live-battle renderer already present in the runtime base.\n\n## inlasComp Web/mobile reference\n- inlasco/gen1recomp-web-pwa DramaticShape-Mobile-Web-by-inlasco.zip is the reference for Safari/WebGL1 policy: progressive fallback, mobile-first defaults, no bundled ROM/save/cache, and avoidance of mandatory desktop-only features.\n\n## Adaptation policy\n- Gold / Silver / Crystal target: Gen2 only.\n- Voxel diorama: ON by default.\n- Live 3D battle world + smart camera: ON by default.\n- Native Gen2 battle command UI: preserved by default.\n- Stadium ROM features, 3D Pokemon replacements, alternate custom UI, follower, Wilds visible-spawn feature and heavy weather: OFF by default.\n- No ROM, save, private cache or user-derived asset is intentionally included.\n'''
+          (mod / 'INLASCOMP_SOURCES.md').write_text(sources, encoding='utf-8')
+
+          # Machine-readable adaptation record.
+          audit = {
+              'build': '0.1.0',
+              'upstream_name': upstream_name,
+              'upstream_version': upstream_version,
+              'defaults_requested': defaults,
+              'defaults_changed': sorted(changed),
+              'target_games': ['gold','silver','crystal'],
+              'target_runtime': 'LÖVE 11.5 / WebGL1 / mobile Web/PWA',
+          }
+          (mod / 'INLASCOMP_BUILD.json').write_text(json.dumps(audit, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Validate package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/tmp/gen2-fusion
+          MOD="$ROOT/mod"
+          REPORT="$ROOT/VALIDATION.txt"
+          : > "$REPORT"
+
+          echo '== JSON ==' | tee -a "$REPORT"
+          python3 -m json.tool "$MOD/manifest.json" >/dev/null
+          python3 -m json.tool "$MOD/INLASCOMP_BUILD.json" >/dev/null
+          echo 'PASS manifest/build JSON' | tee -a "$REPORT"
+
+          echo '== Lua syntax ==' | tee -a "$REPORT"
+          count=0
+          while IFS= read -r -d '' f; do
+            luac5.4 -p "$f"
+            count=$((count+1))
+          done < <(find "$MOD" -type f -name '*.lua' -print0)
+          echo "PASS Lua files: $count" | tee -a "$REPORT"
+
+          echo '== Required root files ==' | tee -a "$REPORT"
+          for f in manifest.json main.lua options.lua; do
+            test -s "$MOD/$f"
+            echo "PASS $f" | tee -a "$REPORT"
+          done
+
+          echo '== Gen2/mobile signals ==' | tee -a "$REPORT"
+          grep -R -q 'isGen2\|generation' "$MOD/main.lua" && echo 'PASS Gen2 gate signal' | tee -a "$REPORT"
+          grep -R -q 'render.compose' "$MOD/lib" "$MOD/main.lua" && echo 'PASS render.compose mobile/current pipeline signal' | tee -a "$REPORT"
+          grep -R -q 'BattleState\|battle3dWorld' "$MOD/lib" "$MOD/options.lua" && echo 'PASS Gen2 live battle signal' | tee -a "$REPORT"
+          grep -R -q 'touch\|Touch' "$MOD/lib" "$MOD/main.lua" && echo 'PASS touch/mobile signal' | tee -a "$REPORT"
+
+          echo '== Safety scan ==' | tee -a "$REPORT"
+          bad=$(find "$MOD" -type f \( -iname '*.gb' -o -iname '*.gbc' -o -iname '*.sav' -o -iname '*.srm' -o -iname '*.z64' -o -iname '*.n64' -o -iname '*.v64' \) -print)
+          if [ -n "$bad" ]; then
+            echo "$bad" | tee -a "$REPORT"
+            echo 'FAIL forbidden ROM/save file extension present' | tee -a "$REPORT"
+            exit 1
+          fi
+          echo 'PASS no ROM/save files by extension' | tee -a "$REPORT"
+
+          echo '== Source overlap study ==' | tee -a "$REPORT"
+          python3 - <<'PY' | tee -a "$REPORT"
+          from pathlib import Path
+          import hashlib
+          a=Path('/tmp/gen2-fusion/src/gen2-3d-sprites/lib')
+          b=Path('/tmp/gen2-fusion/src/gen2-dramatic-shapes/lib')
+          common=sorted(set(p.name for p in a.glob('*.lua')) & set(p.name for p in b.glob('*.lua')))
+          same=[]; diff=[]
+          for name in common:
+              ha=hashlib.sha256((a/name).read_bytes()).digest()
+              hb=hashlib.sha256((b/name).read_bytes()).digest()
+              (same if ha==hb else diff).append(name)
+          print(f'common_lib_files={len(common)} byte_identical={len(same)} adapted={len(diff)}')
+          print('mobile/adapted examples=' + ', '.join(diff[:20]))
+          PY
+
+          echo '== Archive ==' | tee -a "$REPORT"
+          mkdir -p "$ROOT/out"
+          cp "$REPORT" "$MOD/INLASCOMP_VALIDATION.txt"
+          (cd "$MOD" && zip -q -r -9 "$ROOT/out/inlasComp-Gen2-Dramatic-Mobile-v0.1.0.zip" .)
+          unzip -t "$ROOT/out/inlasComp-Gen2-Dramatic-Mobile-v0.1.0.zip" | tail -n 2 | tee -a "$REPORT"
+          sha256sum "$ROOT/out/inlasComp-Gen2-Dramatic-Mobile-v0.1.0.zip" | tee "$ROOT/out/SHA256SUMS" | tee -a "$REPORT"
+          cp "$REPORT" "$ROOT/out/VALIDATION.txt"
+          cp "$MOD/INLASCOMP_SOURCES.md" "$ROOT/out/SOURCES.md"
+          cp "$MOD/INLASCOMP_BUILD.json" "$ROOT/out/BUILD.json"
+
+      - name: Upload candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: inlasComp-Gen2-Dramatic-Mobile-v0.1.0-candidate
+          path: /tmp/gen2-fusion/out/
+          if-no-files-found: error
+          retention-days: 7
